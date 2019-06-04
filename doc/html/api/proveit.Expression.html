@@ -1,0 +1,687 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Expression &#8212; Prove-It 0.3 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Function" href="proveit.Function.html" />
+    <link rel="prev" title="ExprTensor" href="proveit.ExprTensor.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="expression">
+<h1>Expression<a class="headerlink" href="#expression" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="proveit.Expression">
+<em class="property">class </em><code class="descclassname">proveit.</code><code class="descname">Expression</code><span class="sig-paren">(</span><em>coreInfo</em>, <em>subExpressions=()</em>, <em>styles={}</em>, <em>requirements=()</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.contexts" title="proveit.Expression.contexts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contexts</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.displayed_expression_styles" title="proveit.Expression.displayed_expression_styles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">displayed_expression_styles</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.in_progress_to_conclude" title="proveit.Expression.in_progress_to_conclude"><code class="xref py py-obj docutils literal notranslate"><span class="pre">in_progress_to_conclude</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.conclude" title="proveit.Expression.conclude"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conclude</span></code></a>([assumptions])</td>
+<td>Attempt to conclude this expression under the given assumptions,  using automation specific to this type of expression.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.concludeNegation" title="proveit.Expression.concludeNegation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concludeNegation</span></code></a>([assumptions])</td>
+<td>Attempt to conclude the negation of this expression under the given assumptions, using automation specific to the type of expression being negated.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.concludeViaImplication" title="proveit.Expression.concludeViaImplication"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concludeViaImplication</span></code></a>([assumptions])</td>
+<td>Attempt to conclude this expression via applying modus ponens of known implications.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.copy" title="proveit.Expression.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
+<td>Make a copy of the Expression with the same styles.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.coreInfo" title="proveit.Expression.coreInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coreInfo</span></code></a>()</td>
+<td>Copy out the core information.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.disprove" title="proveit.Expression.disprove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">disprove</span></code></a>([assumptions,&nbsp;automation])</td>
+<td>Attempt to prove the logical negation (Not) of this expression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.evaluation" title="proveit.Expression.evaluation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluation</span></code></a>([assumptions])</td>
+<td>If possible, return a KnownTruth of this expression equal to its irreducible value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.exprInfo" title="proveit.Expression.exprInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exprInfo</span></code></a>([details])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.formatted" title="proveit.Expression.formatted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">formatted</span></code></a>(formatType,&nbsp;**kwargs)</td>
+<td>Returns a formatted version of the expression for the given formatType (‘string’ or ‘latex’).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.freeMultiVars" title="proveit.Expression.freeMultiVars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeMultiVars</span></code></a>()</td>
+<td>Returns the used multi-variables that are not bound as an instance variable or wrapped in a Bundle (see multiExpression.py).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.freeVars" title="proveit.Expression.freeVars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">freeVars</span></code></a>()</td>
+<td>Returns the union of the free Variables of the sub-Expressions.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.getRequirements" title="proveit.Expression.getRequirements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getRequirements</span></code></a>()</td>
+<td>Return a copy of the requirements.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.getStyle" title="proveit.Expression.getStyle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getStyle</span></code></a>(styleName)</td>
+<td>Return the current style setting for the given style name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.getStyles" title="proveit.Expression.getStyles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getStyles</span></code></a>()</td>
+<td>Return a copy of the internally maintained styles dictionary.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.innerExpr" title="proveit.Expression.innerExpr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">innerExpr</span></code></a>()</td>
+<td>Return an InnerExpr object to wrap the expression and access any inner sub-expression for the purpose of creating a lambda expression to replace the inner expression within this one or change its styles.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.latex" title="proveit.Expression.latex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">latex</span></code></a>(**kwargs)</td>
+<td>Return a latex-formatted representation of the Expression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.numSubExpr" title="proveit.Expression.numSubExpr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numSubExpr</span></code></a>()</td>
+<td>Return the number of sub-expressions of this expression.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.orderOfAppearance" title="proveit.Expression.orderOfAppearance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orderOfAppearance</span></code></a>(subExpressions)</td>
+<td>Yields the given sub-Expressions in the order in which they appear in this Expression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.prove" title="proveit.Expression.prove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prove</span></code></a>([assumptions,&nbsp;automation])</td>
+<td>Attempt to prove this expression automatically under the given assumptions (if None, uses defaults.assumptions).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.relabeled" title="proveit.Expression.relabeled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">relabeled</span></code></a>(relabelMap[,&nbsp;reservedVars])</td>
+<td>A watered down version of substituted in which only variable labels are changed.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.remakeArguments" title="proveit.Expression.remakeArguments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remakeArguments</span></code></a>()</td>
+<td>Yield the argument values or (name, value) pairs that could be used to recreate the Expression.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.remakeConstructor" title="proveit.Expression.remakeConstructor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remakeConstructor</span></code></a>()</td>
+<td>Method to call to reconstruct this Expression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.remakeWithStyleCalls" title="proveit.Expression.remakeWithStyleCalls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remakeWithStyleCalls</span></code></a>()</td>
+<td>In order to reconstruct this Expression to have the same styles, what “with…” method calls are most appropriate?  Return a  tuple of strings with the calls to make.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.safeDummyVar" title="proveit.Expression.safeDummyVar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">safeDummyVar</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.safeDummyVars" title="proveit.Expression.safeDummyVars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">safeDummyVars</span></code></a>(n)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.sideEffects" title="proveit.Expression.sideEffects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sideEffects</span></code></a>(knownTruth)</td>
+<td>Yield methods to attempt as side-effects when this expression is proven as a known truth.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.simplification" title="proveit.Expression.simplification"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplification</span></code></a>([assumptions])</td>
+<td>If possible, return a KnownTruth of this expression equal to its irreducible value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.string" title="proveit.Expression.string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string</span></code></a>(**kwargs)</td>
+<td>Return a string representation of the Expression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.styleNames" title="proveit.Expression.styleNames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">styleNames</span></code></a>()</td>
+<td>Return the name of the styles that may be set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.styleOptions" title="proveit.Expression.styleOptions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">styleOptions</span></code></a>()</td>
+<td>Return a StyleOptions object that indicates the possible styles and values that is available to determine how this Expression may be presented.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.subExpr" title="proveit.Expression.subExpr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subExpr</span></code></a>(idx)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.subExprIter" title="proveit.Expression.subExprIter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subExprIter</span></code></a>()</td>
+<td>Iterator over the sub-expressions of this expression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.substituted" title="proveit.Expression.substituted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">substituted</span></code></a>(exprMap[,&nbsp;relabelMap,&nbsp;…])</td>
+<td>Returns this expression with the expressions substituted  according to the exprMap dictionary (mapping Expressions to Expressions – for specialize, this may only map Variables to Expressions).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.usedVars" title="proveit.Expression.usedVars"><code class="xref py py-obj docutils literal notranslate"><span class="pre">usedVars</span></code></a>()</td>
+<td>Returns the union of the used Variables of the sub-Expressions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#proveit.Expression.withMatchingStyle" title="proveit.Expression.withMatchingStyle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">withMatchingStyle</span></code></a>(expr_with_different_style)</td>
+<td>Alter the styles of this expression to match that of the given “expr_with_different_style”.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#proveit.Expression.withStyles" title="proveit.Expression.withStyles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">withStyles</span></code></a>(**kwargs)</td>
+<td>Alter the styles of this expression, and anything containing this particular expression object, according to kwargs.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="proveit.Expression.contexts">
+<code class="descname">contexts</code><em class="property"> = {-9187340429198992536: &lt;proveit._core_.context.Context object at 0x7f129c09be80&gt;, -9110385477773811308: &lt;proveit._core_.context.Context object at 0x7f129c150c50&gt;, -8992500592735343253: &lt;proveit._core_.context.Context object at 0x7f129c0b1438&gt;, -8973296688432177103: &lt;proveit._core_.context.Context object at 0x7f129c0ed8d0&gt;, -8958191452453238090: &lt;proveit._core_.context.Context object at 0x7f129baa4f98&gt;, -8810299987504566671: &lt;proveit._core_.context.Context object at 0x7f129c10d908&gt;, -8798391532912546066: &lt;proveit._core_.context.Context object at 0x7f129b9f8c50&gt;, -8790371157436243891: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -8778339896925495569: &lt;proveit._core_.context.Context object at 0x7f129bb2a9e8&gt;, -8527595961345567542: &lt;proveit._core_.context.Context object at 0x7f129c0bb080&gt;, -8428684503787850911: &lt;proveit._core_.context.Context object at 0x7f129c143550&gt;, -8370625173752894918: &lt;proveit._core_.context.Context object at 0x7f129b9c17b8&gt;, -8317599005434028722: &lt;proveit._core_.context.Context object at 0x7f129ba18320&gt;, -8313972126217048364: &lt;proveit._core_.context.Context object at 0x7f129bc101d0&gt;, -8087282151421303845: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -7887177668667137755: &lt;proveit._core_.context.Context object at 0x7f129ba58a20&gt;, -7800317047751008593: &lt;proveit._core_.context.Context object at 0x7f129c0b1438&gt;, -7306654746121304131: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, -7033752098381643131: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -6963402469082649519: &lt;proveit._core_.context.Context object at 0x7f129bb31128&gt;, -6955024733699336849: &lt;proveit._core_.context.Context object at 0x7f129b971f28&gt;, -6771718215151194801: &lt;proveit._core_.context.Context object at 0x7f129ba18240&gt;, -6722897681739701444: &lt;proveit._core_.context.Context object at 0x7f129b97cc50&gt;, -6467896134855307968: &lt;proveit._core_.context.Context object at 0x7f129ba30f60&gt;, -6416894866752395127: &lt;proveit._core_.context.Context object at 0x7f129c070e80&gt;, -6401716596734836287: &lt;proveit._core_.context.Context object at 0x7f129c0b1438&gt;, -6247339352080642468: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -6229128820732447564: &lt;proveit._core_.context.Context object at 0x7f129c150c50&gt;, -5938631250124367566: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, -5918831536009234521: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, -5896477583817179034: &lt;proveit._core_.context.Context object at 0x7f129bb1e748&gt;, -5896326900629481852: &lt;proveit._core_.context.Context object at 0x7f129c150c50&gt;, -5751037490843765130: &lt;proveit._core_.context.Context object at 0x7f129c150710&gt;, -5617476272664393693: &lt;proveit._core_.context.Context object at 0x7f129c150c50&gt;, -5436714229629090235: &lt;proveit._core_.context.Context object at 0x7f129bb2aeb8&gt;, -5394030091668584876: &lt;proveit._core_.context.Context object at 0x7f129b9f8438&gt;, -5327619013959866459: &lt;proveit._core_.context.Context object at 0x7f129c0b1438&gt;, -5219921207130110370: &lt;proveit._core_.context.Context object at 0x7f129b9e9c88&gt;, -5192828475550377451: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -4961099438323566039: &lt;proveit._core_.context.Context object at 0x7f129b971278&gt;, -4895868568890362374: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -4794475732335561737: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, -4761792232864466815: &lt;proveit._core_.context.Context object at 0x7f129bab3a20&gt;, -4632789116253014685: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -4618009977078162652: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, -4543167943707642845: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -4491330975918837142: &lt;proveit._core_.context.Context object at 0x7f129bc101d0&gt;, -4187058466648871420: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, -4172383425913647826: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, -4031499078887847683: &lt;proveit._core_.context.Context object at 0x7f129b9b6908&gt;, -4023228249268518696: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -3932286010979279430: &lt;proveit._core_.context.Context object at 0x7f129ba3a128&gt;, -3811063866233710798: &lt;proveit._core_.context.Context object at 0x7f129c09be80&gt;, -3795446420692705382: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, -3768245046345694385: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -3727210147555109529: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, -3708027690075204517: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -3705644563432801582: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -3466907477283745573: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, -3323998961339227878: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, -2995539302302873371: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -2946835525938599412: &lt;proveit._core_.context.Context object at 0x7f129c0f8390&gt;, -2691207589853137826: &lt;proveit._core_.context.Context object at 0x7f129b9f8eb8&gt;, -2651066218083375413: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, -2525368317998158120: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -2371967449969171067: &lt;proveit._core_.context.Context object at 0x7f129ba45a20&gt;, -2319566849744542203: &lt;proveit._core_.context.Context object at 0x7f129c11f898&gt;, -2171633746125085840: &lt;proveit._core_.context.Context object at 0x7f129c0b1438&gt;, -2095833445266395427: &lt;proveit._core_.context.Context object at 0x7f129bac87f0&gt;, -2012730093706709435: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -1986871008855895028: &lt;proveit._core_.context.Context object at 0x7f129c150cf8&gt;, -1857042756559311927: &lt;proveit._core_.context.Context object at 0x7f129c0b1438&gt;, -1818718951502026414: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, -1664997407015856216: &lt;proveit._core_.context.Context object at 0x7f129c0b1438&gt;, -1657451281220159966: &lt;proveit._core_.context.Context object at 0x7f129c0b1438&gt;, -1535978946558706171: &lt;proveit._core_.context.Context object at 0x7f129c09be80&gt;, -1464984745474734253: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -1344536413731796985: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, -1241324310588584722: &lt;proveit._core_.context.Context object at 0x7f129ba3a438&gt;, -1117109179353389599: &lt;proveit._core_.context.Context object at 0x7f129c0e3f60&gt;, -1027646141586375456: &lt;proveit._core_.context.Context object at 0x7f129c070e10&gt;, -887404630418097790: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, -871810078882834501: &lt;proveit._core_.context.Context object at 0x7f129b9653c8&gt;, -815263784546992591: &lt;proveit._core_.context.Context object at 0x7f129c09be80&gt;, -801593240977383974: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, -682224972814349578: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, -502983560656245527: &lt;proveit._core_.context.Context object at 0x7f129bbffa58&gt;, -385687271851254280: &lt;proveit._core_.context.Context object at 0x7f129c0ed748&gt;, -259184468038025740: &lt;proveit._core_.context.Context object at 0x7f129b9e1438&gt;, 39628546353631567: &lt;proveit._core_.context.Context object at 0x7f129c0e3080&gt;, 64281080984809114: &lt;proveit._core_.context.Context object at 0x7f129ba8f7f0&gt;, 125796801053450375: &lt;proveit._core_.context.Context object at 0x7f129baa4f98&gt;, 134732188185471675: &lt;proveit._core_.context.Context object at 0x7f129bbf5d68&gt;, 143891959368455461: &lt;proveit._core_.context.Context object at 0x7f129ba607f0&gt;, 465615461631661179: &lt;proveit._core_.context.Context object at 0x7f129c09b5f8&gt;, 782810751367627421: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 860384549598928424: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, 909002471406716800: &lt;proveit._core_.context.Context object at 0x7f129ba0add8&gt;, 972382321862474542: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 982895498407545260: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 1028731528398081579: &lt;proveit._core_.context.Context object at 0x7f129baa4f98&gt;, 1044393339785937009: &lt;proveit._core_.context.Context object at 0x7f129bec8e80&gt;, 1127716346782919404: &lt;proveit._core_.context.Context object at 0x7f129c11fd68&gt;, 1169567047434886215: &lt;proveit._core_.context.Context object at 0x7f129baa4eb8&gt;, 1196092265438615702: &lt;proveit._core_.context.Context object at 0x7f129b9f82b0&gt;, 1304071853172409268: &lt;proveit._core_.context.Context object at 0x7f129ba0a128&gt;, 1355684964798110632: &lt;proveit._core_.context.Context object at 0x7f129bc105f8&gt;, 1411582503575142982: &lt;proveit._core_.context.Context object at 0x7f129b9cc668&gt;, 1480046159647308155: &lt;proveit._core_.context.Context object at 0x7f129b9e1908&gt;, 1659958698954258260: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, 1663372749080832500: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, 1699749044663035230: &lt;proveit._core_.context.Context object at 0x7f129ba0af28&gt;, 1752582862477684501: &lt;proveit._core_.context.Context object at 0x7f129bb2a9e8&gt;, 1819957745508590986: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, 1989702817012649164: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, 2041880629615482489: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 2132432388425322673: &lt;proveit._core_.context.Context object at 0x7f129c0b1438&gt;, 2156052493449671720: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, 2263348038207331067: &lt;proveit._core_.context.Context object at 0x7f129ba4f048&gt;, 2285154299350597896: &lt;proveit._core_.context.Context object at 0x7f129c09be80&gt;, 2317482480493846966: &lt;proveit._core_.context.Context object at 0x7f129bec8f60&gt;, 2536042195477091444: &lt;proveit._core_.context.Context object at 0x7f129baa4f98&gt;, 2560077489105063258: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, 2588300336067618336: &lt;proveit._core_.context.Context object at 0x7f129b9e9320&gt;, 3011113842496396819: &lt;proveit._core_.context.Context object at 0x7f129b97cf98&gt;, 3320570781147621104: &lt;proveit._core_.context.Context object at 0x7f129c12e588&gt;, 3378769411704621270: &lt;proveit._core_.context.Context object at 0x7f129ba990f0&gt;, 3528993901712226124: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, 3546948451565080386: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, 3564583026076210057: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 3789029081079371344: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 3835666181720856406: &lt;proveit._core_.context.Context object at 0x7f129c150c50&gt;, 3916471377992677067: &lt;proveit._core_.context.Context object at 0x7f129c0eda20&gt;, 3931599503400366541: &lt;proveit._core_.context.Context object at 0x7f129c0dbcc0&gt;, 4043892587071443105: &lt;proveit._core_.context.Context object at 0x7f129baff0b8&gt;, 4140374561088764943: &lt;proveit._core_.context.Context object at 0x7f129c0e3a90&gt;, 4191040235979818470: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 4228766751471958028: &lt;proveit._core_.context.Context object at 0x7f129b9d8518&gt;, 4310109614925512064: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 4481433229588949962: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, 4548466553438956402: &lt;proveit._core_.context.Context object at 0x7f129bb2a9e8&gt;, 4647970212561148547: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, 4746520810338221668: &lt;proveit._core_.context.Context object at 0x7f129bb31860&gt;, 4747162031088032923: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 4760258996629314406: &lt;proveit._core_.context.Context object at 0x7f129ba01eb8&gt;, 4904420694205962102: &lt;proveit._core_.context.Context object at 0x7f129c1054e0&gt;, 5030050797179345538: &lt;proveit._core_.context.Context object at 0x7f129b9e98d0&gt;, 5067714734250400696: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, 5096258735818653561: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, 5145686598806418662: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, 5180182257702054731: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 5254951128001830779: &lt;proveit._core_.context.Context object at 0x7f129bc101d0&gt;, 5430499510786960137: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, 5530893925027154043: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 5582952239315766061: &lt;proveit._core_.context.Context object at 0x7f129ba3a320&gt;, 5600661797976279205: &lt;proveit._core_.context.Context object at 0x7f129c13ae10&gt;, 5633015025185771341: &lt;proveit._core_.context.Context object at 0x7f129ba3a208&gt;, 5700989473116453907: &lt;proveit._core_.context.Context object at 0x7f129bb2a9e8&gt;, 5831696072330077623: &lt;proveit._core_.context.Context object at 0x7f129c062f60&gt;, 6156988452033017825: &lt;proveit._core_.context.Context object at 0x7f129b9f8630&gt;, 6166678702769010112: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 6169300863371728981: &lt;proveit._core_.context.Context object at 0x7f129ba787f0&gt;, 6186861949258801706: &lt;proveit._core_.context.Context object at 0x7f129c0e37f0&gt;, 6276270509359736756: &lt;proveit._core_.context.Context object at 0x7f129bbffa90&gt;, 6281508622164287709: &lt;proveit._core_.context.Context object at 0x7f129c150c50&gt;, 6286503663998255139: &lt;proveit._core_.context.Context object at 0x7f129ba18978&gt;, 6597387276656391283: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, 6635737788244734631: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, 6665397500263939196: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 6849003491465467493: &lt;proveit._core_.context.Context object at 0x7f129ba3a8d0&gt;, 6925280235581417099: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 6971351325090436461: &lt;proveit._core_.context.Context object at 0x7f129c116908&gt;, 6990874639996326768: &lt;proveit._core_.context.Context object at 0x7f129ba30eb8&gt;, 7162416106912159803: &lt;proveit._core_.context.Context object at 0x7f129baa4f98&gt;, 7212435312722092407: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 7215056115322366941: &lt;proveit._core_.context.Context object at 0x7f129bc101d0&gt;, 7341359362554617838: &lt;proveit._core_.context.Context object at 0x7f129bb2a9e8&gt;, 7419688915256078534: &lt;proveit._core_.context.Context object at 0x7f129bab30b8&gt;, 7480540205810608607: &lt;proveit._core_.context.Context object at 0x7f129ba45080&gt;, 7499896638490863412: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 7507371144640629517: &lt;proveit._core_.context.Context object at 0x7f129c0db048&gt;, 7564388577505331657: &lt;proveit._core_.context.Context object at 0x7f129c0dbe10&gt;, 7719711373757671443: &lt;proveit._core_.context.Context object at 0x7f129bb2acf8&gt;, 7852619113496703457: &lt;proveit._core_.context.Context object at 0x7f129c150c50&gt;, 7858218680655106309: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 8219792333748051471: &lt;proveit._core_.context.Context object at 0x7f129ba01eb8&gt;, 8243711269629818908: &lt;proveit._core_.context.Context object at 0x7f129ba58320&gt;, 8261383618019880275: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, 8331159737318503431: &lt;proveit._core_.context.Context object at 0x7f129bb2a9e8&gt;, 8535052153112501053: &lt;proveit._core_.context.Context object at 0x7f129c17bb00&gt;, 8848679866348214196: &lt;proveit._core_.context.Context object at 0x7f129c18f5c0&gt;, 8912733838409886387: &lt;proveit._core_.context.Context object at 0x7f129c143b38&gt;, 8991453326236958566: &lt;proveit._core_.context.Context object at 0x7f129ba01eb8&gt;, 9146171760990852706: &lt;proveit._core_.context.Context object at 0x7f129c09be80&gt;}</em><a class="headerlink" href="#proveit.Expression.contexts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="proveit.Expression.displayed_expression_styles">
+<code class="descname">displayed_expression_styles</code><em class="property"> = set()</em><a class="headerlink" href="#proveit.Expression.displayed_expression_styles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="proveit.Expression.in_progress_to_conclude">
+<code class="descname">in_progress_to_conclude</code><em class="property"> = set()</em><a class="headerlink" href="#proveit.Expression.in_progress_to_conclude" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="proveit.Expression.conclude">
+<code class="descname">conclude</code><span class="sig-paren">(</span><em>assumptions=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.conclude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.conclude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to conclude this expression under the given assumptions, 
+using automation specific to this type of expression.
+Return the KnownTruth if successful, or raise an exception.
+This is called by the <cite>prove</cite> method when no existing proof was found 
+and it cannot be proven trivially via assumption or defaultConclude.
+The <cite>prove</cite> method has a mechanism to prevent infinite recursion, 
+so there are no worries regarding cyclic attempts to conclude an expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.concludeNegation">
+<code class="descname">concludeNegation</code><span class="sig-paren">(</span><em>assumptions=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.concludeNegation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.concludeNegation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to conclude the negation of this expression under the given
+assumptions, using automation specific to the type of expression being negated.
+Return the KnownTruth if successful, or raise an exception.
+This is called by the <cite>prove</cite> method of the negated expression
+when no existing proof for the negation was found.
+The <cite>prove</cite> method has a mechanism to prevent infinite recursion, 
+so there are no worries regarding cyclic attempts to conclude an expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.concludeViaImplication">
+<code class="descname">concludeViaImplication</code><span class="sig-paren">(</span><em>assumptions=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.concludeViaImplication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.concludeViaImplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to conclude this expression via applying
+modus ponens of known implications.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a copy of the Expression with the same styles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.coreInfo">
+<code class="descname">coreInfo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.coreInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.coreInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy out the core information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.disprove">
+<code class="descname">disprove</code><span class="sig-paren">(</span><em>assumptions=None</em>, <em>automation=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.disprove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.disprove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to prove the logical negation (Not) of this expression. 
+If successful, the KnownTruth is returned, otherwise an exception
+is raised.  By default, this simply calls prove on the negated
+expression. Override <cite>concludeNegation</cite> for automation specific to
+the type of expression being negated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.evaluation">
+<code class="descname">evaluation</code><span class="sig-paren">(</span><em>assumptions=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.evaluation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.evaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>If possible, return a KnownTruth of this expression equal to its
+irreducible value.  Override for other appropriate functionality.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.exprInfo">
+<code class="descname">exprInfo</code><span class="sig-paren">(</span><em>details=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.exprInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.exprInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.formatted">
+<code class="descname">formatted</code><span class="sig-paren">(</span><em>formatType</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.formatted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.formatted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a formatted version of the expression for the given formatType
+(‘string’ or ‘latex’).  In the keyword arguments, fence=True indicates
+that parenthesis around the sub-expression may be necessary to avoid 
+ambiguity.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.freeMultiVars">
+<code class="descname">freeMultiVars</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.freeMultiVars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.freeMultiVars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the used multi-variables that are not bound as an instance variable
+or wrapped in a Bundle (see multiExpression.py).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.freeVars">
+<code class="descname">freeVars</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.freeVars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.freeVars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the union of the free Variables of the sub-Expressions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.getRequirements">
+<code class="descname">getRequirements</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.getRequirements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.getRequirements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the requirements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.getStyle">
+<code class="descname">getStyle</code><span class="sig-paren">(</span><em>styleName</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.getStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.getStyle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current style setting for the given style name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.getStyles">
+<code class="descname">getStyles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.getStyles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.getStyles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the internally maintained styles dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.innerExpr">
+<code class="descname">innerExpr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.innerExpr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.innerExpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an InnerExpr object to wrap the expression and
+access any inner sub-expression for the purpose of creating
+a lambda expression to replace the inner expression within
+this one or change its styles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.latex">
+<code class="descname">latex</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.latex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.latex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a latex-formatted representation of the Expression.  The kwargs can contain formatting
+directives (such as ‘fence’ used to indicate when a sub-expression should be wrapped in
+parentheses if there can be ambiguity in the order of operations).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.numSubExpr">
+<code class="descname">numSubExpr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.numSubExpr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.numSubExpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of sub-expressions of this expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.orderOfAppearance">
+<code class="descname">orderOfAppearance</code><span class="sig-paren">(</span><em>subExpressions</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.orderOfAppearance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.orderOfAppearance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields the given sub-Expressions in the order in which they
+appear in this Expression.  There may be repeats.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.prove">
+<code class="descname">prove</code><span class="sig-paren">(</span><em>assumptions=None</em>, <em>automation=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.prove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.prove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to prove this expression automatically under the
+given assumptions (if None, uses defaults.assumptions).  First
+it tries to find an existing KnownTruth, then it tries a simple
+proof by assumption (if self is contained in the assumptions),
+then it attempts to call the ‘conclude’ method.  If successful,
+the KnownTruth is returned, otherwise an exception is raised.
+Cyclic attempts to <cite>conclude</cite> the same expression under the
+same set of assumptions will be blocked, so <cite>conclude</cite> methods are
+free make attempts that may be cyclic.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.relabeled">
+<code class="descname">relabeled</code><span class="sig-paren">(</span><em>relabelMap</em>, <em>reservedVars=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.relabeled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.relabeled" title="Permalink to this definition">¶</a></dt>
+<dd><p>A watered down version of substituted in which only variable labels are
+changed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.remakeArguments">
+<code class="descname">remakeArguments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.remakeArguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.remakeArguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield the argument values or (name, value) pairs
+that could be used to recreate the Expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.remakeConstructor">
+<code class="descname">remakeConstructor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.remakeConstructor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.remakeConstructor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to call to reconstruct this Expression.  The default is the class name
+itself to use the __init__ method, but sometimes a different method is more
+appropriate for setting the proper style (e.g. the Frac method in 
+proveit.number.division.divide which constructs a Div object with a different
+style).  This constructor method must be in the same module as the class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.remakeWithStyleCalls">
+<code class="descname">remakeWithStyleCalls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.remakeWithStyleCalls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.remakeWithStyleCalls" title="Permalink to this definition">¶</a></dt>
+<dd><p>In order to reconstruct this Expression to have the same styles,
+what “with…” method calls are most appropriate?  Return a 
+tuple of strings with the calls to make.  For example,
+[“withWrappingAt(3)”, “withJustification(‘right’)”].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.safeDummyVar">
+<code class="descname">safeDummyVar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.safeDummyVar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.safeDummyVar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.safeDummyVars">
+<code class="descname">safeDummyVars</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.safeDummyVars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.safeDummyVars" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.sideEffects">
+<code class="descname">sideEffects</code><span class="sig-paren">(</span><em>knownTruth</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.sideEffects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.sideEffects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield methods to attempt as side-effects when this expression
+is proven as a known truth.  These should each accept an
+‘assumptions’ parameter.
+These should be obvious and useful consequences, trivial and limited.
+There is no need to call this manually; it is called automatically when
+the corresponding KnownTruth is created.
+It also may be desirable to store the knownTruth for future automation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.simplification">
+<code class="descname">simplification</code><span class="sig-paren">(</span><em>assumptions=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.simplification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.simplification" title="Permalink to this definition">¶</a></dt>
+<dd><p>If possible, return a KnownTruth of this expression equal to its
+irreducible value.  Override for other appropriate functionality.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.string">
+<code class="descname">string</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string representation of the Expression.  The kwargs can contain formatting
+directives (such as ‘fence’ used to indicate when a sub-expression should be wrapped in
+parentheses if there can be ambiguity in the order of operations).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.styleNames">
+<code class="descname">styleNames</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.styleNames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.styleNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the name of the styles that may be set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.styleOptions">
+<code class="descname">styleOptions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.styleOptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.styleOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a StyleOptions object that indicates the possible
+styles and values that is available to determine how
+this Expression may be presented.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.subExpr">
+<code class="descname">subExpr</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.subExpr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.subExpr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.subExprIter">
+<code class="descname">subExprIter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.subExprIter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.subExprIter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator over the sub-expressions of this expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.substituted">
+<code class="descname">substituted</code><span class="sig-paren">(</span><em>exprMap</em>, <em>relabelMap=None</em>, <em>reservedVars=None</em>, <em>assumptions=None</em>, <em>requirements=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.substituted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.substituted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns this expression with the expressions substituted 
+according to the exprMap dictionary (mapping Expressions to Expressions –
+for specialize, this may only map Variables to Expressions).
+If supplied, reservedVars is a dictionary that maps reserved Variable’s
+to relabeling exceptions.  You cannot substitute with an expression that
+uses a restricted variable and you can only relabel the exception to the
+restricted variable.  This is used to protect an Lambda function’s “scope”.</p>
+<p>For certain Expression classes in proveit._core_.expression.composite,
+intermediate proofs may be required.  This is why assumptions may be
+needed.  If a list is passed into requirements, KnownTruth’s for these
+intermediate proofs will be appended to it – these are requirements
+for the substitution to be valid.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.usedVars">
+<code class="descname">usedVars</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.usedVars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.usedVars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the union of the used Variables of the sub-Expressions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.withMatchingStyle">
+<code class="descname">withMatchingStyle</code><span class="sig-paren">(</span><em>expr_with_different_style</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.withMatchingStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.withMatchingStyle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alter the styles of this expression to match that of the
+given “expr_with_different_style”.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="proveit.Expression.withStyles">
+<code class="descname">withStyles</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/proveit/_core_/expression/expr.html#Expression.withStyles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#proveit.Expression.withStyles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alter the styles of this expression, and anything containing this
+particular expression object, according to kwargs.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Prove-It</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="proveit.asExpression.html">asExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.asExpressions.html">asExpressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.compositeExpression.html">compositeExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.expressionDepth.html">expressionDepth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.maybeFenced.html">maybeFenced</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.maybeFencedLatex.html">maybeFencedLatex</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.maybeFencedString.html">maybeFencedString</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.reset.html">reset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.safeDefaultOrDummyVar.html">safeDefaultOrDummyVar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.safeDummyVar.html">safeDummyVar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.singleOrCompositeExpression.html">singleOrCompositeExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.varIter.html">varIter</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="proveit.Assumption.html">Assumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Axiom.html">Axiom</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Composite.html">Composite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Context.html">Context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ContextException.html">ContextException</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.DuplicateLiteralError.html">DuplicateLiteralError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ExprList.html">ExprList</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ExprListError.html">ExprListError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ExprTensor.html">ExprTensor</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Expression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Function.html">Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Generalization.html">Generalization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.GeneralizationFailure.html">GeneralizationFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.HypotheticalReasoning.html">HypotheticalReasoning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ImproperRelabeling.html">ImproperRelabeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ImproperSubstitution.html">ImproperSubstitution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Indexed.html">Indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.IndexedError.html">IndexedError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.InnerExpr.html">InnerExpr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.InvalidAssumptions.html">InvalidAssumptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Iter.html">Iter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.KnownTruth.html">KnownTruth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Label.html">Label</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Lambda.html">Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.LambdaError.html">LambdaError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Literal.html">Literal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.MakeNotImplemented.html">MakeNotImplemented</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ModusPonens.html">ModusPonens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ModusPonensFailure.html">ModusPonensFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.NamedExprs.html">NamedExprs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Operation.html">Operation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.OperationError.html">OperationError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.OperationOverInstances.html">OperationOverInstances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.OperationSequence.html">OperationSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ParameterExtractionError.html">ParameterExtractionError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Proof.html">Proof</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ProofFailure.html">ProofFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.RelabelingFailure.html">RelabelingFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.ScopingViolation.html">ScopingViolation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Specialization.html">Specialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.SpecializationFailure.html">SpecializationFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.StyleOptions.html">StyleOptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Theorem.html">Theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.TransitiveRelation.html">TransitiveRelation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.TransitiveSequence.html">TransitiveSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.Variable.html">Variable</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.compose.html">compose</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.concludeViaImplication.html">concludeViaImplication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.defaultSimplification.html">defaultSimplification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.evaluateTruth.html">evaluateTruth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.inBool.html">inBool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.isIrreducibleValue.html">isIrreducibleValue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.reduceOperands.html">reduceOperands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.And.html">And</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Card.html">Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Difference.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Disjoint.html">Disjoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Distinct.html">Distinct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Equals.html">Equals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.EvaluationError.html">EvaluationError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Exists.html">Exists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Forall.html">Forall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Iff.html">Iff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Implies.html">Implies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.InSet.html">InSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Intersect.html">Intersect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.IrreducibleValue.html">IrreducibleValue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Membership.html">Membership</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Nonmembership.html">Nonmembership</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Not.html">Not</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.NotEquals.html">NotEquals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.NotExists.html">NotExists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.NotInSet.html">NotInSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.NotSubsetEq.html">NotSubsetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.NotSupersetEq.html">NotSupersetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Or.html">Or</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Set.html">Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.SetOfAll.html">SetOfAll</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Subset.html">Subset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.SubsetEq.html">SubsetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Superset.html">Superset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.SupersetEq.html">SupersetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.logic.Union.html">Union</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Frac.html">Frac</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.GreaterEqOnlySeq.html">GreaterEqOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.GreaterOnlySeq.html">GreaterOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.LessEqOnlySeq.html">LessEqOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.LessOnlySeq.html">LessOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.greaterSequence.html">greaterSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.isLiteralInt.html">isLiteralInt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.lesserSequence.html">lesserSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.num.html">num</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Abs.html">Abs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Add.html">Add</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Ceil.html">Ceil</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.DecimalSequence.html">DecimalSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Div.html">Div</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Exp.html">Exp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Floor.html">Floor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Greater.html">Greater</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.GreaterEq.html">GreaterEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.GreaterSequence.html">GreaterSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Integrate.html">Integrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Interval.html">Interval</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.IntervalCC.html">IntervalCC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.IntervalCO.html">IntervalCO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.IntervalOC.html">IntervalOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.IntervalOO.html">IntervalOO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Len.html">Len</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Less.html">Less</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.LessEq.html">LessEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.LesserSequence.html">LesserSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Max.html">Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Min.html">Min</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Mod.html">Mod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.ModAbs.html">ModAbs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Mult.html">Mult</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Neg.html">Neg</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Numeral.html">Numeral</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.RealInterval.html">RealInterval</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Round.html">Round</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Sqrt.html">Sqrt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Subtract.html">Subtract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proveit.number.Sum.html">Sum</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="proveit.ExprTensor.html" title="previous chapter">ExprTensor</a></li>
+      <li>Next: <a href="proveit.Function.html" title="next chapter">Function</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Wayne Witzel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/api/proveit.Expression.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
