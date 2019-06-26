@@ -323,28 +323,78 @@ class Proof:
 class Assumption(Proof):
     allAssumptions = dict() # map expression and the to assumption object
      
-    def __init__(self, expr, assumptions=None):
+    def __init__(self, expr, assumptions=None, iter_start_or_index=None, iter_end=None):
+        '''
+        Assumptions are not meant to be created manually.  Please use the
+        'makeAssumption' method. 
+        '''
         assumptions = defaults.checkedAssumptions(assumptions)
+        orig_expr = expr
+        requirements = []
+        
+        if iter_start_or_index is not None:
+            from proveit import Iter
+            from proveit.logic import InSet
+            from proveit.number import Subtract, Naturals
+            assert isinstance(expr, Iter), "May only use 'iter_start' and 'iter_end' when 'expr' is an Iter object"
+            assert expr.ndims==1, "Only expecting 1-D iterations as assumptions"
+            if iter_end is None: iter_end = iter_start_or_index
+            if iter_start_or_index==iter_end:
+                # Assume an instance of an Iter expr.
+                self.iter_start = self.iter_end = iter_start_or_index
+                expr = expr.getInstance(iter_start_or_index, assumptions, requirements)
+            else:
+                # Assume a sub-range of an Iter expr.
+                self.iter_start = iter_start_or_index
+                self.iter_end = iter_end
+                # In our requirements, we need to ensure that the new iter_start and iter_end is
+                # indeed a proper sub-range of the original Iter:
+                # (new_start - old_start) in Naturals:
+                new_start_requirement = InSet(Subtract(iter_start_or_index, expr.start_index_or_indices), Naturals) 
+                requirements.append(new_start_requirement.prove(assumptions))
+                # (old_end - new_end) in Naturals
+                new_end_requirement = InSet(Subtract(expr.end_index_or_indices, iter_end), Naturals)
+                requirements.append(new_end_requirement.prove(assumptions))
+                expr = Iter(expr.lambda_map.parameter_or_parameters, expr.lambda_map.body, iter_start_or_index, iter_end)
+        else:
+            assert iter_end is None, "Only use 'iter_end' when also using 'iter_start'"
+        
         if expr not in assumptions:
             # an Assumption proof must assume itself; that's what it does.
             assumptions = assumptions + (expr,)
         prev_default_assumptions = defaults.assumptions
         defaults.assumptions = assumptions # these assumptions will be used for deriving any side-effects
         try:
-            Proof.__init__(self, KnownTruth(expr, {expr}), [])
+            Proof.__init__(self, KnownTruth(expr, (orig_expr,)), requirements)
         finally:
             # restore the original default assumptions
             defaults.assumptions = prev_default_assumptions
         Assumption.allAssumptions[(expr, assumptions)] = self
     
     @staticmethod
-    def makeAssumption(expr, assumptions):
+    def makeAssumption(expr, assumptions, iter_start_or_index=None, iter_end=None):
         '''
         Return an Assumption object, only creating it if it doesn't
-        already exist.  assumptions must already be 'checked' and in
+        already exist.  Assumptions must already be 'checked' and in
         tuple form.
+        
+        If iter_start_or_index and iter_end are None:
+            Assume the 'expr' is true under the given assumptions,
+            deriving side-effects under all of the assumptions.
+        
+        otherwise, if iter_start_or_index==iter_end or iter_end is None:
+            The 'expr' must be an 'Iter' object.  Assume 
+            'expr.getInstance(iter_start, assumptions, requirements)'.
+            The requirements will be the pre-requisites.
+            
+        otherwise, if iter_start_or_index and iter_end are not None:
+            The 'expr' must be an 'Iter' object.  Assume 
+            a modified form of 'expr' with its start and end
+            replaced with 'iter_start' and 'iter_end', having
+            pre-requisites that 'new_start - old_start in Naturals'
+            and 'old_end - new_end in Naturals'.
         '''
-        key = (expr, assumptions)
+        key = (expr, assumptions, iter_start_or_index, iter_end)
         if key in Assumption.allAssumptions:
             preexisting = Assumption.allAssumptions[key]
             if (preexisting.provenTruth, assumptions) not in KnownTruth.sideeffect_processed:
@@ -354,7 +404,7 @@ class Assumption(Proof):
                 # when assumptions change.
                 preexisting.provenTruth.deriveSideEffects()
             return preexisting
-        return Assumption(expr, assumptions)
+        return Assumption(expr, assumptions, iter_start_or_index, iter_end)
         
     def stepType(self):
         return 'assumption'
