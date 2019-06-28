@@ -758,8 +758,12 @@ class KnownTruth:
                 elif iVar not in processedSubMap:
                     # default is to map instance variables to themselves
                     processedSubMap[iVar] = iVar
-
-        return self._checkedTruth(Specialization(self, numForallEliminations=numForallEliminations, specializeMap=processedSubMap, relabelMap=relabelMap, assumptions=assumptions))
+        
+        checkedTruths = [self._checkedTruth(truth) for truth in Specialization._makeSpecializations(self, numForallEliminations=numForallEliminations, specializeMap=processedSubMap, relabelMap=relabelMap, assumptions=assumptions)]
+        if len(checkedTruths)==1:
+            return checkedTruths[0]
+        # Multiple proofs may be generated when an Iter object is the instance expression of the universal quantification being specialized
+        return checkedTruths
         
     def generalize(self, forallVarLists, domainLists=None, domain=None, conditions=tuple()):
         '''

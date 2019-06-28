@@ -57,8 +57,6 @@ class Lambda(Expression):
         body = singleOrCompositeExpression(body)
         if not isinstance(body, Expression):
             raise TypeError('A Lambda body must be of type Expression')
-        if isinstance(body, Iter):
-            raise TypeError('An Iter must be within an ExprList or ExprTensor, not directly as a Lambda body')
         self.body = body
         self.conditions = compositeExpression(conditions)
         for requirement in self.body.getRequirements():

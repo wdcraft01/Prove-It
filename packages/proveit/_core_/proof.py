@@ -691,11 +691,46 @@ class HypotheticalReasoning(Proof):
         return 'hypothetical reasoning'
 
 class Specialization(Proof):
-    def __init__(self, generalTruth, numForallEliminations, specializeMap=None, relabelMap=None, assumptions=USE_DEFAULTS):
+    def __init__(self, generalTruth, specializedExpr, requirements, mappedVarLists, mappings, assumptions, Failure):
         '''
-        Create the Specialization proof step that specializes the given general expression
+        Do not create Specialization objects manually.  Use the specialize method of
+        KnownTruth which will use Specialization._makeSpecializations.
+        '''
+        # obtain the KnownTruths for the substituted conditions
+        requirementTruths = []
+        requirementTruthSet = set() # avoid repeats of requirements
+        for requirementExpr in requirements:
+            try:
+                # each substituted condition must be proven under the assumptions
+                # (if WILDCARD_ASSUMPTIONS is included, it will be proven by assumption if there isn't an existing proof otherwise)
+                requirementTruth = requirementExpr.prove(assumptions)
+                if requirementTruth not in requirementTruthSet:
+                    requirementTruths.append(requirementTruth)
+                    requirementTruthSet.add(requirementTruth)
+                    _appendExtraAssumptions(assumptions, requirementTruth)
+            except ProofFailure:
+                raise Failure(specializedExpr, assumptions, 'Unmet specialization requirement: ' + str(requirementExpr))
+        # remove any unnecessary assumptions (but keep the order that was provided)
+        assumptionsSet = generalTruth.assumptionsSet
+        for requirementTruth in requirementTruths:
+            assumptionsSet |= requirementTruth.assumptionsSet
+        assumptions = [assumption for assumption in assumptions if assumption in assumptionsSet]
+        # we have what we need; set up the Specialization Proof
+        self.generalTruth = generalTruth
+        self.requirementTruths = requirementTruths
+        self.mappedVarLists = mappedVarLists
+        self.mappings = mappings
+        specializedTruth = KnownTruth(specializedExpr, assumptions)
+        Proof.__init__(self, specializedTruth, [generalTruth] + requirementTruths)
+    
+    @staticmethod
+    def _makeSpecializations(generalTruth, numForallEliminations, specializeMap=None, relabelMap=None, assumptions=USE_DEFAULTS):
+        '''
+        Yield Specialization proof(s) that specializes the given general expression
         using the substitution map (subMap) under the given assumptions.  
-        Eliminates the number of nested Forall operations as indicated, substituting
+        Multiple Specialization object may be yielded when specializing over
+        an iteration that is to be expanded.  In each instance, we
+        eliminates the number of nested Forall operations as indicated, substituting
         their instance variables according to subMap.  The default for any unspecified instance 
         variable is to specialize it to itself, or, in the case of a bundled variable 
         (Etcetera-wrapped MultiVariables), the default is to specialize it to an empty list.
@@ -723,33 +758,8 @@ class Specialization(Proof):
                     raise Failure(None, [], 'Assumptions do not include the assumptions required by generalTruth')
             generalExpr = generalTruth.expr
             # perform the appropriate substitution/relabeling
-            specializedExpr, requirements, mappedVarLists, mappings = Specialization._specialized_expr(generalExpr, numForallEliminations, specializeMap, relabelMap, assumptions)
-            # obtain the KnownTruths for the substituted conditions
-            requirementTruths = []
-            requirementTruthSet = set() # avoid repeats of requirements
-            for requirementExpr in requirements:
-                try:
-                    # each substituted condition must be proven under the assumptions
-                    # (if WILDCARD_ASSUMPTIONS is included, it will be proven by assumption if there isn't an existing proof otherwise)
-                    requirementTruth = requirementExpr.prove(assumptions)
-                    if requirementTruth not in requirementTruthSet:
-                        requirementTruths.append(requirementTruth)
-                        requirementTruthSet.add(requirementTruth)
-                        _appendExtraAssumptions(assumptions, requirementTruth)
-                except ProofFailure:
-                    raise Failure(specializedExpr, assumptions, 'Unmet specialization requirement: ' + str(requirementExpr))
-            # remove any unnecessary assumptions (but keep the order that was provided)
-            assumptionsSet = generalTruth.assumptionsSet
-            for requirementTruth in requirementTruths:
-                assumptionsSet |= requirementTruth.assumptionsSet
-            assumptions = [assumption for assumption in assumptions if assumption in assumptionsSet]
-            # we have what we need; set up the Specialization Proof
-            self.generalTruth = generalTruth
-            self.requirementTruths = requirementTruths
-            self.mappedVarLists = mappedVarLists
-            self.mappings = mappings
-            specializedTruth = KnownTruth(specializedExpr, assumptions)
-            Proof.__init__(self, specializedTruth, [generalTruth] + requirementTruths)
+            for specializedExpr, requirements, mappedVarLists, mappings in Specialization._specialized_expr(generalExpr, numForallEliminations, specializeMap, relabelMap, assumptions):
+                yield Specialization(generalTruth, specializedExpr, requirements, mappedVarLists, mappings, assumptions, Failure)
         finally:
             # restore the original default assumptions
             defaults.assumptions = prev_default_assumptions
@@ -804,7 +814,7 @@ class Specialization(Proof):
         map dictionary (subMap), or defaulting basic instance variables as
         themselves. 
         '''
-        from proveit import Lambda, Expression, Iter
+        from proveit import Lambda, Expression, Iter, ExprList
         from proveit.logic import Forall
         # check that the mappings are appropriate
         for key, sub in list(relabelMap.items()):
@@ -871,9 +881,13 @@ class Specialization(Proof):
         mappings.update(relabelMap) # mapping everything
         
         subbed_expr = expr.substituted(specializeMap, relabelMap, assumptions=assumptions, requirements=requirements)
+        if isinstance(expr, Iter) and isinstance(subbed_expr, ExprList):
+            # substituting an Iter to get a list will generate multiple proven truths
+            for subbed_expr_elem in subbed_expr:
+                yield subbed_expr_elem, subbedConditions + requirements, mappedVarLists, mappings
         
         # Return the expression and conditions with substitutions and the information to reconstruct the specialization
-        return subbed_expr, subbedConditions + requirements, mappedVarLists, mappings
+        yield subbed_expr, subbedConditions + requirements, mappedVarLists, mappings
 
     @staticmethod
     def _checkRelabelMapping(key, sub, assumptions):
