@@ -404,6 +404,17 @@ class Iter(Expression):
             requirements += new_requirements # append new requirements
         
         return subbed_self
+    
+    def deriveInstance(self, index, assumptions=USE_DEFAULTS):
+        from proveit._theorems_ import iterInstance
+        from proveit._common_ import AA, i, j, l
+        return iterInstance.specialize({AA:, i:self.start_index, j:index, l:end_index})
+
+    def deriveInterval(self, start_index, end_index, assumptions=USE_DEFAULTS):
+        from proveit._theorems_ import iterInterval
+        from proveit._common_ import AA, i, j, l
+        return iterInterval.specialize({AA:, i:self.start_index, j:start_index, k:end_index, l:end_inde})
+
 
 def varIter(var, start, end):
     from proveit import safeDummyVar
