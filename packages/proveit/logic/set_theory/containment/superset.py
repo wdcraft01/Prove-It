@@ -166,7 +166,8 @@ class SupersetEq(SupersetRelation):
         '''
         from proveit.logic import Equals
         from ._theorems_ import transitivitySupsetEqSupset, transitivitySupsetEqSupsetEq
-        from .superset import Subset, SubsetEq
+        # from .superset import Subset, SubsetEq # corrected below by wdc on Tues 10/8/19
+        from .subset import Subset, SubsetEq
         if isinstance(other, Equals):
             return ContainmentRelation.applyTransitivity(other, assumptions) # handles this special case
         if isinstance(other,Subset) or isinstance(other,SubsetEq):
