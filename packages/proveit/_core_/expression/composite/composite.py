@@ -75,6 +75,7 @@ def _simplifiedCoord(coord, assumptions, requirements):
     if they are not the same.
     '''
     from proveit.logic import Equals
+    print("simplify", coord)
     #from proveit.number import Add
     try:
         simplified_coord = coord.simplification(assumptions=assumptions).rhs
