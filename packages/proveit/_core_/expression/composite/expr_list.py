@@ -240,7 +240,20 @@ class ExprList(Composite, Expression):
         if fence:            
             outStr += ')' if formatType=='string' else  r'\right)'
         return outStr
-        
+    
+    def entryCoords(self, base, assumptions, requirements):
+        from proveit.number import one, num, Add, subtract
+        from .iteration import Iter
+        indices = []
+        index = num(base)
+        for entry in self:
+            indices.append(index)
+            if isinstance(entry, Iter):
+                entry_delta = subtract(entry.end_index, entry.start_index)
+                index =  _simplifiedCoord(Add(index, entry_delta), assumptions, requirements)
+            index = _simplifiedCoord(Add(index, one), assumptions, requirements)
+        return indices
+    
     def entryRanges(self, base, start_index, end_index, assumptions, requirements):
         '''
         For each entry of the list that is fully or partially contained in the window defined
@@ -248,19 +261,20 @@ class ExprList(Composite, Expression):
         against list indices), yield the start and end of the intersection of the
         entry range and the window.
         '''
-        from proveit.number import one, num, Add, subtract, Less
-        from proveit.logic import Equals
+        from proveit.logic import Equals, InSet
+        from proveit.number import one, num, Add, subtract, Less, Naturals
         from .iteration import Iter
-        from proveit import ProofFailure
-        
+
+        if not isinstance(base, int):
+            raise TypeError("'base' should be an integer")
+            
         if requirements is None: requirements = [] # requirements won't be passed back in this case
         
         index = num(base)
         started = False
-        prev_end = None
 
         try:
-            start_end_relation = Less.sort([start_index, end_index]).prove(assumptions=assumptions)
+            start_end_relation = Less.sort([start_index, end_index], assumptions=assumptions)
             if start_end_relation.operands[0]!=start_index:
                 # end comes before start: the range is empty.  This is the vacuous case.
                 requirements.append(start_end_relation)
@@ -279,29 +293,30 @@ class ExprList(Composite, Expression):
         # Iterate over the entries and track the true element index,
         # including ranges of iterations (Iter objects).
         for i, entry in enumerate(self):
-            if not started:
-                # We have not yet encounted an entry within the desired window,
-                # see if this entry is in the desired window.
-                if index == start_index:
-                    started = True # Now we've started
-                else:
-                    try:
-                        start_relation = Less.sort([start_index, index], reorder=False, assumptions=assumptions)
-                        requirements.append(start_relation)
-                        if start_relation.operator==Less._operator_ and prev_end is not None:
-                            # The start of the window must have occurred before this entry, 
-                            # and there was a previous entry:
-                            yield (start_index, prev_end) # Do the range for the previous entry.
-                        started = True # Now we've started
-                    except ProofFailure:
-                        pass # We have not started yet.
-            
+            if not started and index==start_index:
+                # We have encountered the start
+                started = True # Now we've started
+
             # Obtain the ending index of the entry (entry_end) and the next_index
             # (entry_end+1). 
             entry_end = index # unless it is an Iter:
             if isinstance(entry, Iter):
-                entry_span = subtract(entry.end_index, entry.start_index)
-                entry_end =  _simplifiedCoord(Add(index, entry_span), assumptions, requirements)
+                entry_delta = subtract(entry.end_index, entry.start_index)
+                entry_end =  _simplifiedCoord(Add(index, entry_delta), assumptions, requirements)
+                # See if our window starts within this entry.
+                if not started:
+                    start_relation = Less.sort([start_index, entry_end], assumptions=assumptions)
+                    if start_relation.operands[0]==start_index:
+                        #  Start comes within this entry
+                        started = True
+                        requirements.append(start_relation)
+                        index = start_index # start here
+                # See if our window ends within this entry.
+                end_relation = Less.sort([end_index, entry_end], assumptions=assumptions)
+                if end_relation.operands[0]!=entry_end:
+                    # End comes within the entry.
+                    requirements.append(end_relation)
+                    index = end_index # end it here
             
             if index==end_index:
                 arrived_at_end = True
@@ -312,22 +327,6 @@ class ExprList(Composite, Expression):
                     arrived_at_end == True
                 except ProofFailure:                    
                     next_index = _simplifiedCoord(Add(entry_end, one), assumptions, requirements) 
-                    """
-                    # TO KEEP THINGS SIMPLE, LET'S INSIST THAT THE INDEX MUST MATCH THE END EXACTLY TO STOP
-                    # (NOT GOING BEYOND WITHOUT MATCHING).
-                    # The exception is when the range is empty which we test at the beginning.
-                                                       
-                    # See if this entry takes us to the end of the window or beyond.
-                    try:
-                        print next_index, end_index
-                        Less.sort([next_index, end_index], reorder=False, assumptions=assumptions)
-                    except ProofFailure:
-                        arrived_at_end = True # we have presumably encountered the end
-                        if entry_end != end_index:
-                            # we require a proven relation that we are at the end
-                            end_relation = Less.sort([end_index, next_index], reorder=False, assumptions=assumptions)
-                            requirements.append(end_relation)
-                    """
             
             if arrived_at_end:
                 if started:
@@ -344,8 +343,14 @@ class ExprList(Composite, Expression):
                 # We have encountered the start but not the end.
                 yield (index, entry_end) # Yield the full range of the entry.
             
+            if isinstance(entry, Iter):
+                # We must ensure that the index moves forward by 0 or more (a natural number).
+                # This is trivial for single element entries (moves by +1).
+                # For Iter entries, we need to make sure that the entry spans
+                # zero or more whole units.
+                requirements.append(InSet(subtract(next_index, index), Naturals))
+            
             index = next_index # Move on to the next entry.
-            prev_end = entry_end
         
         if not arrived_at_end:
             raise IndexError("ExprList index out of range")
