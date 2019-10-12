@@ -267,6 +267,11 @@ class TransitiveRelation(Operation):
                     return WeakClass(leftItem, rightItem).prove(automation=False, assumptions=assumptions)
                 except (ProofFailure, NotImplementedError):
                     pass
+            elif leftItem==rightItem:
+                # Treat special case when left and right items are the same expression
+                # -- cannot happen when relation must be strong.
+                DesiredRelationClass = RelationClass._checkedStrongRelationClass()
+                raise TransitivityException(DesiredRelationClass(leftItem, rightItem), assumptions, 'Cannot prove a strong transitivity relationship between an expression and itself.')
         
         # "Chains" map end-points to list of known true relations that get us there
         # by applying transitivity rules.
