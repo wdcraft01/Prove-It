@@ -180,6 +180,7 @@ class Iter(Expression):
         # map to the desired instance
         return self.lambda_map.mapped(*indices)
     
+    """
     def _makeNonoverlappingRangeSet(self, rel_iter_ranges, arg_sorting_relations, assumptions, requirements):
         '''
         Helper method for substituted.
@@ -190,7 +191,7 @@ class Iter(Expression):
         from proveit.number import Add, subtract, one
         from .composite import _simplifiedCoord
         owning_range = dict() # map relative indices to the owning range; overlap occurs when ownership is contested.
-        nonoverlapping_ranges = set()
+        nonoverlapping_ranges = set() # ranges that are not (yet) known to overlap (relative to processed ranges)
         while len(rel_iter_ranges) > 0:
             rel_iter_range = rel_iter_ranges.pop()
             for p in itertools.product(*[range(start, end) for start, end in zip(*rel_iter_range)]):
@@ -203,6 +204,7 @@ class Iter(Expression):
                     # further splits along different axes.
                     range1, range2 = rel_iter_range, owning_range[p]
                     for axis, (start1, end1, start2, end2) in enumerate(zip(*(range1 + range2))):
+                        arg_sorting_relation = arg_sorting_relations[axis]
                         if start1 != start2 or end1 != end2:
                             # (re)assign range1 to have the earliest start.
                             if start1 > start2:
@@ -210,25 +212,25 @@ class Iter(Expression):
                                 start1, end1, start2, end2 = start2, end2, start1, end1
                             if start1 < start2:
                                 # add the first range
-                                first_range = (tuple(range1[0]), tuple(range1[1]))
-                                abs_end = _simplifiedCoord(subtract(arg_sorting_relations.operands[start2], one), assumptions=assumptions, requirements=requirements)
-                                first_range[1][axis] = arg_sorting_relations.index(abs_end)
-                                rel_iter_ranges.add(first_range)
+                                first_range = [list(range1[0]), list(range1[1])]
+                                first_end = _simplifiedCoord(subtract(arg_sorting_relation.operands[start2], one), assumptions=assumptions, requirements=requirements)
+                                first_range[1][axis] = arg_sorting_relation.index(first_end)
+                                rel_iter_ranges.add((tuple(first_range[0], first_range[1])))
                             mid_end = min(end1, end2)
-                            if start2 < min(end1, end2):
+                            if start2 < mid_end:
                                 # add the middle ranges (one from each of the originals
                                 # where the overlap occurs. 
                                 for orig_range in (range1, range2):
-                                    mid_range = (tuple(orig_range[0]), tuple(orig_range[1]))
-                                    mid_range[1][axis] = end
-                                    rel_iter_ranges.add(mid_range)
+                                    mid_range = [list(orig_range[0]), list(orig_range[1])]
+                                    mid_range[1][axis] = mid_end
+                                    rel_iter_ranges.add((tuple(mid_range[0]), tuple(mid_range[1])))
                             end = max(end1, end2)
                             if mid_end < end:
                                 # add the last range
-                                last_range = (tuple(range2[0]), tuple(range2[1]))
-                                abs_start = _simplifiedCoord(Add(arg_sorting_relations.operands[mid_end], one), assumptions=assumptions, requirements=requirements) 
-                                first_range[0][axis] = arg_sorting_relations.index(abs_start)
-                                rel_iter_ranges.add(last_range)
+                                last_range = [list(range2[0]), list(range2[1])]
+                                last_start = _simplifiedCoord(Add(arg_sorting_relation.operands[mid_end], one), assumptions=assumptions, requirements=requirements) 
+                                first_range[0][axis] = arg_sorting_relations.index(last_start)
+                                rel_iter_ranges.add((tuple(last_range[0]), tuple(last_range[1])))
                             break
                     # remove/exclude the obsolete originals
                     nonoverlapping_ranges.discard(owning_range[p])
@@ -239,6 +241,76 @@ class Iter(Expression):
             if rel_iter_range is not None:
                 nonoverlapping_ranges.add(rel_iter_range)
         return nonoverlapping_ranges
+    """
+    
+    def _makeNonoverlappingRangeSet(self, axis, rel_iter_ranges, arg_sorting_relations, assumptions, requirements):
+        '''
+        Helper method for substituted.
+        Check for overlapping relative iteration ranges along
+        a particular axis, breaking them up when found and returning
+        the new collection of ranges, in absolute terms and in sorted order,
+        with no overlaps.
+        '''
+        from proveit.number import Add, Subtract, one
+        from .composite import _simplifiedCoord
+        owning_range = dict() # map relative indices to the owning range; overlap occurs when ownership is contested.
+        nonoverlapping_ranges = set()
+        # multiply ranges by 3 to provide room for breaking up intervals
+        # and inserting start-1 and end+1 where needed:
+        rel_iter_ranges = {(start*3, end*3) for start, end in rel_iter_ranges}
+        used_indices = set() # specifically, we want to know which start-1 and end+1 cases are required 
+        while len(rel_iter_ranges) > 0:
+            rel_iter_range = rel_iter_ranges.pop()
+            start, end = rel_iter_range[axis]
+            for rel_idx in range(start, end):
+                # Check for contested ownership
+                if rel_idx in owning_range and owning_range[rel_idx] in nonoverlapping_ranges:
+                    # Split along the first axis that differs,
+                    # adding the split ranges back in.  If there are still 
+                    # distinct overlapping ranges after that split, there may be
+                    # further splits along different axes.
+                    (start1, end1), (start2, end2) = rel_iter_range, owning_range[rel_idx]
+                    if start1 != start2 or end1 != end2:
+                        # (re)assign range1 (start1, end1) to have the earliest start.
+                        if start1 > start2:
+                            start1, end1, start2, end2 = start2, end2, start1, end1
+                        assert end1 >= start2, "'overlapping' ranges do not actually overlap -- that's not right"
+                        if start1 < start2:
+                            # add the first range that must end before the second range starts
+                            rel_iter_ranges.add((start1, start2-1))
+                            used_indices.update({start1, start2-1})
+                        mid_end = min(end1, end2)
+                        if start2 < mid_end:
+                            # add the middle range where the overlap occurs. 
+                            rel_iter_ranges.add((start2, mid_end))
+                            used_indices.update({start2, mid_end})
+                        last_end = max(end1, end2)
+                        if mid_end < last_end:
+                            # add the last range
+                            rel_iter_ranges.add((mid_end+1, last_end))
+                            used_indices.update({mid_end+1, last_end})
+                        break
+                    # remove/exclude the obsolete originals
+                    nonoverlapping_ranges.discard(owning_range[rel_idx])
+                    rel_iter_range = None
+                    break
+                else:
+                    owning_range[rel_idx] = rel_iter_range
+            if rel_iter_range is not None:
+                nonoverlapping_ranges.add(rel_iter_range)
+        
+        # internal method to convert from relative to absolute indices
+        def to_abs_idx(rel_idx):
+            mod3 = rel_idx%3
+            if mod3==0: 
+                return arg_sorting_relations.operands[rel_idx//3]
+            elif mod3==1:
+                return _simplifiedCoord(Add(arg_sorting_relations.operands[(rel_idx-1)//3], one), assumptions=assumptions, requirements=requirements)
+            elif mod3==2:
+                return _simplifiedCoord(Subtract(arg_sorting_relations.operands[(rel_idx+1)//3], one), assumptions=assumptions, requirements=requirements)
+                
+        rel_idx_to_abs_idx = {rel_idx:to_abs_idx(rel_idx) for rel_idx in used_indices}
+        return [(rel_idx_to_abs_idx(start), rel_idx_to_abs_idx(end)) for start, end in sorted(nonoverlapping_ranges)]
                 
     def substituted(self, exprMap, relabelMap=None, reservedVars=None, assumptions=USE_DEFAULTS, requirements=None):
         '''
@@ -287,9 +359,9 @@ class Iter(Expression):
                 for axis, (start, end) in enumerate(zip(*iter_range)):
                     special_points[axis].add(start)
                     special_points[axis].add(end)
+                    '''
                     # Preemptively include start-1 and end+1 in case it is required for splitting up overlapping ranges
                     # (we won't add simplification requirements until we find we actually need them.)
-                    # Not necesary in the 1D case.
                     # Add the coordinate simplification to argument sorting assumptions -
                     # after all, this sorting does not go directly into the requirements.
                     start_minus_one = _simplifiedCoord(subtract(start, one), assumptions=assumptions, requirements=arg_sorting_assumptions)
@@ -300,11 +372,17 @@ class Iter(Expression):
                     arg_sorting_assumptions.append(Less(start_minus_one, start))
                     arg_sorting_assumptions.append(Less(end, end_plus_one))
                     arg_sorting_assumptions.append(Equals(end, subtract(end_plus_one, one)))
+                    '''
                     # Also add start<=end to ease the argument sorting requirement even though it
                     # may not strictly be true if an empty range is possible.  In such a case, we
                     # still want things sorted this way while we don't know if the range is empty or not
                     # and it does not go directly into the requirements.
                     arg_sorting_assumptions.append(LessEq(start, end))
+                    Hmmm... we need to ensure we sort things so that start comes before the end
+                    but technically we can have an empty range with end=start-1.  If we know this
+                    then we get a contradiction.  We probably just need to check if we know that,
+                    if we do, then we can skip that interval.  otherwise, we should add start<=end:
+                    as an assumption.
             
             # add the assumptions for applying ordering transitivity rules used to
             # sort special points (these relations may or may not need to be added as actual requirements;
@@ -343,16 +421,17 @@ class Iter(Expression):
                 rel_range_end = tuple([arg_sorting_relation.operands.index(arg) for arg, arg_sorting_relation in zip(range_end, arg_sorting_relations)])
                 rel_iter_ranges.add((rel_range_start, rel_range_end))
             
-            rel_iter_ranges = sorted(self._makeNonoverlappingRangeSet(rel_iter_ranges, arg_sorting_relations, assumptions, new_requirements))
+            iter_ranges_by_axis = []
+            for axis in range(self.ndim):
+                iter_ranges_by_axis.append(self._makeNonoverlappingRangeSet(axis, rel_iter_ranges, arg_sorting_relations, assumptions, new_requirements))
             
-            #print arg_sorting_relations
-            # Generate the expanded list/tensor to replace the iterations.
-            if self.ndims==1: lst = []
-            else: tensor = dict()            
-            for rel_iter_range in rel_iter_ranges:
-                #print rel_iter_range
+            # Generate the expanded tupple/array to replace the iteration.
+            expanded = make_array([range(len(iter_ranges_by_axis[axis])) for axis in range(self.ndim)])
+            # iterate over each "block"
+            for rel_loc in itertools.product(*[range(len(iter_ranges_by_axis[axis])) for axis in range(self.ndim)]):
+                iter_ranges = [iter_ranges_by_axis[axis][idx] for axis, idx in enumerate(rel_loc)]
                 # get the starting location of this iteration range
-                start_loc = tuple(arg_sorting_relation.operands[idx] for arg_sorting_relation, idx in zip(arg_sorting_relations, rel_iter_range[0]))
+                start_loc = tuple(start for (start, end) in zip(arg_sorting_relations, iter_ranges))
                 if rel_iter_range[0] == rel_iter_range[1]:
                     # single element entry (starting and ending location the same)
                     entry_inner_expr_map = dict(inner_expr_map)
@@ -361,7 +440,7 @@ class Iter(Expression):
                     entry = self.lambda_map.body.substituted(entry_inner_expr_map, relabelMap, inner_reservations, inner_assumptions, new_requirements)
                 else:
                     # iterate over a sub-range
-                    end_loc = tuple(arg_sorting_relation.operands[idx] for arg_sorting_relation, idx in zip(arg_sorting_relations, rel_iter_range[1]))
+                    end_loc = tuple(end for (start, end) in zip(arg_sorting_relations, iter_ranges))
                     # Shift the iteration parameter so that the iteration will have the same start-indices
                     # for this sub-range (like shifting a viewing window, moving the origin to the start of the sub-range).
                     # Include assumptions that the lambda_map parameters are in the shifted start_loc to end_loc range.
@@ -387,13 +466,10 @@ class Iter(Expression):
                     # Add the shifted sub-range iteration to the appropriate starting location.
                     end_indices = [_simplifiedCoord(subtract(range_end, start_idx), assumptions, new_requirements) for start_idx, range_end in zip(self.start_indices, end_loc)]
                     entry = Iter(range_lambda_map, self.start_indices, end_indices)
-                if self.ndims==1: lst.append(entry)
-                else: tensor[start_loc] = entry
+                
+                expanded.set_entry(rel_loc, entry)
 
-            if self.ndims==1:
-                subbed_self = compositeExpression(lst)
-            else:
-                subbed_self = compositeExpression(tensor)
+            subbed_self = compositeExpression(expanded)
 
         except _NoExpandedIteration:
             # No Indexed sub-Expressions whose variable is 
