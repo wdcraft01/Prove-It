@@ -10,7 +10,7 @@ from .set_theory import Set, Subset, SubsetEq, SubsetProper, Superset, SupersetE
 from .set_theory import Card, Difference, Disjoint, Distinct, Intersect  
 from .set_theory import Union, SetOfAll
 from .equality import Equals, NotEquals
-from .equality import reduceOperands, defaultSimplification, evaluateTruth, EvaluationError
+from .equality import reduceOperands, defaultSimplification, evaluateTruth, SimplificationError
 from .irreducible_value import IrreducibleValue, isIrreducibleValue
 
 #from mapping.mappingOps import Domain, CoDomain
