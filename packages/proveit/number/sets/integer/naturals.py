@@ -8,7 +8,12 @@ class NaturalsSet(NumberSet):
     
     def deduceMemberLowerBound(self, member):
         from ._theorems_ import naturalsLowerBound
-        return naturalsLowerBound.specialize({n:member})  
+        return naturalsLowerBound.specialize({n:member})
+
+    def deduceMembershipInBool(self, member):
+        from ._theorems_ import xInNatsInBool
+        from proveit._common_ import x
+        return xInNatsInBool.specialize({x:member})
 
 class NaturalsPosSet(NumberSet):
     def __init__(self):
@@ -29,6 +34,11 @@ class NaturalsPosSet(NumberSet):
         # only fence if forceFence=True (nested exponents is an example of when fencing must be forced)
         kwargs['fence'] = kwargs['forceFence'] if 'forceFence' in kwargs else False        
         return maybeFencedString(inner_str, **kwargs)
+
+    def deduceMembershipInBool(self, member):
+        from ._theorems_ import xInNatsPosInBool
+        from proveit._common_ import x
+        return xInNatsPosInBool.specialize({x:member})
 
 try:
     # Import some fundamental axioms and theorems without quantifiers.
