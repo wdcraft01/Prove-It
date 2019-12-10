@@ -875,14 +875,41 @@ class Specialization(Proof):
         # Return the expression and conditions with substitutions and the information to reconstruct the specialization
         return subbed_expr, subbedConditions + requirements, mappedVarLists, mappings
 
+    # @staticmethod
+    # def _checkRelabelMapping(key, sub, assumptions):
+    #     from proveit import Variable
+    #     if isinstance(key, Variable):
+    #         if not isinstance(sub, Variable):
+    #             raise RelabelingFailure(None, assumptions, 'May only relabel a Variable to a Variable.')
+    #     else:
+    #         raise RelabelingFailure(None, assumptions, "May only relabel a Variable")
+
+    # attempting some modification of the _checkRelabelMapping() method
     @staticmethod
     def _checkRelabelMapping(key, sub, assumptions):
-        from proveit import Variable
-        if isinstance(key, Variable):
-            if not isinstance(sub, Variable):
-                raise RelabelingFailure(None, assumptions, 'May only relabel a Variable to a Variable.')
+        print('Entering the _checkRelabelMapping() method.')                    # for testing; delete later
+        from proveit import Indexed, Iter, Variable
+        print('Finished imports in _checkRelabelMapping() method.')             # for testing; delete later
+        if (isinstance(key, Indexed) or
+            isinstance(key, Iter) or
+            isinstance(key, Variable)):
+            print('Entering the if block.')                                     # for testing; delete later
+            print('sub = %s'%str(sub))                                          # for testing; delete later
+            if isinstance(sub, list):
+                print('sub is of type list')                                    # for testing; delete later
+                for elem in sub:
+                    if ((not isinstance(elem, Indexed)) and
+                        (not isinstance(elem, Iter)) and
+                        (not isinstance(elem, Variable))):
+                        raise RelabelingFailure(None, assumptions,
+                        'List of relabels may only contain Indexed, Iter, or Variables.')
+            elif ((not isinstance(sub, Indexed)) and
+                  (not isinstance(sub, Iter)) and
+                  (not isinstance(sub, Variable))):
+                raise RelabelingFailure(None, assumptions,
+                        'May only relabel to an Indexed, Iter, or Variable.')
         else:
-            raise RelabelingFailure(None, assumptions, "May only relabel a Variable")                       
+            raise RelabelingFailure(None, assumptions, "May only relabel a Variable")
 
 class Generalization(Proof):
     def __init__(self, instanceTruth, newForallVarLists, newConditions=tuple()):
