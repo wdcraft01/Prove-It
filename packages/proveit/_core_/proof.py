@@ -887,16 +887,16 @@ class Specialization(Proof):
     # attempting some modification of the _checkRelabelMapping() method
     @staticmethod
     def _checkRelabelMapping(key, sub, assumptions):
-        print('Entering the _checkRelabelMapping() method.')                    # for testing; delete later
+        # print('Entering the _checkRelabelMapping() method.')                    # for testing; delete later
         from proveit import Indexed, Iter, Variable
-        print('Finished imports in _checkRelabelMapping() method.')             # for testing; delete later
+        # print('Finished imports in _checkRelabelMapping() method.')             # for testing; delete later
         if (isinstance(key, Indexed) or
             isinstance(key, Iter) or
             isinstance(key, Variable)):
-            print('Entering the if block.')                                     # for testing; delete later
-            print('sub = %s'%str(sub))                                          # for testing; delete later
+            # print('Entering the if block.')                                     # for testing; delete later
+            # print('sub = %s'%str(sub))                                          # for testing; delete later
             if isinstance(sub, list):
-                print('sub is of type list')                                    # for testing; delete later
+                # print('sub is of type list')                                    # for testing; delete later
                 for elem in sub:
                     if ((not isinstance(elem, Indexed)) and
                         (not isinstance(elem, Iter)) and
