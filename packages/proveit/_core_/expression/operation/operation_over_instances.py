@@ -86,7 +86,13 @@ class OperationOverInstances(Operation):
         else:
             domain = domains = None
             nondomain_conditions = conditions
-                
+
+        # The instance expression will typically be a singular expression,
+        # but there are cases when it should be a composite.  For example,
+        # it may be a single, indivisible iteration:
+        # forall_{k, n in Naturals | k < n} [forall_{x1, ..., xn} x1, ..., xk]
+        #instanceExpr = singleOrCompositeExpression(instanceExpr)
+                        
         if len(instanceVars) > 1:
             if nestMultiIvars:
                 # "inner" instance variable are all but the first one.
