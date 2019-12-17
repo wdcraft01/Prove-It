@@ -7,55 +7,55 @@ class OperationOverInstances(Operation):
     '''
     OperationOverInstances description: TODO
     '''
-    
+
     '''
-    When deriving from OperationOverInstances, set the '_init_argname_mapping' 
-    static variable to indicate how the initialization argument names in the 
+    When deriving from OperationOverInstances, set the '_init_argname_mapping'
+    static variable to indicate how the initialization argument names in the
     derived class correspond with the OperationOverInstances argument names.
     Omitted keys will be presumed to be unchanged argument names.  This is
     a simple way to make extractInitArgValue and extractMyInitArgValue function
     properly without overriding them.
     '''
     _init_argname_mapping_ = {'instanceVarOrVars':'instanceVarOrVars', 'instanceExpr':'instanceExpr', 'domain':'domain', 'domains':'domains', 'conditions':'conditions'}
-    
+
     def __init__(self, operator, instanceVarOrVars, instanceExpr, domain=None, domains=None, conditions=tuple(), nestMultiIvars=False, styles=None):
         '''
-        Create an Operation for the given operator that is applied over instances of the 
-        given instance Variable(s), instanceVarOrVars, for the given instance Expression, 
-        instanceExpr under the given conditions.  
+        Create an Operation for the given operator that is applied over instances of the
+        given instance Variable(s), instanceVarOrVars, for the given instance Expression,
+        instanceExpr under the given conditions.
         That is, the operation operates over all possibilities of given Variable(s) wherever
         the condition(s) is/are satisfied.  Examples include forall, exists, summation, etc.
         instanceVars may be singular or plural (iterable).  An OperationOverInstances is
         effected as an Operation over a conditional Lambda map.
-        
+
         If nestMultiIvars is True do the following:
-        When there are multiple instanceVars, this will generate a nested structure in 
+        When there are multiple instanceVars, this will generate a nested structure in
         actuality and simply set the style to display these instance variables together.
         In other words, whether instance variables are joined together, like
         "forall_{x, y} P(x, y)" or split in a nested structure like
         "forall_{x} [forall_y P(x, y)]"
         is deemed to be a matter of style, not substance.  Internally it is treated as the
         latter.
-              
-        If a 'domain' is supplied, additional conditions are generated that each instance 
-        Variable is in the domain "set": InSet(x_i, domain), where x_i is for each instance 
+
+        If a 'domain' is supplied, additional conditions are generated that each instance
+        Variable is in the domain "set": InSet(x_i, domain), where x_i is for each instance
         variable.  If, instead, 'domains' are supplied, then each instance variable is supplied
         with its own domain (one for each instance variable).  Whether the OperationOverInstances
-        is constructed with domain/domains explicitly, or they are provided as conditions in 
-        the proper order does not matter.  Essentially, the 'domain' concept is simply a 
+        is constructed with domain/domains explicitly, or they are provided as conditions in
+        the proper order does not matter.  Essentially, the 'domain' concept is simply a
         convenience for conditions of this form and may be formatted using a shorthand notation.
-        For example, "forall_{x in S | Q(x)} P(x)" is a shorthand notation for 
-        "forall_{x | x in S, Q(x)} P(x)".  
+        For example, "forall_{x in S | Q(x)} P(x)" is a shorthand notation for
+        "forall_{x | x in S, Q(x)} P(x)".
         '''
         from proveit.logic import InSet
         from proveit._core_.expression.lambda_expr.lambda_expr import getParamVar
         instanceVars = compositeExpression(instanceVarOrVars)
-        
+
         if styles is None: styles=dict()
-        
+
         if len(instanceVars)==0:
             raise ValueError("Expecting at least one instance variable when constructing an OperationOverInstances")
-        
+
         if domain is not None:
             # prepend domain conditions
             if domains is not None:
@@ -63,20 +63,20 @@ class OperationOverInstances(Operation):
             if not isinstance(domain, Expression):
                 raise TypeError("The domain should be an 'Expression' type")
             domains = [domain]*len(instanceVars)
-        
-        
+
+
         if domains is not None:
             # Prepend domain conditions.  Note that although we start with all domain conditions at the beginning,
             # some may later get pushed back as "inner conditions" (see below),
             if len(domains) != len(instanceVars):
-                raise ValueError("When specifying multiple domains, the number should be the same as the number of instance variables.")         
+                raise ValueError("When specifying multiple domains, the number should be the same as the number of instance variables.")
             for domain in domains:
                 if domain is None:
                     raise ValueError("When specifying multiple domains, none of them can be the None value")
             conditions = [InSet(instanceVar, domain) for instanceVar, domain in zip(instanceVars, domains)] + list(conditions)
             domain = domains[0]  # domain of the outermost instance variable
-        conditions = compositeExpression(conditions)        
-                
+        conditions = compositeExpression(conditions)
+
         # domain(s) may be implied via the conditions.  If domain(s) were supplied, this should simply reproduce
         # them from the conditions that were prepended.
         if len(conditions)>=len(instanceVars) and all(isinstance(cond, InSet) and cond.element==ivar for ivar, cond in zip(instanceVars, conditions)):
@@ -86,7 +86,7 @@ class OperationOverInstances(Operation):
         else:
             domain = domains = None
             nondomain_conditions = conditions
-                
+
         if len(instanceVars) > 1:
             if nestMultiIvars:
                 # "inner" instance variable are all but the first one.
@@ -100,7 +100,7 @@ class OperationOverInstances(Operation):
                 else:
                     inner_conditions = conditions[1:len(domains)] # everything but the outer domain condition
                     conditions = [conditions[0]] # outer domain condition
-                
+
                 # Apart from the domain conditions, the "inner" conditions start with the
                 # first one that has any free variables that include any of the "inner" instance variables.
                 for k, cond in enumerate(nondomain_conditions):
@@ -108,10 +108,10 @@ class OperationOverInstances(Operation):
                         inner_conditions += nondomain_conditions[k:]
                         nondomain_conditions = nondomain_conditions[:k]
                         break
-                
+
                 # Include the outer non-domain conditions.
                 conditions += nondomain_conditions
-                
+
                 # the instance expression at this level should be the OperationOverInstances at the next level.
                 innerOperand = self._createOperand(inner_instance_vars, instanceExpr, conditions=inner_conditions)
                 instanceExpr = self.__class__._make(['Operation'], dict(styles), [operator, innerOperand])
@@ -128,16 +128,16 @@ class OperationOverInstances(Operation):
 
         self.instanceExpr = instanceExpr
         '''Expression corresponding to each 'instance' in the OperationOverInstances'''
-        
+
         if not hasattr(self, 'instanceVars'):
             self.instanceVar = instanceVar
             '''Outermost instance variable (or iteration of indexed variables) of the OperationOverInstance.'''
             self.domain = domain
             '''Domain of the outermost instance variable (may be None)'''
-        
+
         self.conditions = conditions
         '''Conditions applicable to the outermost instance variable (or iteration of indexed variables) of the OperationOverInstance.  May include an implicit 'domain' condition.'''
-        
+
         """
         # extract the domain or domains from the condition (regardless of whether the domain/domains was explicitly provided
         # or implicit through the conditions).
@@ -153,16 +153,16 @@ class OperationOverInstances(Operation):
                 else:
                     self.domain_or_domains = self.domains = ExprList(*domains)
         """
-    
+
     def hasDomain(self):
         if hasattr(self, 'domains'):
             return True
         return self.domain is not None
-                        
+
     @staticmethod
     def _createOperand(instanceVars, instanceExpr, conditions):
         return Lambda(instanceVars, instanceExpr, conditions)
-    
+
     @classmethod
     def extractInitArgValue(operationClass, argName, operator, operand):
         '''
@@ -170,7 +170,7 @@ class OperationOverInstances(Operation):
         return the corresponding value as determined by the
         given operator and operand for an OperationOverInstances
         Expression.
-        
+
         Override this if the __init__ argument names are different than the
         default.
         '''
@@ -179,7 +179,7 @@ class OperationOverInstances(Operation):
         assert isinstance(operand, Lambda), "Expecting OperationOverInstances operand to be a Lambda expression"
         if argName=='operator':
             return operator
-        if argName=='domain' or argName=='domains': 
+        if argName=='domain' or argName=='domains':
             return None # specify domains implicitly through conditions
         elif argName=='instanceVarOrVars':
             return singleOrCompositeExpression(operand.parameters)
@@ -187,7 +187,7 @@ class OperationOverInstances(Operation):
             return operand.body
         elif argName=='conditions':
             return operand.conditions
-    
+
     def extractMyInitArgValue(self, argName):
         '''
         Return the most proper initialization value for the initialization argument
@@ -215,7 +215,7 @@ class OperationOverInstances(Operation):
         elif argName=='conditions':
             # return the joined conditions excluding domain conditions
             return singleOrCompositeExpression(OperationOverInstances.explicitConditions(self))
-        
+
     def _allInstanceVars(self):
         '''
         Yields the instance variable of this OperationOverInstances
@@ -233,7 +233,7 @@ class OperationOverInstances(Operation):
             if isinstance(self.instanceExpr, self.__class__):
                 for innerIvar in self.instanceExpr.allInstanceVars():
                     yield innerIvar
-    
+
     def allInstanceVars(self):
         '''
         Returns all instance variables of this OperationOverInstances
@@ -243,7 +243,7 @@ class OperationOverInstances(Operation):
         Added by wdc on 6/06/2019.
         '''
         return list(self._allInstanceVars())
-    
+
     def _allDomains(self):
         '''
         Yields the domain of this OperationOverInstances
@@ -261,7 +261,7 @@ class OperationOverInstances(Operation):
             if isinstance(self.instanceExpr, self.__class__):
                 for domain in self.instanceExpr.allDomains():
                     yield domain
-    
+
     def allDomains(self):
         '''
         Returns all domains of this OperationOverInstances
@@ -271,7 +271,7 @@ class OperationOverInstances(Operation):
         Added by wdc on 6/17/2019.
         '''
         return list(self._allDomains())
-    
+
     def _allConditions(self):
         '''
         Yields each condition of this OperationOverInstances
@@ -286,7 +286,7 @@ class OperationOverInstances(Operation):
         if isinstance(self.instanceExpr, self.__class__):
             for condition in self.instanceExpr.allConditions():
                 yield condition
-                
+
     def allConditions(self):
         '''
         Returns all conditions of this OperationOverInstances
@@ -296,23 +296,22 @@ class OperationOverInstances(Operation):
         Added by wdc on 6/06/2019.
         '''
         return list(self._allConditions());
-    
+
     def joinedNestings(self):
         '''
         Yield the nested levels of the OperationOverInstances that are
         joined together in the style.
         '''
         yield self
-        # iVarStyle = self.getStyle('instance_vars', '') # supplying too many params?
-        iVarStyle = self.getStyle('instance_vars')
+        iVarStyle = self.getStyle('instance_vars', '')
         if iVarStyle == 'join_next':
             assert isinstance(self.instanceExpr, self.__class__), "Not expecting 'instance_vars' style to be 'join_next' unless there is nesting of the same type of OperationOverInstances"
             for expr in self.instanceExpr.joinedNestings():
                 yield expr
-    
+
     def explicitInstanceVars(self):
         '''
-        Return the instance variables that are to be shown explicitly 
+        Return the instance variables that are to be shown explicitly
         in the formatting (as opposed to being made implicit via conditions)
         joined together at this level according to the style.
         By default, this includes all of the instance variables that
@@ -338,7 +337,7 @@ class OperationOverInstances(Operation):
                 # only show as explicit domains if none of them are None:
                 return domains
         return [] # No explicitly displayed domains
-    
+
     def domainConditions(self):
         '''
         Return the domain conditions of all instance variables that
@@ -359,12 +358,12 @@ class OperationOverInstances(Operation):
                 assert expr.conditions[0] == InSet(expr.instanceVar, expr.domain)
                 domain_conditions.append(expr.conditions[0])
             return domain_conditions
-    
+
     def explicitConditions(self):
         '''
         Return the conditions that are to be shown explicitly in the formatting
         (after the "such that" symbol "|") at this level according to the style.
-        By default, this includes all of the 'joined' conditions except 
+        By default, this includes all of the 'joined' conditions except
         implicit 'domain' conditions.
         '''
         from proveit.logic import InSet
@@ -393,19 +392,17 @@ class OperationOverInstances(Operation):
         for expr in self.joinedNestings():
             conditions.extend(expr.conditions)
         return conditions
-        
+
     def explicitInstanceExpr(self):
         '''
         Return the instance expression after joining instance variables according
         to the style.
         '''
-        # iVarStyle = self.getStyle('instance_vars', '')
-        iVarStyle = self.getStyle('instance_vars')
-        print('iVarStyle = %s'%iVarStyle)                                       # for testing; delete later
+        iVarStyle = self.getStyle('instance_vars', '')
         if iVarStyle == 'join_next':
             return self.instanceExpr.explicitInstanceExpr()
         return self.instanceExpr
-    
+
     def instanceVarLists(self):
         '''
         Yield lists of instance vars that include all of the instance variables
@@ -425,7 +422,7 @@ class OperationOverInstances(Operation):
                     iVarGroup = [] # start next group
             expr = expr.instanceExpr
         assert len(iVarGroup)==0,  "Not expecting 'instance_vars' style to be 'join_next' unless there is nesting of the same type of OperationOverInstances"
-        
+
 
     def string(self, **kwargs):
         return self._formatted('string', **kwargs)
@@ -446,50 +443,50 @@ class OperationOverInstances(Operation):
         hasExplicitIvars = (len(explicitIvars) > 0)
         hasExplicitConditions = (len(explicitConditions) > 0)
         hasMultiDomain = (len(explicitDomains)>1 and explicitDomains != ExprList(*[self.domain]*len(explicitDomains)))
-        domain_conditions = ExprList(*self.domainConditions())        
+        domain_conditions = ExprList(*self.domainConditions())
         outStr = ''
         formattedVars = ', '.join([var.formatted(formatType, abbrev=True) for var in explicitIvars])
         if formatType == 'string':
             if fence: outStr += '['
             outStr += self.operator.formatted(formatType) + '_{'
-            if hasExplicitIvars: 
-                if hasMultiDomain: outStr += domain_conditions.formatted(formatType, operatorOrOperators=',')
+            if hasExplicitIvars:
+                if hasMultiDomain: outStr += domain_conditions.formatted(formatType, operatorOrOperators=',', fence=False)
                 else: outStr += formattedVars
             if not hasMultiDomain and self.domain is not None:
                 outStr += ' in '
                 if hasMultiDomain:
                     outStr += explicitDomains.formatted(formatType, operatorOrOperators='*', fence=False)
                 else:
-                    outStr += self.domain.formatted(formatType, fence=False)                    
+                    outStr += self.domain.formatted(formatType, fence=False)
             if hasExplicitConditions:
                 if hasExplicitIvars: outStr += " | "
-                outStr += explicitConditions.formatted(formatType, fence=False)                
-                #outStr += ', '.join(condition.formatted(formatType) for condition in self.conditions if condition not in implicitConditions) 
+                outStr += explicitConditions.formatted(formatType, fence=False)
+                #outStr += ', '.join(condition.formatted(formatType) for condition in self.conditions if condition not in implicitConditions)
             outStr += '} ' + explicitInstanceExpr.formatted(formatType,fence=True)
             if fence: outStr += ']'
         if formatType == 'latex':
             if fence: outStr += r'\left['
             outStr += self.operator.formatted(formatType) + '_{'
-            if hasExplicitIvars: 
-                if hasMultiDomain: outStr += domain_conditions.formatted(formatType,  operatorOrOperators=',')
+            if hasExplicitIvars:
+                if hasMultiDomain: outStr += domain_conditions.formatted(formatType, operatorOrOperators=',', fence=False)
                 else: outStr += formattedVars
             if not hasMultiDomain and self.domain is not None:
                 outStr += r' \in '
                 outStr += self.domain.formatted(formatType, fence=False)
             if hasExplicitConditions:
                 if hasExplicitIvars: outStr += "~|~"
-                outStr += explicitConditions.formatted(formatType, fence=False)                
-                #outStr += ', '.join(condition.formatted(formatType) for condition in self.conditions if condition not in implicitConditions) 
+                outStr += explicitConditions.formatted(formatType, fence=False)
+                #outStr += ', '.join(condition.formatted(formatType) for condition in self.conditions if condition not in implicitConditions)
             outStr += '}~' + explicitInstanceExpr.formatted(formatType,fence=True)
             if fence: outStr += r'\right]'
 
         return outStr
-    
+
     """
     def instanceSubstitution(self, universality, assumptions=USE_DEFAULTS):
         '''
         Equate this OperationOverInstances, Upsilon_{..x.. in S | ..Q(..x..)..} f(..x..),
-        with one that substitutes instance expressions given some 
+        with one that substitutes instance expressions given some
         universality = forall_{..x.. in S | ..Q(..x..)..} f(..x..) = g(..x..).
         Derive and return the following type of equality assuming universality:
         Upsilon_{..x.. in S | ..Q(..x..)..} f(..x..) = Upsilon_{..x.. in S | ..Q(..x..)..} g(..x..)
@@ -519,10 +516,10 @@ class OperationOverInstances(Operation):
         g_op, g_op_sub = Operation(g, self.instanceVars), universality.instanceExpr.rhs.substituted(iVarSubstitutions)
         Q_op, Q_op_sub = Operation(Qmulti, self.instanceVars), self.conditions
         if self.hasDomain():
-            return instanceSubstitution.specialize({Upsilon:self.operator, Q_op:Q_op_sub, S:self.domain, f_op:f_op_sub, g_op:g_op_sub}, 
+            return instanceSubstitution.specialize({Upsilon:self.operator, Q_op:Q_op_sub, S:self.domain, f_op:f_op_sub, g_op:g_op_sub},
                                                     relabelMap={xMulti:universality.instanceVars, yMulti:self.instanceVars, zMulti:self.instanceVars}, assumptions=assumptions).deriveConsequent(assumptions=assumptions)
         else:
-            return noDomainInstanceSubstitution.specialize({Upsilon:self.operator, Q_op:Q_op_sub, f_op:f_op_sub, g_op:g_op_sub}, 
+            return noDomainInstanceSubstitution.specialize({Upsilon:self.operator, Q_op:Q_op_sub, f_op:f_op_sub, g_op:g_op_sub},
                                                              relabelMap={xMulti:universality.instanceVars, yMulti:self.instanceVars, zMulti:self.instanceVars}, assumptions=assumptions).deriveConsequent(assumptions=assumptions)
 
     def substituteInstances(self, universality, assumptions=USE_DEFAULTS):
@@ -535,7 +532,7 @@ class OperationOverInstances(Operation):
         substitution = self.instanceSubstitution(universality, assumptions=assumptions)
         return substitution.deriveRightViaEquivalence(assumptions=assumptions)
     """
-        
+
 class InstanceSubstitutionException(Exception):
     def __init__(self, msg, operationOverInstances, universality):
         self.msg = msg
