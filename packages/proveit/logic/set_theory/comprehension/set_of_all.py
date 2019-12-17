@@ -29,9 +29,8 @@ class SetOfAll(OperationOverInstances):
         outStr = ''
         explicit_conditions = ExprList(self.explicitConditions())
         inner_fence = (len(explicit_conditions) > 0)
-        formatted_instance_var = self.instanceVar.formatted(formatType)
         formatted_instance_element = self.instanceElement.formatted(formatType, fence=inner_fence)
-        formatted_domain = self.domain.formatted(formatType, fence=True)
+        domain_conditions = ExprList(*self.domainConditions())
         if formatType == 'latex': outStr += r"\left\{"
         else: outStr += "{"
         outStr += formatted_instance_element
@@ -42,11 +41,9 @@ class SetOfAll(OperationOverInstances):
             outStr += formatted_conditions
         if formatType == 'latex': outStr += r"\right\}"
         else: outStr += "}"
-        outStr += '_{' + formatted_instance_var
-        if self.domain is not None:
-            if formatType == 'latex': outStr += r' \in '
-            else: outStr += ' in '
-            outStr += formatted_domain
+        outStr += '_{' 
+        outStr += domain_conditions.formatted(formatType,  
+                                              operatorOrOperators=',')
         outStr += '}'
         return outStr
     
