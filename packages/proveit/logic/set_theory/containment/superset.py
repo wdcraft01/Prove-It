@@ -1,4 +1,4 @@
-from proveit import Literal, Operation, safeDummyVar, USE_DEFAULTS
+from proveit import Literal, Operation, safeDummyVar, USE_DEFAULTS, asExpression
 from proveit._common_ import A, B, C, x
 from .containment_relation import ContainmentRelation, ContainmentSequence, makeSequenceOrRelation
 
@@ -7,15 +7,15 @@ class SupersetRelation(ContainmentRelation):
         ContainmentRelation.__init__(self, operator, superset, subset)
         self.superset = self.operands[0]
         self.subset = self.operands[1]
-    
+
     @staticmethod
     def WeakRelationClass():
-        return SupersetEq 
+        return SupersetEq
 
     @staticmethod
     def StrongRelationClass():
         return Superset
-    
+
     @staticmethod
     def SequenceClass():
         return SupersetSequence
@@ -23,7 +23,7 @@ class SupersetRelation(ContainmentRelation):
 class SupersetSequence(ContainmentSequence):
     def __init__(self, operators, operands):
         ContainmentSequence.__init__(self, operators, operands)
-    
+
     @staticmethod
     def RelationClass():
         return SupersetRelation
@@ -38,15 +38,15 @@ def supersetSequence(operators, operands):
 
 class Superset(SupersetRelation):
     # operator of the Superset operation
-    _operator_ = Literal(stringFormat='supset', latexFormat=r'\supset', context=__file__)    
+    _operator_ = Literal(stringFormat='supset', latexFormat=r'\supset', context=__file__)
 
     # map left-hand-sides to Superset KnownTruths
     #   (populated in TransitivityRelation.deriveSideEffects)
-    knownLeftSides = dict()    
+    knownLeftSides = dict()
     # map right-hand-sides to Superset KnownTruths
     #   (populated in TransitivityRelation.deriveSideEffects)
-    knownRightSides = dict() 
-    
+    knownRightSides = dict()
+
     def __init__(self, superset, subset):
         SupersetRelation.__init__(self, Superset._operator_, superset, subset)
 
@@ -66,12 +66,13 @@ class Superset(SupersetRelation):
 
     def applyTransitivity(self, other, assumptions=USE_DEFAULTS):
         '''
-        Apply a transitivity rule to derive from this A superset B expression 
-        and something of the form B supseteq C, B supset C, or B=C to 
+        Apply a transitivity rule to derive from this A superset B expression
+        and something of the form B supseteq C, B supset C, or B=C to
         obtain A supset B as appropriate.
         '''
         from proveit.logic import Equals, Subset, SubsetEq
         from ._theorems_ import transitivitySupsetSupset, transitivitySupsetSupsetEq
+        other = asExpression(other)
         if isinstance(other, Equals):
             return ContainmentRelation.applyTransitivity(other, assumptions) # handles this special case
         #if isinstance(other,Subset) or isinstance(other,SubsetEq):
@@ -92,18 +93,18 @@ class Superset(SupersetRelation):
                 return result
         else:
             raise ValueError("Cannot perform transitivity with %s and %s!"%(self, other))
-                
+
 class ProperSuperset(SupersetRelation):
     # operator of the ProperSuperset operation
-    _operator_ = Literal(stringFormat='proper_superset', latexFormat=r'\supset', context=__file__)    
+    _operator_ = Literal(stringFormat='proper_superset', latexFormat=r'\supset', context=__file__)
 
     # map left-hand-sides to ProperSuperset KnownTruths
     #   (populated in TransitivityRelation.deriveSideEffects)
-    knownLeftSides = dict()    
+    knownLeftSides = dict()
     # map right-hand-sides to Superset KnownTruths
     #   (populated in TransitivityRelation.deriveSideEffects)
-    knownRightSides = dict() 
-    
+    knownRightSides = dict()
+
     def __init__(self, superset, subset):
         SupersetRelation.__init__(self, ProperSuperset._operator_,
                                   superset, subset)
@@ -126,8 +127,8 @@ class ProperSuperset(SupersetRelation):
 
     def applyTransitivity(self, other, assumptions=USE_DEFAULTS):
         '''
-        Apply a transitivity rule to derive from this A proper_superset B expression 
-        and something of the form B supseteq C, B proper_supset C, or B=C to 
+        Apply a transitivity rule to derive from this A proper_superset B expression
+        and something of the form B supseteq C, B proper_supset C, or B=C to
         obtain A proper_superset C as appropriate.
         '''
         from proveit.logic import Equals, Subset, SubsetEq
@@ -156,15 +157,15 @@ class ProperSuperset(SupersetRelation):
 
 class SupersetEq(SupersetRelation):
     # operator of the SupersetEq operation
-    _operator_ = Literal(stringFormat='supseteq', latexFormat=r'\supseteq', context=__file__)    
-    
+    _operator_ = Literal(stringFormat='supseteq', latexFormat=r'\supseteq', context=__file__)
+
     # map left-hand-sides to SupersetEq KnownTruths
     #   (populated in TransitivityRelation.deriveSideEffects)
-    knownLeftSides = dict()    
+    knownLeftSides = dict()
     # map right-hand-sides to SupersetEq KnownTruths
     #   (populated in TransitivityRelation.deriveSideEffects)
-    knownRightSides = dict() 
-    
+    knownRightSides = dict()
+
     def __init__(self, superset, subset):
         SupersetRelation.__init__(self, SupersetEq._operator_, superset, subset)
 
@@ -176,25 +177,28 @@ class SupersetEq(SupersetRelation):
         return reverseSupsetEq.specialize({A:self.superset, B:self.subset}, assumptions=assumptions)
 
     def conclude(self, assumptions):
-        from ._theorems_ import supersetEqViaEquality
         from proveit import ProofFailure
         from proveit.logic import Equals
-        
+
+        # Any set contains itself
         try:
-            # first attempt a transitivity search
+            Equals(*self.operands).prove(assumptions, automation=False)
+            return self.concludeViaEquality(assumptions)
+        except ProofFailure:
+            pass
+
+        try:
+            # Attempt a transitivity search
             return ContainmentRelation.conclude(self, assumptions)
         except ProofFailure:
             pass # transitivity search failed
 
-        # Any set contains itself
-        try:
-            Equals(self.operands[0], self.operands[1]).prove(assumptions, automation=False)
-            return supersetEqViaEquality.specialize({A: self.operands[0], B: self.operands[1]})
-        except ProofFailure:
-            pass
-
         # Finally, attempt to conclude A supseteq B via forall_{x in B} x in A.
         return self.concludeAsFolded(elemInstanceVar=safeDummyVar(self), assumptions=assumptions)
+
+    def concludeViaEquality(self, assumptions):
+        from ._theorems_ import supersetEqViaEquality
+        return supersetEqViaEquality.specialize({A: self.operands[0], B: self.operands[1]}, assumptions=assumptions)
 
     def unfold(self, elemInstanceVar=x, assumptions=USE_DEFAULTS):
         '''
@@ -203,14 +207,14 @@ class SupersetEq(SupersetRelation):
         '''
         from ._theorems_ import unfoldSupsetEq
         return unfoldSupsetEq.specialize({A:self.superset, B:self.subset}, relabelMap={x:elemInstanceVar}, assumptions=assumptions)
-    
+
     def deriveSupsersetMembership(self, element, assumptions=USE_DEFAULTS):
         '''
         From A superseteq B and x in B, derive x in A.
         '''
         from ._theorems_ import unfoldSupsetEq
         return unfoldSupsetEq.specialize({A:self.superset, B:self.subset, x:element}, assumptions=assumptions)
-    
+
     def concludeAsFolded(self, elemInstanceVar=x, assumptions=USE_DEFAULTS):
         '''
         Derive this folded version, A superset B, from the unfolded version,
@@ -218,17 +222,17 @@ class SupersetEq(SupersetRelation):
         '''
         from ._theorems_ import foldSupsetEq
         return foldSupsetEq.specialize({A:self.superset, B:self.subset}, relabelMap={x:elemInstanceVar}, assumptions=assumptions).deriveConsequent(assumptions)
-        
+
     def applyTransitivity(self, other, assumptions=USE_DEFAULTS):
         '''
-        Apply a transitivity rule to derive from this A superseteq B expression 
-        and something of the form B supseteq C, B supset C, or B=C to 
+        Apply a transitivity rule to derive from this A superseteq B expression
+        and something of the form B supseteq C, B supset C, or B=C to
         obtain A supset B or A supseteq B as appropriate.
         '''
         from proveit.logic import Equals
         from ._theorems_ import transitivitySupsetEqSupset, transitivitySupsetEqSupsetEq
-        # from .superset import Subset, SubsetEq # corrected below by wdc on Tues 10/8/19
-        from .subset import Subset, SubsetEq
+        from .superset import Subset, SubsetEq
+        other = asExpression(other)
         if isinstance(other, Equals):
             return ContainmentRelation.applyTransitivity(other, assumptions) # handles this special case
         if isinstance(other,Subset) or isinstance(other,SubsetEq):
@@ -257,17 +261,17 @@ class NotSuperset(Operation):
     # operator of the NotSuperset operation
     _operator_ = Literal(stringFormat='nsupset',
                          latexFormat=r'\not\supset',
-                         context=__file__)    
+                         context=__file__)
 
     def __init__(self, superset, subset):
         Operation.__init__(self, NotSuperset._operator_, (superset, subset))
-    
+
     def deriveSideEffects(self, knownTruth):
         self.unfold(knownTruth.assumptions) # unfold as an automatic side-effect
 
     def conclude(self, assumptions):
         return self.concludeAsFolded(assumptions)
-        
+
     def unfold(self, assumptions=USE_DEFAULTS):
         '''
         From A nsupset B, derive and return not(supset(A, B)).
@@ -292,18 +296,18 @@ class NotProperSuperset(Operation):
     # operator of the NotProperSuperset operation
     _operator_ = Literal(stringFormat='nsupset',
                          latexFormat=r'\not\supset',
-                         context=__file__)    
+                         context=__file__)
 
     def __init__(self, superset, subset):
         Operation.__init__(self, NotProperSuperset._operator_,
                            (superset, subset))
-    
+
     def deriveSideEffects(self, knownTruth):
         self.unfold(knownTruth.assumptions) # unfold as an automatic side-effect
 
     def conclude(self, assumptions):
         return self.concludeAsFolded(assumptions)
-        
+
     def unfold(self, assumptions=USE_DEFAULTS):
         '''
         From A npropersupset B, derive and return not(propersupset(A, B)).
@@ -327,17 +331,17 @@ class NotSupersetEq(Operation):
     # operator of the NotSupersetEq operation
     _operator_ = Literal(stringFormat='nsupseteq',
                          latexFormat=r'\nsupseteq',
-                         context=__file__)    
+                         context=__file__)
 
     def __init__(self, superset, subset):
         Operation.__init__(self, NotSupersetEq._operator_, (superset, subset))
-    
+
     def deriveSideEffects(self, knownTruth):
         self.unfold(knownTruth.assumptions) # unfold as an automatic side-effect
 
     def conclude(self, assumptions):
         return self.concludeAsFolded(assumptions)
-        
+
     def unfold(self, assumptions=USE_DEFAULTS):
         '''
         From A nsupseteq B, derive and return not(supseteq(A, B)).
