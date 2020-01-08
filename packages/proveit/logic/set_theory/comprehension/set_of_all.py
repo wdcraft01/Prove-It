@@ -1,4 +1,5 @@
-from proveit import Literal, OperationOverInstances, Operation, ExprTuple, singleOrCompositeExpression, USE_DEFAULTS
+from proveit import (ExprTuple, Literal, Operation, OperationOverInstances,
+                     singleOrCompositeExpression, USE_DEFAULTS)
 from proveit._common_ import x, y, f, P, Q, QQ, S, yy
 
 class SetOfAll(OperationOverInstances):
@@ -30,7 +31,8 @@ class SetOfAll(OperationOverInstances):
         explicit_conditions = ExprTuple(self.explicitConditions())
         inner_fence = (len(explicit_conditions) > 0)
         formatted_instance_element = self.instanceElement.formatted(formatType, fence=inner_fence)
-        domain_conditions = ExprList(*self.domainConditions())
+        # domain_conditions = ExprList(*self.domainConditions())
+        domain_conditions = ExprTuple(*self.domainConditions())
         if formatType == 'latex': outStr += r"\left\{"
         else: outStr += "{"
         outStr += formatted_instance_element

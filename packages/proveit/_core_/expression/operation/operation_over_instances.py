@@ -450,7 +450,8 @@ class OperationOverInstances(Operation):
             if fence: outStr += '['
             outStr += self.operator.formatted(formatType) + '_{'
             if hasExplicitIvars:
-                if hasMultiDomain: outStr += domain_conditions.formatted(formatType, operatorOrOperators=',', fence=False)
+                # if hasMultiDomain: outStr += domain_conditions.formatted(formatType, operatorOrOperators=',', fence=False)
+                if hasMultiDomain: outStr += explicitDomains.formatted(formatType, operatorOrOperators=',', fence=False)
                 else: outStr += formattedVars
             if not hasMultiDomain and self.domain is not None:
                 outStr += ' in '
@@ -468,7 +469,8 @@ class OperationOverInstances(Operation):
             if fence: outStr += r'\left['
             outStr += self.operator.formatted(formatType) + '_{'
             if hasExplicitIvars:
-                if hasMultiDomain: outStr += domain_conditions.formatted(formatType, operatorOrOperators=',', fence=False)
+                # if hasMultiDomain: outStr += domain_conditions.formatted(formatType, operatorOrOperators=',', fence=False)
+                if hasMultiDomain: outStr += explicitDomains.formatted(formatType, operatorOrOperators=',', fence=False)
                 else: outStr += formattedVars
             if not hasMultiDomain and self.domain is not None:
                 outStr += r' \in '
