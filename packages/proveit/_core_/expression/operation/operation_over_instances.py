@@ -450,6 +450,9 @@ class OperationOverInstances(Operation):
             if fence: outStr += '['
             outStr += self.operator.formatted(formatType) + '_{'
             if hasExplicitIvars:
+                # following if line was temp'ly replaced by wdc to
+                # allow an update push through; not clear yet exactly
+                # what the appropriate substitute should be
                 # if hasMultiDomain: outStr += domain_conditions.formatted(formatType, operatorOrOperators=',', fence=False)
                 if hasMultiDomain: outStr += explicitDomains.formatted(formatType, operatorOrOperators=',', fence=False)
                 else: outStr += formattedVars
@@ -469,6 +472,9 @@ class OperationOverInstances(Operation):
             if fence: outStr += r'\left['
             outStr += self.operator.formatted(formatType) + '_{'
             if hasExplicitIvars:
+                # following if line was temp'ly replaced by wdc to
+                # allow an update push through; not clear yet exactly
+                # what the appropriate substitute should be
                 # if hasMultiDomain: outStr += domain_conditions.formatted(formatType, operatorOrOperators=',', fence=False)
                 if hasMultiDomain: outStr += explicitDomains.formatted(formatType, operatorOrOperators=',', fence=False)
                 else: outStr += formattedVars
