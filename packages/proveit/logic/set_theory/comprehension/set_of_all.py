@@ -14,7 +14,7 @@ class SetOfAll(OperationOverInstances):
         # nestMultiIvars=False will ensure it does NOT treat multiple instance variables as 
         # nested SetOfAll operations -- that would not make sense.
         # (unlike forall, exists, summation, and product where it does make sense).
-        OperationOverInstances.__init__(self, SetOfAll._operator_, instanceVarOrVars, instanceElement, domain=domain, conditions=conditions, nestMultiIvars=False)
+        OperationOverInstances.__init__(self, SetOfAll._operator_, instanceVarOrVars, instanceElement, domain=domain, domains=domains, conditions=conditions, nestMultiIvars=False)
         self.instanceElement = self.instanceExpr
         if hasattr(self, 'instanceVar'):
             if not hasattr(self, 'domain'):
@@ -29,9 +29,9 @@ class SetOfAll(OperationOverInstances):
         outStr = ''
         explicit_conditions = ExprTuple(self.explicitConditions())
         inner_fence = (len(explicit_conditions) > 0)
-        formatted_instance_var = self.instanceVar.formatted(formatType)
         formatted_instance_element = self.instanceElement.formatted(formatType, fence=inner_fence)
-        formatted_domain = self.domain.formatted(formatType, fence=True)
+        explicit_domains = self.explicitDomains()
+        domain_conditions = ExprTuple(*self.domainConditions())
         if formatType == 'latex': outStr += r"\left\{"
         else: outStr += "{"
         outStr += formatted_instance_element
@@ -42,11 +42,18 @@ class SetOfAll(OperationOverInstances):
             outStr += formatted_conditions
         if formatType == 'latex': outStr += r"\right\}"
         else: outStr += "}"
-        outStr += '_{' + formatted_instance_var
-        if self.domain is not None:
-            if formatType == 'latex': outStr += r' \in '
-            else: outStr += ' in '
-            outStr += formatted_domain
+        outStr += '_{' 
+        if len(explicit_domains) > 1 and explicit_domains == [explicit_domains[0]]*len(explicit_domains):
+            print("explicit_domains = {}".format(explicit_domains))             # for testing; delete later
+            # all in the same domain
+            outStr += self.instanceVars.formatted(formatType, operatorOrOperators=',',
+                                                  fence=False)
+            outStr += r' \in ' if formatType=='latex' else ' in '
+            outStr += explicit_domains[0].formatted(formatType)
+        else:
+            outStr += domain_conditions.formatted(formatType,  
+                                                operatorOrOperators=',',
+                                                fence=False)
         outStr += '}'
         return outStr
     
