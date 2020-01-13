@@ -439,11 +439,11 @@ class OperationOverInstances(Operation):
         explicitIvars = list(self.explicitInstanceVars()) # the (joined) instance vars to show explicitly
         explicitConditions = ExprTuple(*self.explicitConditions()) # the (joined) conditions to show explicitly after '|'
         explicitDomains = ExprTuple(*self.explicitDomains()) # the (joined) domains
-        explicitInstanceExpr = self.explicitInstanceExpr() # left over after joining instnace vars according to the style
+        explicitInstanceExpr = self.explicitInstanceExpr() # left over after joining instance vars according to the style
         hasExplicitIvars = (len(explicitIvars) > 0)
         hasExplicitConditions = (len(explicitConditions) > 0)
         hasMultiDomain = (len(explicitDomains)>1 and explicitDomains != ExprTuple(*[self.domain]*len(explicitDomains)))
-        domain_conditions = ExprTuple(*self.domainConditions())        
+        domain_conditions = ExprTuple(*self.domainConditions())
         outStr = ''
         formattedVars = ', '.join([var.formatted(formatType, abbrev=True) for var in explicitIvars])
         if formatType == 'string':
@@ -455,6 +455,7 @@ class OperationOverInstances(Operation):
             if not hasMultiDomain and self.domain is not None:
                 outStr += ' in '
                 if hasMultiDomain:
+                    print("Do we ever get here?")                               # for testing; delete later
                     outStr += explicitDomains.formatted(formatType, operatorOrOperators='*', fence=False)
                 else:
                     outStr += self.domain.formatted(formatType, fence=False)                    

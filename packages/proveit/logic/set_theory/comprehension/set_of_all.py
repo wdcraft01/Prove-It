@@ -44,7 +44,6 @@ class SetOfAll(OperationOverInstances):
         else: outStr += "}"
         outStr += '_{' 
         if len(explicit_domains) > 1 and explicit_domains == [explicit_domains[0]]*len(explicit_domains):
-            print("explicit_domains = {}".format(explicit_domains))             # for testing; delete later
             # all in the same domain
             outStr += self.instanceVars.formatted(formatType, operatorOrOperators=',',
                                                   fence=False)
