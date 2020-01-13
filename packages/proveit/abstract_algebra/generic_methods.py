@@ -35,7 +35,14 @@ def apply_commutation_thm(expr, initIdx, finalIdx, binaryThm, leftwardThm, right
 def apply_association_thm(expr, startIdx, length, thm, assumptions=USE_DEFAULTS):
     from proveit.logic import Equals
     from proveit.number import num
-    beg, end = startIdx, startIdx+length
+    print("entering apply_association_thm")                                     # for testing; delete later
+    print("    expr = {}".format(expr))                                         # for testing; delete later
+    print("    expr.operands = {}".format(expr.operands))                       # for testing; delete later
+    print("    length = {}".format(length))                                     # for testing; delete later
+    beg, end = startIdx, startIdx+length  # temp modification by wdc on 1/13/2020.
+    # beg, end = startIdx, startIdx+length-1
+    print("    beg = {}".format(beg))                                           # for testing; delete later
+    print("    end = {}".format(end))                                           # for testing; delete later
     if beg < 0: beg = len(expr.operands)+beg # use wrap-around indexing
     if not length >= 2:
         raise IndexError ("The 'length' must be 2 or more when applying association.")
@@ -60,8 +67,20 @@ def apply_disassociation_thm(expr, idx, thm=None, assumptions=USE_DEFAULTS):
             
 def groupCommutation(expr, initIdx, finalIdx, length, disassociate=True, assumptions=USE_DEFAULTS):
     '''
-    Derive a commutation equivalence on a group of multiple operands by associating them
-    together first.  If 'dissassociate' is true, the group will be disassociated at end.
+    Derive a commutation equivalence on a group of multiple operands by
+    associating them together first.  If 'dissassociate' is true, the
+    group will be disassociated at end. For example, the following call:
+    Or(A,B,C,D).groupCommutation(0, 1, length=2,
+                                 assumptions=inBool(A,B,C,D))
+    essentially goes through the following steps:
+    (1) associates 2 elements (i.e. length = 2) starting at index 0 to
+        obtain (A V B) V C V D
+    (2) removes the element to be commuted to obtain C V D
+    (2) inserts the element to be commuted at the desire index to
+        obtain C V (A V B) V D
+    (3) then disassociates to obtain C V A V B V D
+    (4) eventually producing the output:
+    {A in Bool, ..., D in Bool} |- (A V B V C V D) = (C V A V B V D)
     '''
     from proveit import TransRelUpdater
 
@@ -71,7 +90,8 @@ def groupCommutation(expr, initIdx, finalIdx, length, disassociate=True, assumpt
         return expr.commutation(initIdx, finalIdx, assumptions=assumptions)
         
     eq = TransRelUpdater(expr, assumptions) # for convenience while updating our equation
-    expr = eq.update(expr.association(initIdx, initIdx+length, assumptions=assumptions))
+    expr = eq.update(expr.association(initIdx, initIdx+length, assumptions=assumptions)) # modified 1/13/2020 by wdc
+    # expr = eq.update(expr.association(initIdx, length, assumptions=assumptions))
     expr = eq.update(expr.commutation(initIdx, finalIdx, assumptions=assumptions))
     if disassociate:
         expr = eq.update(expr.disassociation(finalIdx, assumptions=assumptions))
