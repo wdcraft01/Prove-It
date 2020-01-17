@@ -1,0 +1,646 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>proveit._core_.expression.composite.indexed &#8212; Prove-It 0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for proveit._core_.expression.composite.indexed</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">proveit._core_.expression.expr</span> <span class="k">import</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">MakeNotImplemented</span>
+<span class="kn">from</span> <span class="nn">proveit._core_.expression.operation.operation</span> <span class="k">import</span> <span class="n">Operation</span>
+<span class="kn">from</span> <span class="nn">proveit._core_.expression.composite.iteration</span> <span class="k">import</span> <span class="n">EmptyIterException</span>
+<span class="kn">from</span> <span class="nn">proveit._core_.expression.lambda_expr.lambda_expr</span> <span class="k">import</span> <span class="n">Lambda</span>
+<span class="kn">from</span> <span class="nn">proveit._core_.expression.label</span> <span class="k">import</span> <span class="n">Variable</span>
+<span class="kn">from</span> <span class="nn">proveit._core_.proof</span> <span class="k">import</span> <span class="n">ProofFailure</span>
+<span class="kn">from</span> <span class="nn">proveit._core_.defaults</span> <span class="k">import</span> <span class="n">USE_DEFAULTS</span>
+
+<div class="viewcode-block" id="Indexed"><a class="viewcode-back" href="../../../../../api/proveit.Indexed.html#proveit.Indexed">[docs]</a><span class="k">class</span> <span class="nc">Indexed</span><span class="p">(</span><span class="n">Expression</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    An Indexed Expression expresses a Variable,</span>
+<span class="sd">    representing an ExprTuple or ExprArray, being indexed</span>
+<span class="sd">    to yield an element.</span>
+<span class="sd">    </span>
+<span class="sd">    Upon substitution, it automatically performs the indexing</span>
+<span class="sd">    if the indexed expression is a composite and the</span>
+<span class="sd">    difference between the index and base is a known</span>
+<span class="sd">    integer (or list of integers).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">index_or_indices</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">styles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="nb">tuple</span><span class="p">()):</span>
+        <span class="kn">from</span> <span class="nn">.composite</span> <span class="k">import</span> <span class="n">compositeExpression</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">Variable</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;var&#39; being indexed should be a Variable, got </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">var</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">compositeExpression</span><span class="p">(</span><span class="n">index_or_indices</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># has a single parameter</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index_or_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index_or_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&#39;base&#39; should be an integer&quot;</span><span class="p">)</span>
+        <span class="n">Expression</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Indexed&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">base</span><span class="p">)],</span> <span class="p">[</span><span class="n">var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_or_indices</span><span class="p">],</span> <span class="n">styles</span><span class="o">=</span><span class="n">styles</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="n">requirements</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">var</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+    
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_make</span><span class="p">(</span><span class="n">subClass</span><span class="p">,</span> <span class="n">coreInfo</span><span class="p">,</span> <span class="n">styles</span><span class="p">,</span> <span class="n">subExpressions</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">subClass</span> <span class="o">!=</span> <span class="n">Indexed</span><span class="p">:</span> 
+            <span class="n">MakeNotImplemented</span><span class="p">(</span><span class="n">subClass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coreInfo</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">coreInfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;Indexed&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expecting Indexed coreInfo to contain exactly two items: &#39;Indexed&#39; and the integer &#39;base&#39;&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">base</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">coreInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expecting &#39;base&#39; to be an integer&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Indexed</span><span class="p">(</span><span class="o">*</span><span class="n">subExpressions</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">)</span><span class="o">.</span><span class="n">withStyles</span><span class="p">(</span><span class="o">**</span><span class="n">styles</span><span class="p">)</span>       
+
+<div class="viewcode-block" id="Indexed.remakeArguments"><a class="viewcode-back" href="../../../../../api/proveit.Indexed.html#proveit.Indexed.remakeArguments">[docs]</a>    <span class="k">def</span> <span class="nf">remakeArguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Yield the argument values or (name, value) pairs</span>
+<span class="sd">        that could be used to recreate the Indexed.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_or_indices</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="s1">&#39;base&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">)</span>       </div>
+    
+<div class="viewcode-block" id="Indexed.string"><a class="viewcode-back" href="../../../../../api/proveit.Indexed.html#proveit.Indexed.string">[docs]</a>    <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">string</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_or_indices</span><span class="o">.</span><span class="n">string</span><span class="p">(</span><span class="n">fence</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Indexed.latex"><a class="viewcode-back" href="../../../../../api/proveit.Indexed.html#proveit.Indexed.latex">[docs]</a>    <span class="k">def</span> <span class="nf">latex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">latex</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;_{&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_or_indices</span><span class="o">.</span><span class="n">latex</span><span class="p">(</span><span class="n">fence</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span></div>
+
+<div class="viewcode-block" id="Indexed.substituted"><a class="viewcode-back" href="../../../../../api/proveit.Indexed.html#proveit.Indexed.substituted">[docs]</a>    <span class="k">def</span> <span class="nf">substituted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reservedVars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assumptions</span><span class="o">=</span><span class="n">USE_DEFAULTS</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns this expression with the substitutions made </span>
+<span class="sd">        according to exprMap and/or relabeled according to relabelMap.</span>
+<span class="sd">        If the indexed variable has been replaced with a Composite</span>
+<span class="sd">        (ExprTuple or ExprArray), this should return the</span>
+<span class="sd">        indexed element.  Only a Variable should be indexed via</span>
+<span class="sd">        a Indexed expression; once the Variable is replaced with</span>
+<span class="sd">        a Composite, the indexing should be actualized.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.composite</span> <span class="k">import</span> <span class="n">Composite</span>
+        <span class="kn">from</span> <span class="nn">.expr_tuple</span> <span class="k">import</span> <span class="n">ExprTuple</span>
+        <span class="kn">from</span> <span class="nn">.expr_array</span> <span class="k">import</span> <span class="n">ExprArray</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkRelabelMap</span><span class="p">(</span><span class="n">relabelMap</span><span class="p">)</span>
+        
+        <span class="n">new_requirements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">subbed_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">substituted</span><span class="p">(</span><span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="p">,</span> <span class="n">reservedVars</span><span class="p">)</span> <span class="c1"># requirements not needed for variable substitution</span>
+        <span class="n">subbed_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">substituted</span><span class="p">(</span><span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="p">,</span> <span class="n">reservedVars</span><span class="p">,</span> <span class="n">assumptions</span><span class="o">=</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="n">new_requirements</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subbed_var</span><span class="p">,</span> <span class="n">Composite</span><span class="p">):</span>
+            <span class="c1"># The indexed expression is a composite.</span>
+            <span class="c1"># Now see if the indices can be simplified to integers; if so,</span>
+            <span class="c1"># we can attempt to extract the specific element.</span>
+            <span class="c1"># If there is an IndexingError (i.e., we cannot get the element</span>
+            <span class="c1"># because the Composite has an unexpanding Iter), </span>
+            <span class="c1"># default to returning the subbed Indexed.</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">subbed_indices</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subbed_var</span><span class="p">,</span> <span class="n">ExprTuple</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subbed_var</span><span class="o">.</span><span class="n">getElem</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">base</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">,</span> <span class="n">assumptions</span><span class="o">=</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="n">new_requirements</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subbed_var</span><span class="p">,</span> <span class="n">ExprArray</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subbed_var</span><span class="o">.</span><span class="n">getElem</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">,</span> <span class="n">assumptions</span><span class="o">=</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="n">new_requirements</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">requirement</span> <span class="ow">in</span> <span class="n">new_requirements</span><span class="p">:</span>
+            <span class="n">requirement</span><span class="o">.</span><span class="n">_restrictionChecked</span><span class="p">(</span><span class="n">reservedVars</span><span class="p">)</span> <span class="c1"># make sure requirements don&#39;t use reserved variable in a nested scope        </span>
+        <span class="k">if</span> <span class="n">requirements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">requirements</span> <span class="o">+=</span> <span class="n">new_requirements</span> <span class="c1"># append new requirements</span>
+               
+        <span class="c1"># If the subbed_var has not been replaced with a Composite,</span>
+        <span class="c1"># just return the Indexed operation with the substitutions made.</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Indexed</span><span class="p">(</span><span class="n">subbed_var</span><span class="p">,</span> <span class="n">subbed_indices</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">)</span></div>
+        
+    <span class="k">def</span> <span class="nf">_iterSubParamVals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">iterParam</span><span class="p">,</span> <span class="n">startArg</span><span class="p">,</span> <span class="n">endArg</span><span class="p">,</span> 
+                          <span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reservedVars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                          <span class="n">assumptions</span><span class="o">=</span><span class="n">USE_DEFAULTS</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Consider a substitution over a containing iteration (Iter) </span>
+<span class="sd">        defined via exprMap, relabelMap, etc, and expand the iteration </span>
+<span class="sd">        by substituting the &quot;iteration parameter&quot; over the range from </span>
+<span class="sd">        the &quot;starting argument&quot; to the &quot;ending argument&quot; </span>
+<span class="sd">        (both inclusive as provided).</span>
+<span class="sd">        </span>
+<span class="sd">        When the Indexed variable is substituted with a Composite, any </span>
+<span class="sd">        containing Iteration is to be expanded over the iteration range.</span>
+<span class="sd">        This method returns a list of parameter values that covers </span>
+<span class="sd">        occupied portions of the full range in a manner that keeps </span>
+<span class="sd">        different inner iterations separate.  In particular, the </span>
+<span class="sd">        iteration range is broken up for the different Iter entries that</span>
+<span class="sd">        are contained in this Composite.  If it is not substituted with </span>
+<span class="sd">        a composite, _NoExpandedIteration is raised.</span>
+<span class="sd">        </span>
+<span class="sd">        Requirements that are passed back ensure that substituted composites are</span>
+<span class="sd">        valid (with iterations that have natural number extents), that the </span>
+<span class="sd">        start and end indices are within range and at integer positions,</span>
+<span class="sd">        and also includes equalities for employed simplifications or inversions</span>
+<span class="sd">        (translating from index coordinates to parameters).</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.composite</span> <span class="k">import</span> <span class="n">Composite</span><span class="p">,</span> <span class="n">IndexingError</span><span class="p">,</span> <span class="n">_simplifiedCoord</span><span class="p">,</span> \
+                                  <span class="n">_generateCoordOrderAssumptions</span>
+        <span class="kn">from</span> <span class="nn">.expr_tuple</span> <span class="k">import</span> <span class="n">ExprTuple</span>
+        <span class="kn">from</span> <span class="nn">.expr_array</span> <span class="k">import</span> <span class="n">ExprArray</span>
+        <span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">InSet</span>
+        <span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">GreaterEq</span><span class="p">,</span> <span class="n">LessEq</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">one</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> \
+                                      <span class="n">dist_add</span><span class="p">,</span> <span class="n">dist_subtract</span><span class="p">,</span> <span class="n">Naturals</span>
+        <span class="kn">from</span> <span class="nn">proveit._core_.expression.expr</span> <span class="k">import</span> <span class="n">_NoExpandedIteration</span>
+        <span class="kn">from</span> <span class="nn">.iteration</span> <span class="k">import</span> <span class="n">Iter</span><span class="p">,</span> <span class="n">InvalidIterationError</span>
+        
+        <span class="k">if</span> <span class="n">requirements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">requirements</span> <span class="o">=</span> <span class="p">[]</span> 
+        
+        <span class="n">subbed_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="o">.</span><span class="n">substituted</span><span class="p">(</span><span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="p">,</span> <span class="n">reservedVars</span><span class="p">,</span> 
+                                          <span class="n">assumptions</span><span class="p">,</span> <span class="n">requirements</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+        <span class="n">subbed_index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">substituted</span><span class="p">(</span><span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="p">,</span> <span class="n">reservedVars</span><span class="p">,</span> 
+                                         <span class="n">assumptions</span><span class="p">,</span> <span class="n">requirements</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subbed_var</span><span class="p">,</span> <span class="n">Composite</span><span class="p">)</span> <span class="ow">or</span> \
+                <span class="n">iterParam</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">subbed_index</span><span class="o">.</span><span class="n">freeVars</span><span class="p">():</span>
+            <span class="c1"># No expansion for this parameter here:</span>
+            <span class="k">raise</span> <span class="n">_NoExpandedIteration</span><span class="p">()</span> <span class="c1"># no expansionn</span>
+
+        <span class="c1"># We cannot substitute in a Composite without doing an </span>
+        <span class="c1"># iteration over it.  Only certain iterations are allowed </span>
+        <span class="c1"># in this manner however.</span>
+
+        <span class="k">if</span> <span class="n">subbed_index</span> <span class="o">!=</span> <span class="n">iterParam</span><span class="p">:</span>
+            <span class="c1"># The index isn&#39;t simply the parameter.  It has a shift.</span>
+            <span class="c1"># find the shift.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subbed_index</span><span class="p">,</span> <span class="n">Add</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">InvalidIterationError</span><span class="p">(</span><span class="n">subbed_index</span><span class="p">,</span> <span class="n">iterParam</span><span class="p">)</span>
+            <span class="n">shift_terms</span> <span class="o">=</span> <span class="p">[</span><span class="n">term</span> <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">subbed_index</span><span class="o">.</span><span class="n">operands</span>
+                            <span class="k">if</span> <span class="n">term</span> <span class="o">!=</span> <span class="n">iterParam</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shift_terms</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">shift</span> <span class="o">=</span> <span class="n">shift_terms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># shift by a single term</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">shift</span> <span class="o">=</span> <span class="n">dist_add</span><span class="p">(</span><span class="o">*</span><span class="n">shift_terms</span><span class="p">)</span> <span class="c1"># shift by multple terms</span>
+        
+        <span class="n">start_index</span> <span class="o">=</span> <span class="n">subbed_index</span><span class="o">.</span><span class="n">substituted</span><span class="p">({</span><span class="n">iterParam</span><span class="p">:</span><span class="n">startArg</span><span class="p">})</span>
+        <span class="n">end_index</span> <span class="o">=</span> <span class="n">subbed_index</span><span class="o">.</span><span class="n">substituted</span><span class="p">({</span><span class="n">iterParam</span><span class="p">:</span><span class="n">endArg</span><span class="p">})</span>
+        <span class="n">entry_span_requirements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">coord_simp_requirements</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subbed_var</span><span class="p">,</span> <span class="n">ExprTuple</span><span class="p">):</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">subbed_var</span><span class="o">.</span><span class="n">entryCoords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span> 
+                                            <span class="n">entry_span_requirements</span><span class="p">,</span>
+                                            <span class="n">coord_simp_requirements</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subbed_var</span><span class="p">,</span> <span class="n">ExprArray</span><span class="p">):</span>
+                <span class="n">subbed_var_class_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">subbed_var</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Indexed variable should only be &quot;</span>
+                                    <span class="s2">&quot;substituted with ExprTuple or &quot;</span>
+                                    <span class="s2">&quot;ExprArray, not </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">subbed_var_class_str</span><span class="p">)</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">subbed_var</span><span class="o">.</span><span class="n">entryCoords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span> 
+                                            <span class="n">entry_span_requirements</span><span class="p">,</span>
+                                            <span class="n">coord_simp_requirements</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">num</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">)</span>
+        <span class="n">coord_order_assumptions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_generateCoordOrderAssumptions</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+        <span class="c1">#print(&quot;indexed sub coords&quot;, self, assumptions, start_index, coords, end_index)</span>
+        <span class="n">extended_assumptions</span> <span class="o">=</span> <span class="n">assumptions</span> <span class="o">+</span> <span class="n">coord_order_assumptions</span>
+        
+        <span class="c1"># We will include all of the &quot;entry span&quot; requirements</span>
+        <span class="c1"># ensuring that the ExprTuple or ExprArray is valid</span>
+        <span class="c1"># (the length of iterations is a natural number).</span>
+        <span class="c1"># We will only include coordinate simplification</span>
+        <span class="c1"># requirements up to the last needed coordinate.</span>
+        <span class="n">requirements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">entry_span_requirements</span><span class="p">)</span>
+                    
+        <span class="c1"># Find where the start index and end index belongs</span>
+        <span class="c1"># relative to the entry coordinates.</span>
+
+        <span class="c1"># The start is inclusive and is typically expected to </span>
+        <span class="c1"># toward the beginning of the coordinates.</span>
+        <span class="c1"># We&#39;ll get the first and the last insertion points w.r.t.</span>
+        <span class="c1"># all coordinates equivalent to start_index.</span>
+        <span class="c1"># The &quot;first&quot; insertion point may help determine if we have</span>
+        <span class="c1"># an empty range case.  Otherwise, we use the &quot;last&quot;</span>
+        <span class="c1"># insertion point so we are not including multiple equivalent </span>
+        <span class="c1"># parameter values at the start.</span>
+        <span class="n">start_pos_firstlast</span> <span class="o">=</span> \
+            <span class="n">LessEq</span><span class="o">.</span><span class="n">insertion_point</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">start_index</span><span class="p">,</span> 
+                                    <span class="n">equiv_group_pos</span> <span class="o">=</span> <span class="s1">&#39;first&amp;last&#39;</span><span class="p">,</span>
+                                    <span class="n">assumptions</span><span class="o">=</span><span class="n">extended_assumptions</span><span class="p">)</span>
+        <span class="c1"># Check the start for an out of bounds error.</span>
+        <span class="n">start_pos</span> <span class="o">=</span> <span class="n">start_pos_firstlast</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">start_pos</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ExprTuple index out of range: </span><span class="si">%s</span><span class="s2"> not proven &quot;</span>
+                    <span class="s2">&quot;to be &gt;= </span><span class="si">%s</span><span class="s2"> (the base) when assuming </span><span class="si">%s</span><span class="s2">&quot;</span>
+                    <span class="o">%</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">start_index</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                        <span class="nb">str</span><span class="p">(</span><span class="n">assumptions</span><span class="p">)))</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="c1"># The end position splits into two cases.  In the simple case,</span>
+        <span class="c1"># it lands at a singular entry as the last entry.  Otherwise,</span>
+        <span class="c1"># we need to add one to the endArg to ensure we get past any</span>
+        <span class="c1"># iterations that may or may not be empty and find the</span>
+        <span class="c1"># insertion point.</span>
+        <span class="n">end_pos</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">end_index</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">:</span>
+            <span class="c1"># Might be the simple case of a singular entry as the last</span>
+            <span class="c1"># entry.</span>
+            <span class="n">end_pos</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">end_index</span><span class="p">)</span>
+            <span class="n">end_coord</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">end_pos</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end_coord</span><span class="p">,</span> <span class="n">Iter</span><span class="p">):</span>
+                <span class="c1"># Not the simple case -- an iteration rather than</span>
+                <span class="n">end_pos</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># a singular entry.</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Check the end for an out of bounds error.</span>
+                <span class="k">if</span> <span class="n">end_pos</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ExprTuple index out of range: </span><span class="si">%s</span><span class="s2"> not proven &quot;</span>
+                            <span class="s2">&quot;to be &lt; </span><span class="si">%s</span><span class="s2"> when assuming </span><span class="si">%s</span><span class="s2">&quot;</span>
+                            <span class="o">%</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">end_index</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> 
+                                <span class="nb">str</span><span class="p">(</span><span class="n">assumptions</span><span class="p">)))</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">start_pos_firstlast</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="n">end_pos</span><span class="p">:</span>
+                    <span class="c1"># Empty range (if valid at all).  Handle this</span>
+                    <span class="c1"># at the Iter.substituted level.</span>
+                    <span class="k">raise</span> <span class="n">EmptyIterException</span><span class="p">()</span>
+                
+        <span class="k">if</span> <span class="n">end_pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Not the simple case.  We need to add one to the endArg</span>
+            <span class="c1"># to ensure we get past any iterations that may or may not</span>
+            <span class="c1"># be empty.</span>
+            <span class="n">endArg</span> <span class="o">=</span> <span class="n">_simplifiedCoord</span><span class="p">(</span><span class="n">dist_add</span><span class="p">(</span><span class="n">endArg</span><span class="p">,</span> <span class="n">one</span><span class="p">),</span> <span class="n">assumptions</span><span class="p">,</span>
+                                      <span class="n">requirements</span><span class="p">)</span>
+            <span class="n">end_index</span> <span class="o">=</span> <span class="n">subbed_index</span><span class="o">.</span><span class="n">substituted</span><span class="p">({</span><span class="n">iterParam</span><span class="p">:</span><span class="n">endArg</span><span class="p">})</span>
+            <span class="c1"># We would typically expect the end-index to come near the</span>
+            <span class="c1"># end of the coordinates in which case it is more efficient</span>
+            <span class="c1"># to search for the insertion point in reverse order, so use</span>
+            <span class="c1"># Greater instead of Less.  </span>
+            <span class="c1"># Use the &quot;last&quot; insertion point for the start so we are not</span>
+            <span class="c1"># including multiple equivalent parameter values at the </span>
+            <span class="c1"># end.</span>
+            <span class="n">end_pos_from_end</span> <span class="o">=</span> \
+                <span class="n">GreaterEq</span><span class="o">.</span><span class="n">insertion_point</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">coords</span><span class="p">)),</span> <span class="n">end_index</span><span class="p">,</span> 
+                                          <span class="n">equiv_group_pos</span> <span class="o">=</span> <span class="s1">&#39;last&#39;</span><span class="p">,</span>
+                                          <span class="n">assumptions</span><span class="o">=</span><span class="n">extended_assumptions</span><span class="p">)</span>
+            <span class="c1"># Check the end for an out of bounds error.</span>
+            <span class="k">if</span> <span class="n">end_pos_from_end</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ExprTuple index out of range: </span><span class="si">%s</span><span class="s2"> not proven &quot;</span>
+                        <span class="s2">&quot;to be &lt;= </span><span class="si">%s</span><span class="s2"> when assuming </span><span class="si">%s</span><span class="s2">.&quot;</span>
+                        <span class="o">%</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">end_index</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> 
+                            <span class="nb">str</span><span class="p">(</span><span class="n">assumptions</span><span class="p">)))</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">end_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">-</span><span class="n">end_pos_from_end</span>
+            <span class="c1"># Check to see if the range is empty.</span>
+            <span class="c1"># Note: when start_pos==end_pos is the case when both</span>
+            <span class="c1"># are within the same entry.</span>
+            <span class="k">if</span> <span class="n">start_pos</span> <span class="o">&gt;</span> <span class="n">end_pos</span><span class="p">:</span>
+                <span class="c1"># Empty range (if valid at all).  Handle this</span>
+                <span class="c1"># at the Iter.substituted level.</span>
+                <span class="k">raise</span> <span class="n">EmptyIterException</span><span class="p">()</span>
+                
+        <span class="c1"># Include coordinate simplification requirements up to</span>
+        <span class="c1"># the last used coordinate.</span>
+        <span class="n">coord_simp_req_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">eq</span><span class="o">.</span><span class="n">rhs</span><span class="p">:</span><span class="n">eq</span> <span class="k">for</span> <span class="n">eq</span> <span class="ow">in</span> <span class="n">coord_simp_requirements</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">[:</span><span class="n">end_pos</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">coord_simp_req_map</span><span class="p">:</span>
+                <span class="n">requirements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coord_simp_req_map</span><span class="p">[</span><span class="n">coord</span><span class="p">])</span>
+        
+        <span class="c1"># End-point requirements may be needed.</span>
+        <span class="k">for</span> <span class="n">coord_and_endpoint</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">coords</span><span class="p">[</span><span class="n">start_pos</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">start_index</span><span class="p">),</span> 
+                                        <span class="p">(</span><span class="n">end_index</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="n">end_pos</span><span class="p">])]:</span>
+            <span class="k">if</span> <span class="n">coord_and_endpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">coord_and_endpoint</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="c1"># When the endpoint index is the same as the</span>
+                <span class="c1"># coordinate, we don&#39;t need to add a requirement.</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># See if we simply need to prove an equality between</span>
+                <span class="c1"># the endpoint index and the coordinate.</span>
+                <span class="n">eq</span> <span class="o">=</span> <span class="n">Equals</span><span class="p">(</span><span class="o">*</span><span class="n">coord_and_endpoint</span><span class="p">)</span>
+                <span class="n">eq</span><span class="o">.</span><span class="n">prove</span><span class="p">(</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">automation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">requirements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eq</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ProofFailure</span><span class="p">:</span>
+                <span class="c1"># Otherwise, we must prove that the difference</span>
+                <span class="c1"># between the coordinate and endpoint</span>
+                <span class="c1"># is in the set of natural numbers (integral and</span>
+                <span class="c1"># in the correct order).</span>
+                <span class="n">requirement</span> <span class="o">=</span> \
+                    <span class="n">InSet</span><span class="p">(</span><span class="n">dist_subtract</span><span class="p">(</span><span class="o">*</span><span class="nb">reversed</span><span class="p">(</span><span class="n">coord_and_endpoint</span><span class="p">)),</span> 
+                          <span class="n">Naturals</span><span class="p">)</span>
+                <span class="c1"># Knowing the simplification may help prove the </span>
+                <span class="c1"># requirement.</span>
+                <span class="n">_simplifiedCoord</span><span class="p">(</span><span class="n">requirement</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">requirements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">requirement</span><span class="o">.</span><span class="n">prove</span><span class="p">(</span><span class="n">assumptions</span><span class="p">))</span>
+                                    
+        <span class="c1"># We must put each coordinate in terms of iter parameter </span>
+        <span class="c1"># values (arguments) via inverting the subbed_index.</span>
+        <span class="k">def</span> <span class="nf">coord2param</span><span class="p">(</span><span class="n">coord</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">subbed_index</span> <span class="o">==</span> <span class="n">iterParam</span><span class="p">:</span>
+                <span class="c1"># Direct indexing that does not need to be inverted:</span>
+                <span class="k">return</span> <span class="n">coord</span> 
+            <span class="c1"># We must subtract by the &#39;shift&#39; that the index</span>
+            <span class="c1"># adds to the parameter in order to invert from</span>
+            <span class="c1"># the coordinate back to the corresponding parameter:</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">dist_subtract</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">_simplifiedCoord</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span> <span class="n">requirements</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">param</span>
+        
+        <span class="n">coord_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">coord2param</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span> <span class="k">for</span> <span class="n">coord</span> 
+                        <span class="ow">in</span> <span class="n">coords</span><span class="p">[</span><span class="n">start_pos</span><span class="p">:</span><span class="n">end_pos</span><span class="p">]]</span> 
+        
+        <span class="c1"># If the start and end are the same expression or known to</span>
+        <span class="c1"># be equal, just return [startArg].</span>
+        <span class="k">if</span> <span class="n">startArg</span><span class="o">==</span><span class="n">endArg</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">startArg</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">eq</span> <span class="o">=</span> <span class="n">Equals</span><span class="p">(</span><span class="n">startArg</span><span class="p">,</span> <span class="n">endArg</span><span class="p">)</span>
+            <span class="n">requirement</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">prove</span><span class="p">(</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">automation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">requirements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">requirement</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">startArg</span><span class="p">]</span>
+        <span class="k">except</span> <span class="n">ProofFailure</span><span class="p">:</span>
+            <span class="c1"># Return the start, end, and coordinates at the</span>
+            <span class="c1"># start of entries in between.</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">startArg</span><span class="p">]</span> <span class="o">+</span> <span class="n">coord_params</span> <span class="o">+</span> <span class="p">[</span><span class="n">endArg</span><span class="p">]</span>
+        
+        
+    <span class="sd">&quot;&quot;&quot;  </span>
+<span class="sd">    def iterated(self, iterParams, startIndices, endIndices, exprMap, relabelMap = None, reservedVars = None, assumptions=USE_DEFAULTS, requirements=None):</span>
+<span class="sd">        from proveit.number import proven_sort, zero, one, num, Add, subtract, Greater</span>
+<span class="sd">        </span>
+<span class="sd">        subbed_var = self.indexed_expr.substituted(exprMap, relabelMap, reservedVars, assumptions, requirements)</span>
+<span class="sd">        if isinstance(subbed_var, Composite):</span>
+<span class="sd">            # We cannot substitute in a Composite without doing an iteration over it.</span>
+<span class="sd">            # Only certain iterations are allowed in this manner however.</span>
+<span class="sd">            </span>
+<span class="sd">            if isinstance(subbed_var, ExprTenosr):</span>
+<span class="sd">                tensor = subbed_var</span>
+<span class="sd">                if len(iterParams) != len(self.indices):</span>
+<span class="sd">                    raise IndexingError(&quot;Mismatch of ...&quot;)</span>
+<span class="sd">                    </span>
+<span class="sd">                for axis in xrange(tensor.ndims): # for each axis</span>
+<span class="sd">                    if iterParams[axis] not in self.indices[axis]:</span>
+<span class="sd">                        raise IndexingError(&quot;Mismatch of ...&quot;)</span>
+<span class="sd">                    index_expr = self.indices[axis]</span>
+<span class="sd">                    start_index = index_expr.substituted({iterParams[axis]:startIndices[axis]})</span>
+<span class="sd">                    end_index = index_expr.substituted({iterParams[axis]:endIndices[axis]})</span>
+<span class="sd">                    </span>
+<span class="sd">                    sorted_coord_list = tensor.sortedCoordLists[axis]</span>
+<span class="sd">                    coord_sorting_relation = proven_sort(sorted_coord_list + [start_index, end_index])</span>
+<span class="sd">                    sorted_coords = list(coord_sorting_relation.operands)</span>
+<span class="sd">                    </span>
+<span class="sd">                </span>
+<span class="sd">            </span>
+<span class="sd">        else:</span>
+<span class="sd">            yield self.substituted(exprMap, relabelMap, reservedVars, assumptions, requirements)</span>
+
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        if self.var in iterParams:</span>
+<span class="sd">            raise IndexedError(&quot;It makes no sense to iterate over an Indexed&#39;s Variable.&quot;)</span>
+<span class="sd">        if len(set(iterParams).intersection(self.indices.freeVars())) &gt; 0:</span>
+<span class="sd">            pass</span>
+<span class="sd">        </span>
+<span class="sd">        subbed_indexed_expr = </span>
+<span class="sd">        if isinstance(subbed_inde</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="IndexedError"><a class="viewcode-back" href="../../../../../api/proveit.IndexedError.html#proveit.IndexedError">[docs]</a><span class="k">class</span> <span class="nc">IndexedError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">Prove-It</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.asExpression.html">asExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.asExpressions.html">asExpressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.compositeExpression.html">compositeExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.expressionDepth.html">expressionDepth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.maybeFenced.html">maybeFenced</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.maybeFencedLatex.html">maybeFencedLatex</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.maybeFencedString.html">maybeFencedString</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.reset.html">reset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.safeDefaultOrDummyVar.html">safeDefaultOrDummyVar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.safeDummyVar.html">safeDummyVar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.singleOrCompositeExpression.html">singleOrCompositeExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.varIter.html">varIter</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Assumption.html">Assumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Axiom.html">Axiom</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Composite.html">Composite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Context.html">Context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ContextException.html">ContextException</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.DuplicateLiteralError.html">DuplicateLiteralError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ExprArray.html">ExprArray</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ExprTuple.html">ExprTuple</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ExprTupleError.html">ExprTupleError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Expression.html">Expression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Function.html">Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Generalization.html">Generalization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.GeneralizationFailure.html">GeneralizationFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.HypotheticalReasoning.html">HypotheticalReasoning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ImproperRelabeling.html">ImproperRelabeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ImproperSubstitution.html">ImproperSubstitution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Indexed.html">Indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.IndexedError.html">IndexedError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.InnerExpr.html">InnerExpr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.InvalidAssumptions.html">InvalidAssumptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Iter.html">Iter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.KnownTruth.html">KnownTruth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Label.html">Label</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Lambda.html">Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.LambdaError.html">LambdaError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Literal.html">Literal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.MakeNotImplemented.html">MakeNotImplemented</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ModusPonens.html">ModusPonens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ModusPonensFailure.html">ModusPonensFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.NamedExprs.html">NamedExprs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Operation.html">Operation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.OperationError.html">OperationError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.OperationOverInstances.html">OperationOverInstances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.OperationSequence.html">OperationSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ParameterExtractionError.html">ParameterExtractionError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Proof.html">Proof</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ProofFailure.html">ProofFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.RelabelingFailure.html">RelabelingFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ScopingViolation.html">ScopingViolation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Specialization.html">Specialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.SpecializationFailure.html">SpecializationFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.StyleOptions.html">StyleOptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Theorem.html">Theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.TransRelUpdater.html">TransRelUpdater</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.TransitiveRelation.html">TransitiveRelation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.TransitiveSequence.html">TransitiveSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.TransitivityException.html">TransitivityException</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Variable.html">Variable</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.compose.html">compose</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.concludeViaImplication.html">concludeViaImplication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.defaultSimplification.html">defaultSimplification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.evaluateTruth.html">evaluateTruth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.inBool.html">inBool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.isIrreducibleValue.html">isIrreducibleValue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.reduceOperands.html">reduceOperands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.And.html">And</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Card.html">Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Difference.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Disjoint.html">Disjoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Distinct.html">Distinct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Equals.html">Equals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Exists.html">Exists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Forall.html">Forall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Iff.html">Iff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Implies.html">Implies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.InSet.html">InSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Intersect.html">Intersect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.IrreducibleValue.html">IrreducibleValue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Membership.html">Membership</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Nonmembership.html">Nonmembership</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Not.html">Not</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotEquals.html">NotEquals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotExists.html">NotExists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotInSet.html">NotInSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotSubsetEq.html">NotSubsetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotSupersetEq.html">NotSupersetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Or.html">Or</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Set.html">Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.SetOfAll.html">SetOfAll</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.SimplificationError.html">SimplificationError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Subset.html">Subset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.SubsetEq.html">SubsetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Superset.html">Superset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.SupersetEq.html">SupersetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Union.html">Union</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.GreaterEqOnlySeq.html">GreaterEqOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.GreaterOnlySeq.html">GreaterOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.LessEqOnlySeq.html">LessEqOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.LessOnlySeq.html">LessOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.dist_add.html">dist_add</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.dist_subtract.html">dist_subtract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.frac.html">frac</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.greaterSequence.html">greaterSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.isLiteralInt.html">isLiteralInt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.lesserSequence.html">lesserSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.num.html">num</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.subtract.html">subtract</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Abs.html">Abs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Add.html">Add</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Ceil.html">Ceil</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.DecimalSequence.html">DecimalSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Div.html">Div</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Exp.html">Exp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Floor.html">Floor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Greater.html">Greater</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.GreaterEq.html">GreaterEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.GreaterSequence.html">GreaterSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Integrate.html">Integrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Interval.html">Interval</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.IntervalCC.html">IntervalCC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.IntervalCO.html">IntervalCO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.IntervalOC.html">IntervalOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.IntervalOO.html">IntervalOO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Len.html">Len</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Less.html">Less</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.LessEq.html">LessEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.LesserSequence.html">LesserSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Max.html">Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Min.html">Min</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Mod.html">Mod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.ModAbs.html">ModAbs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Mult.html">Mult</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Neg.html">Neg</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Numeral.html">Numeral</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.RealInterval.html">RealInterval</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Round.html">Round</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Sqrt.html">Sqrt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Sum.html">Sum</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  <li><a href="../../../../proveit.html">proveit</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Wayne Witzel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

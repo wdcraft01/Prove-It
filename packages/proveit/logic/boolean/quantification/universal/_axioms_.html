@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Axioms for context proveit.logic.boolean.quantification.universal</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../../../../../../index.html"><img src="../../../../../../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Axioms-for-context-proveit.logic.boolean.quantification.universal">Axioms for context <a class="ProveItLink" href="_context_.html">proveit.logic.boolean.quantification.universal</a><a class="anchor-link" href="#Axioms-for-context-proveit.logic.boolean.quantification.universal">&#182;</a></h1><p>Note that $\forall$ is a core concept of <strong>Prove-It</strong> pertaining to the <em>specialization</em> and <em>generalization</em> derivation steps.  As such, axioms are not needed to define the fundamentals of $\forall$.  These axioms just add some extra properties that are not intrinsic to those core fundamentals.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">inBool</span><span class="p">,</span> <span class="n">Equals</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Naturals</span><span class="p">,</span> <span class="n">NaturalsPos</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">P</span>
+<span class="kn">from</span> <span class="nn">proveit.logic._common_</span> <span class="k">import</span> <span class="n">iterQ1k</span>
+<span class="kn">from</span> <span class="nn">proveit.logic.boolean.quantification.universal._common_</span> <span class="k">import</span> <span class="n">generalForall_Px</span>
+<span class="o">%</span><span class="k">begin</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining axioms for context &#39;proveit.logic.boolean.quantification.universal&#39;
+Subsequent end-of-cell assignments will define axioms
+%end_axioms will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>If a $\forall$ statement is not true (the instance expression is not true for all valid instances) then it is defined to be false:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">forallInBool</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span> <span class="n">Forall</span><span class="p">((</span><span class="n">P</span><span class="p">,</span> <span class="n">iterQ1k</span><span class="p">),</span> <span class="n">inBool</span><span class="p">(</span><span class="n">generalForall_Px</span><span class="p">)),</span>
+                      <span class="n">domains</span><span class="o">=</span><span class="p">[</span><span class="n">Naturals</span><span class="p">,</span> <span class="n">NaturalsPos</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="forallInBool">forallInBool:</strong> <a class="ProveItLink" href="__pv_it/23389ee80d63e692259186aaa40454a9ba5ab2ae0/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is applicable to any universal quantification.  Note that there is no guarantee that it can be proven to be true or false, but it must be one of these according to this axiom.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Axioms may be imported from autogenerated _axioms_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-01-16 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>

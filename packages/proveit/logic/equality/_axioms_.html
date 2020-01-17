@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Axioms for context proveit.logic.equality</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../../../../index.html"><img src="../../../../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Axioms-for-context-proveit.logic.equality">Axioms for context <a class="ProveItLink" href="_context_.html">proveit.logic.equality</a><a class="anchor-link" href="#Axioms-for-context-proveit.logic.equality">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">proveit</span> <span class="k">import</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">OperationOverInstances</span>
+<span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">NotEquals</span><span class="p">,</span> <span class="n">Not</span><span class="p">,</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">Implies</span><span class="p">,</span> <span class="n">inBool</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">,</span> <span class="n">QQ</span><span class="p">,</span> <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">Upsilon</span><span class="p">,</span> <span class="n">S</span>
+<span class="kn">from</span> <span class="nn">proveit.logic._common_</span> <span class="k">import</span> <span class="n">xIter1l</span><span class="p">,</span> <span class="n">yIter1l</span><span class="p">,</span> <span class="n">zIter1l</span><span class="p">,</span> <span class="n">f_xIter1l</span><span class="p">,</span> <span class="n">f_yIter1l</span><span class="p">,</span> <span class="n">g_xIter1l</span><span class="p">,</span> <span class="n">g_zIter1l</span>
+<span class="kn">from</span> <span class="nn">proveit.logic._common_</span> <span class="k">import</span> <span class="n">iterQ1k</span><span class="p">,</span> <span class="n">iterQ1k_xIter1l</span><span class="p">,</span> <span class="n">iterQ1k_yIter1l</span><span class="p">,</span> <span class="n">iterQ1k_zIter1l</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Naturals</span><span class="p">,</span> <span class="n">NaturalsPos</span>
+<span class="o">%</span><span class="k">begin</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining axioms for context &#39;proveit.logic.equality&#39;
+Subsequent end-of-cell assignments will define axioms
+%end_axioms will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>By definition, two expressions are either equal or not (though one may not always be able to know which it is):</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">equalityInBool</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">inBool</span><span class="p">(</span><span class="n">Equals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="equalityInBool">equalityInBool:</strong> <a class="ProveItLink" href="__pv_it/73f6352d4b9c57bd488459471847814cbb959ffb0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKYAAAAWBAMAAAC4bPoxAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAmFJREFU
+OMu1VT2IE0EU/pJNNsnuZg2ejYVwgoUgwQg2VjlOUFErtRAtXJscgsoWkvMUvSgcWJzxChUL4bYJ
+/hxKkDOgKW4bQbBJJSIXnCqIh3AqnIWN85dssruDFvrg2535dt6befN+FvgPQlQfkk0BhVjjar7D
+Bu9iPu6VUMnx0Pzxxp0b7xc4/4TN6zE6dQXfl2yYcHbZ9aecr9JZxomqmE0BtfNexCZeZDmfpRea
+XoiqJIiAUuyCeK/d7n7o23yYIoy3Hk1PX4tR2SmhlnP8qc2ToXNWBb9RqXyM0TglcWV55mXoCuyG
+h1mCBp9USeC7tnqRvim/H5iKsTkvYHvWaoLlRvoWlwk6NJLrWAEe8HWBrlP89I3tTvkdsGsxNjcL
+GDDXc6XRT/vSHVSA7fzMznCM2vfB+TxMP8bmdwEbqUhSkEQTv4Ayr4xt3W4QIz3pcd7080RtkwY/
+mlCLRPshbWoTw+fU4XDerrFqWZpcph4mW4P82SqB2RKv33SXCz/0SZiFvu+diE3GT03SayMHEjRJ
+1za5e+SK8wKWuwIz7MccdHq8t3x8dMQm853x9+hWSR5nXC+iJVc0BBb9s7ga9v0EdvuQufR1fMjm
+m5bUFBf2k/OHcUSuKAr0Xn9ZioSw1z7jAjf5ODNXGvSQC1tYQTLeYq5pBU1k0Fi/Nl2BeHkW1Gbu
+kIx7qGZRNmoGLrsYo+kctIhImxCS6tg0eoaiwQz43qvTz1H2cbdV+3Ovy3s63eyzwoUQ72fc1GD3
+SxJRybWP0edBhc1RXnN1L2hFmaaAQszSX/EWPYH3D35xvwHMAqgmkf/s6AAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Equality is transitive (two things equal to the same thing must be equal to each other):</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">equalsTransitivity</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">Equals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="equalsTransitivity">equalsTransitivity:</strong> <a class="ProveItLink" href="__pv_it/15953cfebb497c481d8be77ed0e16c42a27f82610/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANEAAAAXBAMAAABnpbd1AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAoBJREFU
+SMe9VUtoE1EUPZOZZvLrJLQLFVFScKFUMcVC3UglhQotSFYiFiGrVqyLQcQoogQRKihF0Lqwm8GN
+n0AIWAO2ooNQBD+QlYggRBeKuokIdtOF976Zya+daOHhgXDe3Jt55913PwP8N1TlbdXv73pBvwov
+XssQUg/6+7pSwANezMpQCnW6njxwlkjPylBa6uR85Zyk64YMpe2dnJ+A2L1c7qIMoUC+kzdIwfye
+nPwgQ6nLojQUDs1PtDv6evQSIhlgBJjyO+aGCsIGvuOtvY0fjl5lXOGlfurxESBMEe+A4Rd3cCNK
+ShKw8Bw32+wGjMN06ATQjagtQyme5DEwuo7nDDdbDaTTXZWlBGxdJwcZV8nID9KqkF6gNg6UobDs
+gdnzDaXIQv+IN2+yopZdEoPh/Ve3RRRm/RfdFuH4R8Y74bgj5Oj2MJWm3aqj/M8fcXOA7ellq6FU
+1LJbNE7wNaO0otIbghwLtN3HvAugHLyM1vCsLaSwBY2aiWthrsJVdp2tl/agLNzfmm4vGfLyqH+u
+RLN1chPudT3VcXg1mKCKbsX+5TeXhZfCFr4VYR7DuNgy2ZynuOm9pVlaqUECp+vpqMCYLj582p6m
+TOwnHSbEO8Y4M2pCZXMPepn2YahJaQCpoHNXSlJJiYJWPIuaUr1zbPrLNHIwHMlHcM5Eb6BGpI7t
+ytaV1Np9WF7PpPZCnxHkYvDu7aYh6o+Ct/jyZKKIYRu3ynmiaGCzWVcypucWvTYIj5+AuirIRalv
+5l++Gu3DwdZNToDt2085TmPMoTXQO3wJNbP1o2kGrZ1MvkoneWAPObQWF/yVHrU+xhBesph8leYX
+OXKHpEKTudkfgDCcYn7TElEAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Equality is reflexive (everything is equal to itself):</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">equalsReflexivity</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Equals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="equalsReflexivity">equalsReflexivity:</strong> <a class="ProveItLink" href="__pv_it/97b1dd4e9ed3b749f492ebdad1f4680f58c765fe0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGIAAAAVBAMAAABPrCZEAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAVBJREFU
+OMtjYCAZPMAQYdqAWzWPAgPDBRDjNLKoCT4LghkYVoLoPmTBPnw6OBgYyoAUewKSGPcGfDp4FjBw
+AD3COgFJjPEBPh18Agw8y8vLa5HFNPCHVCYDw7e0tFvIQlFAXLWlciu646BiSxkYnBkY0pFleoBW
+L+C5wwgKRNYOMHBgQIjNYGBQYeBrQNYhxMDAxcD9gdMA1QqYmCIDAy8D9wFkqU9A8xhYEjC8DBWz
+B4bmAd4HaDqAAYYliCFiQB18DaBIXu20BeoMSRBRbwBOPqx3wQBiIUQM6CqGdCegKx+4MUIjJQcY
+TQX7GbjRogUmdgLIngoMASZQEEEAMPjmH0hkqEZzE0xsKdx932FSugwMz3a9Wn0ATQdMrAlkH8h+
+ZgFmmAcLCKQSCLDnauBCpDU8gAsWiM92Rq8jKrW/wCZYgk+HOzZBdjwZhNuAAQCEL1prSIrv2QAA
+AABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Equality is symmetric (it is a mutual relationship):</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">equalsSymmetry</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">Equals</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="equalsSymmetry">equalsSymmetry:</strong> <a class="ProveItLink" href="__pv_it/00337eac3723871d5661da0e358240a663e29ee80/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN0AAAAWBAMAAAC2xYReAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAoFJREFU
+SMe9VjFoFEEU/bd7u5u7vdscppAgyhUWggQVbFJFIkTQRsQiGESrS6HFFmIEUbdQSBFCQK0s3CaI
+HgkHyoGc6GIjRISrLITA2qTQ5jCghRbOnz+7uZ2dubtGHzzu9r83f/Zm/p85gP+MWCcYLaIO7xWx
+o4PtyC4+fFQYTgrqYB3PhcxTg+3I5/iwqjCsauIpglxkLB5iZ7zJPpyredltEfXYykU6w+xb9E7W
+Wl4uxEQ9vuYih4bZGSvPlpbuKOQjgnrY8lsawTA78mej8UUhXyJ66yHck36m0zzzZAGgfF4uiTDV
++iFSoB15GmBRMd8KsWz04B0+zy8j7uPXb/ApOghQCqT4WJRqYPHwMhasSIF25GHwVOuwjzhtdaEh
+SSEb/pAtX03e8nqq9UOkQDuyCm6kmO8HMS604HfuiJjj3daT4uP1VMvYKQXakW5UjfXzwdPY3M2J
+B7TzCS0DSpHM5wV4ijRnX7HmN9ppD0wKzoPL1+3yNuIzFcwueMl69sULa6kGFg9v88amFMl6wuIs
+29N4Dt3fx/0T4qWuCz4AWz6lPrg9eMs6Sd52O0q1DCgF2vmQx+wINXg9wt0paAvTuuBFOCZtb+mP
+XXNain5ggUTLgFIk/QAFrv/i0lk4J0xTgjudK77UT9c2X7zB8q/L/d5NtQwoBdr5kArumFkzqQsm
+kuL2iQAbI59n+3Vny8beeUaYKQdluOXDhJEUXSXkLHa9SU2S5ggnOEKkaPYP2Xm9sAkzETxqB9n7
+qBraoXo6b9T7iFKgXR4SOX4x3ewbnKXOBc3PK/q5kKO8bykF2qUhpm+He1cClpkz4AJ8qYjdHmyX
+hlTYq4T/+O/SX8R3y4z+LqoKAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>$\neq$ is defined as the negation of $=$:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">notEqualsDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">NotEquals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">Equals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="notEqualsDef">notEqualsDef:</strong> <a class="ProveItLink" href="__pv_it/c5793376bd5f3ed65f46b9bf759589707c82e7920/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAAAWCAMAAAA4nbqyAAAAPFBMVEX///8LCwsYGBgNDQ0oKCgQ
+EBC6urrMzMxUVFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAACwKje0AAAAAXRSTlMA
+QObYZgAAArlJREFUWMPlWNuy2yAMpD3lYjD3///XAjE5FhZYznT60OohO7GI1qCVgDD2n1v64DfC
+Q5yZM9jTIJ6x0B1r67wQ47efGlYqiDMzO/58k09Y6I4767wAne3unSqFPvDuB2qW6P0JC91xHxJB
+o3u2NDGK9xCfpr8ozdFZ6A5CBTgE+3JulhiFJ4iP088Sp7PQHYRexxEMzjSL1Oa3Q5zW70JP2lJZ
+6A6KdV6AWVeLjtpFHETjvDLWb6MsNehyybXxJrfsuY3KMnXMaMeUo7wAVXtRbahNJABMJXyIgfGu
+n21v9uurfr5btWMi1+LN7Zv9TuIx/GXqwjKjv9BOAuG8AEUdnMiy4gKgO6JbuUq/tGyrb6pfRSE4
+kWWLb3Mk2rEIcV6IdYAP1PlnAbDqSl1LXajxlMWrUvNLrjJTWS67/poWOd1hvBDr3GP6cP4tJ9ci
+3MdysrUCZZZ/aP4T2quhvBCL9nv00lSEV7KfMzWy33ALsTYXeTpIN8n+/PESrT7VeV3pQX9Q4efh
+3E7mP6OdBUJ5B9Tm2KtdqqI6KJJn2TA5lqoOAIN5NReflulne221+phEuO02Okzmv6TF+iXGO6Dd
+ji4qzo3XJFEe+7HI4B5ic2C6LJHxi+pveSiPRA4wxuLqdBkh72nR/RLjHfFUSfmUOVW6rBoZRDxj
+0t4l54b2eU1/Hei3Hny/vQKKuHTgtGgHxHhHDG8VVbnL8ybELxsMNxCRnjNJr4sPzr/mqWMhprg4
+/54llpnb295qWgbL3EW+vUVcDdlMVKx0tndZ+l3lo8vTDe+IJ63YrQirrkRVllVe78/vv1j66/FF
+H2+e/uL9F+MdEV/mIgKDlH9tjAoiIf3MlirsRa9ICp5FnzvQXCC8I6IHR9PWDb9t9a476b43zc1L
+2qtPe7v57B+AzjviLP117Rz7x+03cmkoGF9quhUAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>When two things are equal, one may be substituted the other within any expression:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">substitution</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">fx</span><span class="p">,</span> <span class="n">fy</span><span class="p">),</span> <span class="n">conditions</span><span class="o">=</span><span class="n">Equals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="substitution">substitution:</strong> <a class="ProveItLink" href="__pv_it/8d36a51e21a3e1f2d1a576f0cfdfe721d403af1e0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO8AAAAXBAMAAAARnwX+AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAvdJREFU
+SMfFVj1oFEEUfvef293bHKayECJYpIk5wcYqRyRGTBPUQgyiNonCgVuI8QfNIggWEq5QsLttDglB
+OTAemhRZJIVoc7UorE0QLXIYMIUiznszO7O3uznJQfDBm/123jfzZt+99+YA/pd4vS5MNqLYGPw3
+/63QFr586MHxURzMyQmJUc7EEEOcTInrIr4s9OCY1mQXf3es74shhjk21xvskbu0e786RW7zcFVi
+irUTZYY577n2sR85U9294wQlRy2AKazFKDPM+cLVeDY3d7eHSA/ReCGASa5GmWFOtsr158zMxx4c
+n8dh/cC4j28v33rFolmPEBXHrDsw74E2BaTHAWYxSOON6O5dquMRjb98bDrGpwSrkKeUuA9JytDJ
+0ZJtWAPI21wPgYl5llmZiu7eJen24ZDb8rEGejvPiuRghKg4xzItmGEFXeRaAN1lhkLc13Vx/AOH
+fNvHJqSJPBohKo6XaODnp9pcdbeACdfv9eBYaymcaMQ7DnBqXmpLOTZt7CnGtWk0L40ts3glmyL7
+uWM+SW2vKctiPyVoWeH5ErZfCnXmMwlfHeCcA72oQg2zY2h4R6fzTiRYon/vt46oL6bJk5gtDWkA
+qKivRGxYa6B7YpvOgpcceECnMGyu8IRiQXWQ5Ml6bxiayrGY7DAI/uagj2vuZbgDceWkOHAWRlyQ
+5SSOVOG0bRpPwWTwN96Wu/gGgGEcRjwfb6x8W8IcvR9xrDiwsXrRYr1ykCsYniwPSBVT/GUg4Bgn
+r1CopYEdl20BrwN4p5bZwXmuWqa/4g/ATWtUszX2gIFkWzmmSSG+ga4Do1wJXw1auAsFOemWiSm2
+JBTEVzEP7sab6RfsAY+btnJMk0J8A11ziYVW8IpE+RpJrQCn4GQdoHZl2upk+Gu7HLs5K92IrWNp
+YHIdjLolsZCJsOMgJ796mj3TFldxga+zSk3x15SVdYbiG4g04CECUfWxXtq54/icl0LF/xEMuiEO
+yY7mxDuWhr2W8t5t/RfNBeNeS11EOAAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>We can substitute the mapping within a <code>Lambda</code> map if the mapping is the same for all instances of the parameters for which the condition(s) are satisfied:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mappingSubstitution</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span>
+                             <span class="n">Forall</span><span class="p">((</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">iterQ1k</span><span class="p">),</span> 
+                                    <span class="n">Implies</span><span class="p">(</span><span class="n">Forall</span><span class="p">(</span><span class="n">xIter1l</span><span class="p">,</span> <span class="n">Equals</span><span class="p">(</span><span class="n">f_xIter1l</span><span class="p">,</span> <span class="n">g_xIter1l</span><span class="p">),</span> 
+                                                   <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="n">iterQ1k_xIter1l</span><span class="p">]),</span>
+                                            <span class="n">Equals</span><span class="p">(</span><span class="n">Lambda</span><span class="p">(</span><span class="n">yIter1l</span><span class="p">,</span> <span class="n">f_yIter1l</span><span class="p">,</span> 
+                                                          <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="n">iterQ1k_yIter1l</span><span class="p">]),</span>
+                                                   <span class="n">Lambda</span><span class="p">(</span><span class="n">zIter1l</span><span class="p">,</span> <span class="n">g_zIter1l</span><span class="p">,</span> 
+                                                          <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="n">iterQ1k_zIter1l</span><span class="p">]))</span><span class="o">.</span><span class="n">withWrapAfterOperator</span><span class="p">())</span><span class="o">.</span><span class="n">withWrapAfterOperator</span><span class="p">()),</span>
+                             <span class="n">domains</span><span class="o">=</span><span class="p">(</span><span class="n">Naturals</span><span class="p">,</span> <span class="n">NaturalsPos</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="mappingSubstitution">mappingSubstitution:</strong> <a class="ProveItLink" href="__pv_it/85008f9f0b8f5771cc88b57c10a902188d514b880/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong> This can be applied to any <code>OperationOverInstances</code> expression (e.g., $\forall$, $\exists$, $\sum$, $\prod$) since these are implemented as an operation on a <code>Lambda</code> operand. </strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Axioms may be imported from autogenerated _axioms_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-01-16 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>

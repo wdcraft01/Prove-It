@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Theorems for context proveit.number.sets.integer</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../../../../../index.html"><img src="../../../../../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Theorems-for-context-proveit.number.sets.integer">Theorems for context <a class="ProveItLink" href="_context_.html">proveit.number.sets.integer</a><a class="anchor-link" href="#Theorems-for-context-proveit.number.sets.integer">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">proveit</span>
+<span class="c1"># the context is in the current directory:</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">proveit</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="c1"># adds context root to sys.path if necessary</span>
+<span class="kn">from</span> <span class="nn">proveit</span> <span class="k">import</span> <span class="n">Operation</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">P</span>
+<span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">And</span><span class="p">,</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">Implies</span><span class="p">,</span> <span class="n">inBool</span><span class="p">,</span> <span class="n">InSet</span><span class="p">,</span> <span class="n">Subset</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">zero</span><span class="p">,</span> <span class="n">one</span><span class="p">,</span> <span class="n">num</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Naturals</span><span class="p">,</span> <span class="n">NaturalsPos</span><span class="p">,</span> <span class="n">Integers</span><span class="p">,</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">Reals</span><span class="p">,</span> <span class="n">RealsPos</span><span class="p">,</span> <span class="n">Complexes</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Add</span><span class="p">,</span> <span class="n">subtract</span><span class="p">,</span> <span class="n">Len</span><span class="p">,</span> <span class="n">Greater</span><span class="p">,</span> <span class="n">GreaterEq</span><span class="p">,</span> <span class="n">Less</span><span class="p">,</span> <span class="n">LessEq</span><span class="p">,</span> <span class="n">LessEqOnlySeq</span>
+<span class="kn">from</span> <span class="nn">proveit.number._common_</span> <span class="k">import</span> <span class="n">Pzero</span><span class="p">,</span> <span class="n">Pone</span><span class="p">,</span> <span class="n">Pm</span><span class="p">,</span> <span class="n">P_mAddOne</span><span class="p">,</span> <span class="n">Pn</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">begin</span> theorems
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining theorems for context &#39;proveit.number.sets.integer&#39;
+Subsequent end-of-cell assignments will define theorems
+&#39;%end theorems&#39; will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Proven</span>
+<span class="n">zeroInNats</span> <span class="o">=</span> <span class="n">InSet</span><span class="p">(</span><span class="n">zero</span><span class="p">,</span> <span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="zeroInNats"><a class="ProveItLink" href="_proofs_/zeroInNats.html">zeroInNats</a>:</strong> <a class="ProveItLink" href="__pv_it/96963c4a116b4edbad2dd70262237f9296baf3120/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAPBAMAAAC7N+rPAAAAMFBMVEX///9EREQQEBCYmJh2dnaq
+qqrc3NxUVFQyMjK6uroiIiLMzMyIiIhmZmbu7u4AAADSWfX9AAAAAXRSTlMAQObYZgAAANxJREFU
+GNNjYHh75jYDCnjxUeIBw61fAQwMKxlebUCVE+YWYGD4wMDAs4CBpwFVqmrDGQYGBQYGrgIGzm9g
+kTddq1aAGZV97BtAUvwXGLi/ggS4mx9AdVVv5+sDSeU7MHD/AQkkwmQYqlkPbIRJfQEJiMHtqma4
+yXwASYpPAEmK/UE1koGcWqtWQZ1RzcBX8ALqjM8gVxQg6WLYwg1xPCvI8XwLkKWYAwTAXmYBixYj
+SzG4gaxeyvAIHFCvJsCkJIGYFxRCb32qwQJsvdCgnPEJqIMPJfBYK6AuhAIAynxBe6QeIUQAAAAA
+SUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># In Progress</span>
+<span class="n">successiveNats</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">InSet</span><span class="p">(</span><span class="n">Add</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">one</span><span class="p">),</span> <span class="n">Naturals</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="successiveNats"><a class="ProveItLink" href="_proofs_/successiveNats.html">successiveNats</a>:</strong> <a class="ProveItLink" href="__pv_it/693be06eb794fa495f778b07725d082d9ef710cf0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAAAVBAMAAAAtL8hrAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAApNJREFU
+OMu1lU1oE0EUx//Zj8RskkmgoJ5kix6EHNyiiOjBYIUKglRLQbRI8JAiQsmpFaI1Ckou/QAVBC97
+qBXxEtFDxctiUDQVLQoFheAKpQRspSiIp+LMzmyziTvqxQf/3bdvZn95M/PeBvhP5v5xNCsUbs8k
+8aQJLDBnXjJBzXGF2QigW+0hMlWYhP7pAwaA+ywwKeFucrlCbHmdXsodwaizF0jTd4BR+hjLS7hP
+hQIpFfl96TDj1jvma+8TVUToRtheOvq0hLtNqGXxqnASjPtZ/Nhco+Glru10exmXZJC8NzZ2SYJV
+ylxSbpQntO+Nn+/uXNOlXJwDfhQKHyVc3ebKDpce22Fco5+5sZGNfbDuqHnGvQv0AsOyY3O47CNV
+8j2MG/cWEy22uLo5z7i3gR0gwaWq107g4RnuR0xPirkI8i2Mq2S80midm4VjWg91uoEUEo4f/zI4
+hBeGa4jSSpueCIXG18O46hpzuxsN/9wsLJEr1DlIJzgpv0ITZ8e/4nW1v4PLoBp7T69UJrZWKrkO
+7p5gvqrdw7mkTOPJ09kZ4Dkbq90o+dzINJdeRtpxpfuwGuTiVZTvA4YPASu7nJTF26dmrOx3/fbh
+ith469oh3CRfvRPkGqzTXlLdop+I8Tmki6r3ag32jOCyMmK6bGI2bknrjLzb6GO6aTjJ6wwRNvUo
+TV1dLBTOU+7FVcFVFrjoqkaftJ+bfvznEC1C03u4MCDmT22m1ybVVbYYRunCoEJyPF/lgH+QW4RC
++s0z0ce4OdFoa0uSEU5sDV3b0ce5qPvc+m/fFqWN+0DSUIY/S8njlINluizlugntH76TXlplyUCz
+43mW7m/QYjkuiWlFyUDf3/6lSkLh9kgST1j4BcjZtiuI3JifAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inductionLemma</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Forall</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">Implies</span><span class="p">(</span><span class="n">And</span><span class="p">(</span><span class="n">InSet</span><span class="p">(</span><span class="n">zero</span><span class="p">,</span> <span class="n">S</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">InSet</span><span class="p">(</span><span class="n">Add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">one</span><span class="p">),</span> <span class="n">S</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">S</span><span class="p">)),</span> <span class="n">InSet</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">S</span><span class="p">))),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="inductionLemma"><a class="ProveItLink" href="_proofs_/inductionLemma.html">inductionLemma</a>:</strong> <a class="ProveItLink" href="__pv_it/d0264aa0299b621bd4376e4ba0a5a560ddd4864a0/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">induction</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Implies</span><span class="p">(</span><span class="n">And</span><span class="p">(</span><span class="n">Pzero</span><span class="p">,</span> <span class="n">Forall</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">P_mAddOne</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Naturals</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">Pm</span><span class="p">])),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Pn</span><span class="p">,</span> <span class="n">Naturals</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="induction"><a class="ProveItLink" href="_proofs_/induction.html">induction</a>:</strong> <a class="ProveItLink" href="__pv_it/fad3901ec083ce758131ba87ecbafc7a6969893b0/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natPosInduction</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Implies</span><span class="p">(</span><span class="n">And</span><span class="p">(</span><span class="n">Pone</span><span class="p">,</span> <span class="n">Forall</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">P_mAddOne</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">Naturals</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">Pm</span><span class="p">])),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Pn</span><span class="p">,</span> <span class="n">NaturalsPos</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natPosInduction"><a class="ProveItLink" href="_proofs_/natPosInduction.html">natPosInduction</a>:</strong> <a class="ProveItLink" href="__pv_it/7edb62f7f68d2e8c624c0965dc9c39af199823bf0/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inNaturalsIfNonNeg</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">Naturals</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">GreaterEq</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="inNaturalsIfNonNeg"><a class="ProveItLink" href="_proofs_/inNaturalsIfNonNeg.html">inNaturalsIfNonNeg</a>:</strong> <a class="ProveItLink" href="__pv_it/a720796aeeafa0af8341b7a41b64f6c08ea9f5340/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKcAAAAXBAMAAACc8kKqAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAphJREFU
+OMu1lc9rE0EUx79JdvNzsxURxFuKgl7EPZSipdLQeBBECP64+ANCxa1ClT2o9eCP/AE1BKxeDUKN
+VpBQiYi9LOLJQgmCiEpgBZVS0UYP9aLF9ya7m43GxQQcGPLmO/M+mXnz3izwP5rVi1Ow8ve5p9Rr
+bCx0CR3ooC2tnrJw/GdR1oB7LBS6hHZcPxHKAQ0gD1ygYSTXHTPR8fT7tXlgHfAciFJQ5WJ30ID3
+ItTH9XqejdGCpDH0HaCUJycvd3n6bd7BzkXbyAyoBYaGaYuruv6mS+gRDtm+2xvZjpx11EysMsjQ
+eJZsYLyTZ+p3YbbqWFPU+41wg+2w4UJxQKkQNEbB2AI173ENb5g5mWWjdXnTwi9RCqZtYT1t8Adk
+seIjWlDJyhA0SD2JhOnEvHrYTBrxT1Y7NHKIUg9JDWu28A2QGkiKHOiv1+2LykBNLxEwRCdImEnn
+Mh9t/WIpGL6EdmiTumLhdQval8OK1l4HFMehkA1V86yff3ICijg2slkPlHVacyeFEQtvbfdNwNUK
+bokS/+yFKsVc8/gYHyWvV5E1RMWcsktrQYXOv3etHS3oBO27iL0xXiiZHijK5KVwMG5Q+UvZUA1D
+Ym55GS2o0PmWprw7naGaMWMv4+LvXjjQMepyvplSCFDA+1KJNHbrul5B6QGuuFCh0x+dpr0ZfGzR
+tnOazg3OicHFg3ZFfM1BJFKUk1Gx+BbCi8Z78apdN1F2oULHMm8ioOG7U6aGN3+nr9W9Ocll6lTz
+yLAl8VpZRrDmQoX+YczOUychlJJfvd13X92jC8egsvOzPbNn0i5U6Juba+arlu/T5yR7vn0c55g6
+ze85POczJxk+k37QiM/n5CH+CXqTskLv6Vv2R0v37voLXz+yLQ7T3TwAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inNaturalsPosIfPos</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">NaturalsPos</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">Greater</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="inNaturalsPosIfPos"><a class="ProveItLink" href="_proofs_/inNaturalsPosIfPos.html">inNaturalsPosIfPos</a>:</strong> <a class="ProveItLink" href="__pv_it/72a335b12b0279e063bbd9b9be14a7657ff1ca180/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALcAAAAbBAMAAADMngM5AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAuBJREFU
+SMe1lk9oE0EUxr8ku0mbTbYi4p+DUFG0t64ogtLSYEVERHOpCIoEtelBxBVqclEbD0KxtRWKIIqQ
+i1R7KL3UQ4uwBwUloAEPWjW4hx5Ki7ZQqIhQfDPJ7k7SmO1GfLBh5u3sb2be++ZNgP9g9//tc39z
+rbcJesL1w/fDDR6I1ctWh1zhmKbHrAcuGe7wqA7kWSPnEX6t2m6Gk0OQv81YcIXi8pw1hjzCu6o5
+g8YBoAlSf//W/gGabBVIkTuU8AjfWDVWH5QJ+Oyw4CvQQEGXPQozsCT2Fu4VPnF4i9kpwk8DkdF0
++qbHhSsbxJkGS5qQ9sXmTAH+np6VZPKzV7Fk6Kd3aofOOilLb5L2OJAQ4K30ohPoqUZYcwbHJu3U
+kRD8W3CVd+yPJU1uznF48fx0aMAuqBkx55uedsed6Zmli7HI+q1D10AD+gwWVBJFwoHjpLTXIfXR
+8qJQrCOhTnYZUT28YJbDU+f5odCwWnJECX4K+MKrzPZCoZRQDbPqbQe+SDJRjKgVtRd7fpgRtN1A
+ORwt42ysiRkBvgJ1GWU1hOCBbMXK1QyrQtenLiLCw4F4XIAzP/BwgkJoFpfKwhJD6Dcal1S227wA
+x9ugANdYRg7TkI+hVTRwX+Sg5sC5n+yNwZJvwaUE1F+kmRHWOSHCwykH3srE9IDmluKBPA5x3/y8
+UH24n9lLXVi5Qr5BPIlnWee7Jasga5xx4Ezn8NGem5qpzrQnk8kJZMdxy4ZzP0vbXSzq2GZdFXRC
+e6d3XubY0J3iTv3Dm+l3zoE/43EwWbaC7/RZPmbEwKgN537KWrcJn4af1nfLov4bjxXVUmkDVsNn
+drSZEguSLMOft+Hcj8AlnevcFtDx9Vwo9lL8Z3PnoF6g1qsjY1diNpz7Q0f5OZ+etC+W9nXAIxWl
+NsxiXnadcNutrSnd6yijUc3trvqLhTLu8NeoE45HruzaF1DNvwYR17jIdd38HuwP1Sy5J17EVJMA
+AAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intervalInNats</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">InSet</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Naturals</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Interval</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="intervalInNats"><a class="ProveItLink" href="_proofs_/intervalInNats.html">intervalInNats</a>:</strong> <a class="ProveItLink" href="__pv_it/7b3862c0e5fb260fd837475593f67e92b72ef9300/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPEAAAAZBAMAAAAS8tXVAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA5BJREFU
+SMfFll1o01AUgE/Tv7VN071MH8QR8W84hEzFn+FocYh7kDGQgTKFotAhOOiDtmNDVkXBgXZ7EQRf
++rKJICXIJjiHBEXQFWph4B90RhhYGFPYwD4ow3PvbZpmrU0GAwNt7s2553655y8HwPwayEdhk6/9
++ZSVZTnY/Msd+o9k1QpZ2OjGrXVkvMjI9EAZE7KfasiWwfZathTGIklwfv0MZxj5MXmYNCF7x/HW
+oFom117qUg4DBFDKyDFyC5uQ6YKYdWO/qPnUMe+TwYbGS1EyeT3nuFmEEaOcs05uNsyW7uU/UXKL
+2knIQiMl84/i8eumsT0Xj8ethziXMDj9bsn2joOhgopkuMyy6lck8sWUHIhEBlKWyU5c2to/PMU0
+YprTHdJDe5iQJxi5E6C//LJ3/kF2SOAyFrIhxXBKVNxXftKAo1SXLKzSWXl3h+QUM4T8gJF3gaAb
+Z6J0P9or+ppUncyFoGCsBFuNb0cUe7WJTQRO/ADCCk2msE6GbkcbDnYwsh98+uuPkqXTvQofTkO6
+soblYLaclygHT8JIHmVHYVdABAGxnjVqju35fCnCJFgUbuAgyMg+xa9nXxF/z/b+UPmM00iehQVt
+SuRV5OI6MsE6EsaqgmR7qk0nC4lDOLk2c4m83+8ple8h9erYEdlALpAN3jydwWQgckp2901Kmp9R
+USfbMEudCQgo5EhCroIM71y6taH/BIo/uolpfDk+1EArpZR+bSC7rqIFX/2BeVqBGHk5OqJZiyjq
+ZBe6z5aC9yoN7tOVZC+pR29L5PskdnvsdH+Zz7UzstfbXUn2XMDVSwm0ajvbBTc9CR1lFirCNy36
+vWiWEREmPdQky6K2iAzO6lkFNpl4xkeHkjPcEYlEZF5yZxcMX8ltBCdzjUDl3C2crsBU2b6oCFyT
+ZvsctWjsOUuD28wn3NgW4jb83SyReTTZT9WVjZJy7lcW2Zlh50sDOcv27xEXtWIhrMGV71pMoaJ+
+ZjCmnKeLxXY5ORorOgObGjyuDkb96CtHlJH5dFVnMAK2AxKVUz8321ez7iQMqu4kUYSW8t5zdUuc
+V64gc32Z8xBUuD48ykWct+BfqIq8B5xPmJySd89OK/YiBKP2IlHUI8zkg1qo7oZYRfGiH+t1Q1S+
+Pp+hMp9NuqxTVSvsUet9WH0yDNcB+6QqMr+BDnB93YbKur1pvWe+Vr89VNWVtSob6bdDfwHQwAJv
+tLOjbgAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intervalInNatsPos</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">InSet</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">NaturalsPos</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Interval</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">Greater</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="intervalInNatsPos"><a class="ProveItLink" href="_proofs_/intervalInNatsPos.html">intervalInNatsPos</a>:</strong> <a class="ProveItLink" href="__pv_it/e891a533be90ab3ec68928536e57fc88d6a62fde0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATIAAAAbBAMAAAANPB68AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABFlJREFU
+WMPNl2+IG0UUwF/2T3JJNpt+8C+CRNF62A9dtYhKS4LV0g8iASkopyVom0PwZD/Uy1H/XASFU/Fa
+UKHgl3xpi0VKlDvReoVFVKwHZ/DU0kp0hUOPlnpyBwZRDue92Z2dTUKzyYk0MElm37y3v5l5f2YA
+rqjP4f/GzFjT7lvn5suLS6zVWFOa5zdC1uhfRS30JttG/w78z2TLbm+ydJ2TuRshM/tVeQh6k8FZ
+TkYTnx+QLIM/Rj2yRmJTt6fmofI06D+f88lmONl7+DM9IFkKY2ko+rLrxa6P487dAFnQpqaum3oD
+YMUlsnGcSmlAMlIcj64Ry3V9rC0y34qJ3cw4RIYz1g8PGgG42I9F18iHd/HjZrNKZMPuTolMLxGZ
+cbxSeXHg2Py6Uqn0EaIfhHr3LPhrdldh2Q3IjD941vizXD4/MFm2XB6rRdfYzdqW0ednSCXxrNhN
+6121FJAp65xsJ8CoP0SZareltD84MSuTaRbEw4XgoBNSZwZvD57swxS/u26ukd/bAZmemycySsTq
+Gie7BcyqUD3qR8tVR/dTHMWFqELf6ZpSkMhYZzmcF64NTwQN7hG9V5lG7gcwV7HzaxABFjys3RHY
+WOVkGUgHk3oNHXN2j5OxUxfdMNn4XoobC9blGtCAOeHQTA+S1TAZGjwiet+zUQwrSSZuajb9CLBg
+yXw5iIy/OFnayQQJqcXaR7f97hqw/QUIk8HwSaBcc04mm4Of/C7qdZC12skQS6NB2+Q1U2uda2ZW
+cchzp55Ct/h7xjV4NiwWJTIuPcKSfd6FH2WyZazRX3x4qgBcD8kSI8cs38+YQYnsFcwJVcg6uBaX
+ZDI4E6xBwvMzGL2f4Z1N4AqnG0ZhiKTGvVZA5knhKwe2tpHFD+TA/OwfWASuh2SX7El/F9CgRLYL
+s20NvnExODVHJksFCVtpeWTvYIwVVXpP3WjcR9ILFyAg86QAp+32NUs+weZ4scp2jetp7J0Pwg5R
+d5hB+EUE4WnWJnNwLInTNr8Vo7A0PCrI/HwGMbZJ2VwaQy5m6aUd5XK5DrWT8JIg86SgvA4rNlwf
+OgXdgDh1ZROQnoL7tcprMngGQbna725Fx2fB9An1Jh7x1ujQNegXgixV9cgMFx07vmBjVc04SzT4
+LQeOCzJPqu532avIqQOyBf7+Ym6J1+wamOvwzG/eEDQorVnWCoXH2282q13y8VBdOjnG3Px2d8LO
+MJ/Q0I6ug9IQZCQFdZ9N+azUcXKchNidFumRn92ori0kpmHCTUyjQRgOXD1SvVixJTJlZP5xyDvK
+CJvyk6z/+QMnxgqCjKSJXfTqT2fdDrLNoL/P9Yjs1rlZR21B3lZbaFCKADVSjf2y87TNgyWFfiac
+U/zbbPU4bZNessv2BGTwdBSyxQ4ytctVKN7nPaAH2UQEMJ4YQ2QGbJysvW5CqG5CMoKjjUe7O2mX
+kTW73TcPdtwKtsinjzO9yfbSffM7uGI//wL300UoTgAyHQAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">allInNegativeIntervalAreNegative</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Less</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">zero</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Interval</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">Less</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="allInNegativeIntervalAreNegative"><a class="ProveItLink" href="_proofs_/allInNegativeIntervalAreNegative.html">allInNegativeIntervalAreNegative</a>:</strong> <a class="ProveItLink" href="__pv_it/8b1aeb2a306e00d642194580f48977903d41ce440/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAR0AAAAZBAMAAAD+oufqAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABANJREFU
+SMfNl0toE0EYx//ZzaNNNpuigqggUXxdxEW8KEqDDxQPEhDroyrFR4qokIMaEbWheFAUKYjgzVxU
+fBJEPaRVgiiIYgl6KD5ZwWKpaEXBoJbiNzP7SraNTdqDC5vN7O5/5jffa2aBmg//ux6M7zH/XWYM
+6jDG/QjE/jsefQw8arUSKTviIyUqeAqs8aw2Hm4hJTt6yaLhb/d2rgfWC56r7MbZ2niCHXSpq8LC
+I4zzAl801AmeQ+zSUhsP1x0avSLkMuVBjd0uIJSGkuE8bHq+jhrjmc138+gVnnJTLmrnHcUgFaE2
+cB7lSip1rNb8eppKpQqjV8wrb6/gl0gc8i9gj8j3n4nE61p5IonE/ipK2BbKsHupzrVG88JGcW3L
+QP4DXBI8xNhq5eNJV4aKiaTNdvB63MHj1eBPlrx/JF9qgTSkG1brDOm9pzGg8db9W7B5fhOe4JkF
+1RqNMYq1YNKl3Xxgv6AwII4jR+/bPFIMfaUFbXLpdJjQZ81gAjAz3IIBVmpw0wpug2eG4AkjZM/p
+FJ3q3Q35cDL4Wbd56kTA97biJSK6oz4X0GVKmQz16VIeJrTvfQd0grnIelATUScP+atR8ITyYTvs
+i3Tem/tVV7D0KGyeCHdKfzvUIYQ7HDxdeG9KmczFw4QlPAxmDW/Ia8yOWDwPWjxqmlXNg7mdLFr+
+3NEVYd543MGzoHMdgZPxZOLJOnj6ZOrh8e0c5Sl/n40daL6smQRMaPNMoXMTMCjWmcA2wy+U7/VF
+y19oXU5QPYEhXpmUWJ1YThZrDp77eITQGQZcxuM/EIX6cJDcKGRs7C/JNsvgTGjz7KNzKpShoOHh
+mw9EmSwgSFXjicFznv574zKrI/6sUljC3+nvh4NnL57Lb7iRy3jqt1Enn9PkZyHzUvavwjLLXySE
+OtmRLYHvCLacM288Fyn2Ch80K9/hoQEi0RD/q/laliUSiSwytyiZLJ6JaFKbWPypRXic8YNpDCIr
+NYDLpBM8Su5YPCQkR5gJNp8M3IDAXns5uMC90HudFcZ2g0ch6w7o/m4KvQjC+Y+87JzL44rN8w1v
+oTZpfIBI0snTLWYRj3IZfBkW8vs+meNxoWUfT7JCsTTWC3NlaVyqH06GqSh5mcjng1SweQo8TlfS
+kxzmuPZjbfAs1LiMx8p0+Ud34CwO6/TDhJIVP0qlWh7MOnik5mdb0ZiXmml+O6j9aOW1/TGbZ3aO
+B8+uJEKd2108c+C7IWScZ3bX3bxcRGOSfpjQUQMq7Wv63PtVkX9BFj/Wpt35XN5ZYb/KZeX1x2Q0
+jgMVeFa7eORh3Ouvbv/8D57AyHvJkObiUTBmnvL1i8d4fBy/L7wVeIb7/jrisoDUVcX3V+wv4zcP
+OpWkcLwAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">allInPositiveIntervalArePositive</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Greater</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">zero</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Interval</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">Greater</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="allInPositiveIntervalArePositive"><a class="ProveItLink" href="_proofs_/allInPositiveIntervalArePositive.html">allInPositiveIntervalArePositive</a>:</strong> <a class="ProveItLink" href="__pv_it/c56e8b8768c51711061dbf0804ab6676304698200/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAR8AAAAZBAMAAAD6VzfXAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA+xJREFU
+SMfNl0toE0EYx//ZTbJNskmKD0QFieILRVhEBKXS4APFU0AEtSpFMSIq7KGaUtQG8eCLUhDBm7lU
+8YEEUQ9tD0EURKEERYr1wQqKxaKFCga1FOexmZ1N2tikPbiw7M7s/L/5zXzffDML1H753/djeq9V
+7zNTkYcx7ZcW//+ArKkARaqVKNkJP+kxDpSnhRc1ArE50rOTl6wZv/pzzw5gBwe6RSs6agQKdpJH
+XRWTPEFHL/HNQB0HOkkfzTUCMeHJyStC0mRqm5zqPEJp6BkGRMfn66w1qOmId09e4ZEnc+0BYSgO
+pYBIPQPSb6ZSp2teZc9TqVR+8orlrlLLBfslmoD6CzjCl/3PZHKgZqBoMnm8ily2h6yzR6me7Xbx
+6zv+bM9A/QN0cSDiysNiVZ4vW6elFcE7CQnIa8Bvur635VxyYnCFU3OZ6L2XMGzY5aEBqwj0G7jG
+gRYjkhaKruKuMKvrEOvY7wQh77ibCBwgJY5Bd2ab4+anBneK0gxgUbgZwzGRfF5bDtBCDhRGyBkC
+9Wrk4c5c2AwOWSVAh1jFK0QtKVPn0VtsQHUIpN1A1OA1URoBLEJzXcS2us10XNbIgUK5sBP7BXI/
+Wvbd0tFwCm4gKBdJu8gYwp0SUC8+FL9TXRlQoRSI0mwTJpNGMahHBVAkTdPnie6DtMGfB5bOYySR
+kIC0phtEGbhEhkSAshLQoEpMPL3fTZYrE1Ag3pr3SAxKQHPJvQsYtbecwDmzuOwDBeEyHN5IqPq1
+MZah9Hgdd+46QwL6ZrbTWdQvQykB8rfEEHk8SjzJdRTIbg3boAR0jNzzoI8FeR8DlkiMQZI8ntlA
+V8m7N6HSdOLP6vn1fEV+hQS0BRu4sr90hgL7iJWhNHEN13kzTmvbID6aUohrIwg2X2FdvBWh8gYf
+DbHs4SEdRGMh9mr4mjckk8ksMvdwxgEawQOe2DKRAjxyDGE+pcgq9WA65ZzU2jYIZbY4gBEn1kM7
+Si1o76TN9Q7dR87aQDoBHbb8fWQcUYRzn5jvr+RwUwCRSD72hSb7/cBMRE0ZqI93m4gxHXwZ0ZqF
+KzEozZDHrJA17a2juMk0NlitZpj420tFPh+UvDNDC9QfpOO1W1keWlp2QGuHZ7XBdCyGaGutA62W
+1kENShuGXimrB7MSkNL0Yi8ac0oTGSDd855svn087gAt6X2YQwtL6KGe/WVAS+G7y3UMiLZWC2g0
+1QI1KAV1xXPOYPkRlifIII0hEZVOGjr4jyMs05XmIbjyEFoqAG0tA1LH8bC/yjP1P4C0iU+XIaMM
+SMfUgUr3Mrj2smn46/BWAhrvv6ytbA5W5qr4L4v/BQTnGGbDSqN+AAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intervalLowerBound</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">LessEq</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Interval</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="intervalLowerBound"><a class="ProveItLink" href="_proofs_/intervalLowerBound.html">intervalLowerBound</a>:</strong> <a class="ProveItLink" href="__pv_it/f1891b172d63b86c7e5e00bcea94b6ad6a28ad4d0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAAAZBAMAAADEVw+wAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA4VJREFU
+SMfFlltIFFEYgP+d2dnr7GxUIBHECllBREtEUCguViAEsS8FZYEUrQ8pzIO5YtkOYVAQshBBby2B
+SiWxmAbZBoPYi5It3QQvMYKVKOWSkA+JdC7OeGZWd0cQOrAzc85/9nzn/LfzAxRtrslR2NzGTY7Z
+mBWAzW+N/42r2eBKG1Zken3ZAOVm8Wu4MJecWEzb5x4uIBPChPsEf7cX5vqS6OXR7HOt6/k/MB2F
+cJvQ011bmEvkTfaxfotqZsfZ3hDh4mMIySJ+hfd/zj7XYVbNtwlTd4pwxa54vLWYPw/F4/Gsfe4+
+s+/eteSDJImjP7HYWDFuMBZrSNnnnse2O/W4hPrYLX14f931XrSKL0q4xwHqDP+/szbXGQaXbBps
+Uc0nVIDrNnr30K9UduXw9/fLxnCqOi0tAHgVwt0NkmKIOnRdbO+4El3lchGYMXHcJea94TMI+h9g
+K5qwBALxVv+4bmwu9AWk3+i9hXAD4F/dOzaF1HdGDci+OY3JV1nI6FOwmOyZbZ4kMGNocWcOAtSr
+xbGVhSQE9S4D8DnC9auBVfdbRL+Xe39pIpTfYPNkBr7qXSzO4wZlCzdYC/Nh2vPeXjERgjoVgysp
+OLtc68d24P72aiJVVzTKcmf4CMDbnv4IUDFmuGs6w/qcg69PM9wdAIk0PNJzMNdG5wkKBFVN1zPU
+VSH4qHsZGyMrRjxUO0fDLNfVGAJpYAk+AhVjxk85YSjqDQwy3HqA+SRUe/Ul+Bj5cqTgvZYCkfoV
+PECR6YzyOD5daTF7jKaYWdN95L2IzjenIDtQsRPFw0moMOZchXcglTDe6VG9n32GmK/Cz0QIOtFe
+VuIIHMj+wZA/gj/DQm1FLBZLQ+o53GTvwZ0YlkYqImKujVix11h4G5xFoaOb5gAO354jPZaALEXJ
+9hXaUohyRaStec01gqwfhIA6TUxyX4UuljtCdxUNTVNTpUBahvof+pI5mGDO65ALZZUp5t53aJXl
+WrMcgIfgxH8SBOCy1ns/AY5DYSImttzFL4y426FZQ48sGuAM+4oFc9szhsvVDF+ASpWrQee4hPqD
+J542RKzcPSB0UzHhlmX6VH4RKmX0KOtn44i9B1sncWPuQUnJq3No/vBh+65f5xCxNX71vdgon4jC
+TBN42XZ9VYTrLlCbvMjbmGi/rrPmZ+Jr0U2uJ9eqn1vyTsRlNlA/f/oHNuD1dIW0Xz0AAAAASUVO
+RK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">intervalUpperBound</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">LessEq</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Interval</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="intervalUpperBound"><a class="ProveItLink" href="_proofs_/intervalUpperBound.html">intervalUpperBound</a>:</strong> <a class="ProveItLink" href="__pv_it/53627333c645c1c68307d576b2ec677e16491bed0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOwAAAAZBAMAAADAot+NAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA5BJREFU
+SMfFll1IFFEUx/87u7Oj6+xsVCAVxBZZvoRLRFAoblkgFTEvfaq0JK0PKuyDuSKV++BDUciCBL7l
+i0mlspT64EcMYi+KslAgSMYIQqKUYqAPiXTvHWd2dld3JxC6MHf3njNzf+eee865F8janHMz2NPG
+zc1aeMuNPW8N/wurWsBK/+zG2K6qMQ0bpz+TmbFsvWLMOvbsjlLpIoHxPoZ9SwVtmbGuKPnJUa1j
+0+Yb9dI+x0+6CMM2kl4IZMYyfaN1al6KY6ReTeCh5k8wLF0EH80SUtT6u9axtmTHSFWK9qeIyucZ
+VuwOh59ki+SJcDgct44tTBoJ5fqqelkZiLIEWg8GZ7NhPcFgfad17D0Sy4Ph4atsYC/36vLW4euA
+S2bYMqDGCPxnO2MdPjhDScJmJXl9EXA9xuglmdzxAis0aKWgz3D2Ojw+5EYY9gSkiPFBl14QD3Y9
+lBNYzo/FZMflJ5tGl8DrH2A/cNwdwApb5ugnXZy7BVsnuH0M60ZewvLn1KiBm4o75FpWTVUqjhHD
+ZqJmJptbDtmwhGwNUAnztTbDVN+2mI/AI8O+yrB5ijsReBvkGTz1SxVR/NhcHEfwXR9SdRrWE0rB
+Umb59rDj9vZEMooUHStFaE15NFRN9/ZPvypqvpJlM3bRTjL984chPzQ1RQgVb4xtKxq+YcIeIs8d
+YFMvqoVletreV3Uno+YSYc8IWzTP46I/h70inveZsc4GL6SxTXyBpqaIn6EWw02jGDdh68hzGOKW
+Sxecq2ZYH5FC1EIKr0hGOmQ7zUtnTIxfYC8uLSWdQLlVZHXLEbIJmtpB0ukKSox3ajEFKd8UmMIa
+XIH2RJGm0eWI8n4jgWAjlcvjzaP10ubjAyXBYDCGzj48NR98R+hnMeIgpuZa2Q72G9MewC3gmL4v
+p0FdKdSmFD/pWiWNPq+GFYmrVlTnNIkKD9zKAkvgdgXdZuy0ZpTsXdCCshPSFup+6DOu4ptptbZQ
+hloybzrmbWppsdoUcqMDDvoNz4OLpx7zLbCd8TE128ej9t/TQhuaVNLFiYAz9lbMVNHem7BcxWQl
+ShWugqziARmPX35X70/FngTfo6kZtmBkQLFvoDREuoIhcwKZDz5hjjWjQEqRtEuNVjZcdG93v9Qw
+dWre6qZkvysxbyXp7SHLd6ksWGH3m8jHNLNE61e41JrMwkze25vjTvfk5rT1cCPW78lf/wIfV+7J
+urs20wAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inInterval</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">InSet</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Interval</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">,</span> 
+                    <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">LessEqOnlySeq</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">b</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="inInterval"><a class="ProveItLink" href="_proofs_/inInterval.html">inInterval</a>:</strong> <a class="ProveItLink" href="__pv_it/0aef9d29580dfd0d524d6107307ba43742e68ae80/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARMAAAAXBAMAAADaYbYpAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA7BJREFU
+SMe9ll1IFFEUx//uuo67OzsbCUVBoH1AEeEGPoWQfUCiUvtihAqZwUoYtQ+mvmQ+FBRuIUTiS7UP
+pUgkQhGiFEMfFEmxD5GlCeNLD30pBUZY0jl3Ptdddwu2LsyduXPPnPO7555z5gL/o8kNGSZ3DBgP
+Wk5tuobTvVUmM360vQd4SPcED8ZzhVKW9q1/bhlxZReb93TRFQIG+dWlXKGkV+RbsZx8YYU5TTht
+dJMac0TiH/5LlGCPOf2cuChYPD05QslLiryPF6ffZEEp1czpGQrugfb207nan83OgTumZfXKbWu6
+gNwxH4lM5gqljnLoXvtYlRi0aUkb1DpaEk354OxYjTHtCwN7gGYrF88vZ6Q4ky+6zKcYqczvxmyI
+B5ZWkSKu1TiZmkHzCIYgc4J5SWYjFEsVbi6RPVJ1sFY8JAd2rx0T3hNiQXpbCawPNGKWwRX7k+00
+PqPiYAqKdxF5ceAce4FcE4BfteYuOKOutgETGHqQitL3wFbWraHQivqvVDKJ4zqTutZNT+thW1ZE
+3QFgKgWF3BWkdRSQN93kGr8asNf43ZGYTZ1foLqfqikoz+yUlbs5I6MOFOaoFFFbYUmV0IbNQ/mW
+ghIIo5T0c6wyitLFJfLU6FFeycJdwpLrt94AnujcHjhQhNQIw+ky/pjIyLH9huo1dB0Cfiq8QQnL
+Yn4XpAV455Q0ZeWwpscKbxCad9N3E9IieyIh01o+laqBEPQAenTZgSKkrortEDLet2LuPh4bqo/T
+tRbyoo8HNXaJS0D5QUCXzX8ed8xFMbvWyCCZ7V0h/PywmxdRMCzTrXOEfO6OC+NDcQeKkPrQxI9C
+RukXidWCF3bUS1/haxT8n4udyRzD1TDpUn7B6GbZbI+nwpHMyKOtDxb7eWvzQh62WY0SuF9HIi3w
++TRJs1B0qY/HYMhAuccuKrJyY5twtNQiHCedCzlQWsc2tBCbsgpGN0MqleoGs+wUMrhMtma1gpcU
+fEEEVKG71qWIqNtSDl/UQjGk/BcMGbqNkNU5vDMLf1IR81ZmLfz29Iz989hZrnVEA+hDR1SaQ9EG
+7OP34TCv1EQRUgwfgy7D6aQi4TULkxz/y9+hPX3LKrP14w3Yqbrq49w3ok7Fe/KYvLeq/5WNIqTE
+ejVdhts1bBrNckiQM6NwMXaUWdFURw/0U6xY7Q+PEa3pT0hTmU9xtOj85P+TO2r3S9sfokjpDyzy
+YLaz7Z0lHzj65VF6I9T0+uzlxxP4z63i35v4DUH0+jHxTUG/AAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsInInts</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">Integers</span><span class="p">),</span><span class="n">domain</span> <span class="o">=</span> <span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsInInts"><a class="ProveItLink" href="_proofs_/natsInInts.html">natsInInts</a>:</strong> <a class="ProveItLink" href="__pv_it/70e508340a9d87d9071e5905dab1a885e5b0ec720/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHYAAAAVBAMAAABh6QfWAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAhxJREFU
+OMtjYKAAPMAnqY1bikeBgeECiHEauzyzAxZBzvt/O2QbDzAEMzCsBPH7sOvlwOYo7tYHDA1sQEkG
+hjIglz0Bu97d2ARZFzBwTVgEdPQCsNmsE7DrlUPmvO69ewNEszxgKAF5hk+AgWd5eXktdq1MDch+
+70F4II8NxM5kYPiWlnYLu16g6xgYSnYpFoA4ZQitPBvOgKilDAzODAzpOILqANBucYZ8MAdJzTM+
+cPjMYGBQYeBDdptFqAK3KMQORmAU1h9gCAOx+ZCC05kF7BJFBgZeBu4DUEG+raEHeBLWMayDcPmB
+ev0ZGG6D/S579y4krBiYArTAtD0wvg7wwryyTf3dA57TrMh6vzHwfUZLJhwMQHcuB+vlazABCpTu
+SmbgCQAFhKX5BqhexgkM7L8ZOD/wgZx0Aa53JRckOSqCQsEJKHWd/R8opQD1Gqw7DNXLdoCB7ycD
+S8NkEMcHppXdAWgXlwADwwkgZyrQDJYA5gsMVhC9XFx+EFVcQHf0MMwNAEUVw1sFqF62gjwGvqgE
+cBwxMG4AeY3bgcE2LS1tA48B+7l70LQBNLRkt3I2WBd7qwFEVDFDLK1fDGhsE8gmYFC9f8B2ruAJ
+xF4G5X1QK8RR8o8HNJxhkSIAZTA+sLd5AI42oF4eqH8ZTuHL21wbYEk3+nQMA18SkKUBJBzw5UEY
+eIFmFNC/yHx2Bzx63QkUSNW4pbgNGAC0un4nnw6qzAAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsInReals</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">Reals</span><span class="p">),</span><span class="n">domain</span> <span class="o">=</span> <span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsInReals"><a class="ProveItLink" href="_proofs_/natsInReals.html">natsInReals</a>:</strong> <a class="ProveItLink" href="__pv_it/413af6371478b4ed546b9c1f59983c05c27dab5c0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAAAVBAMAAACOK2zoAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAhJJREFU
+OMtjYKAEPMAnybQBt9whIL4AYpzGocAEi9iJb/kdEkBDWQ0YGFaCBPpwaMYqnlDCYDajgIGhgYGh
+DMhlT8CulxurqxNKGdieA3WcYmDgAHqadQJ2zYzIAcK34+7dBqhmLgOg5ocMDDzLy8trcbhaA5lj
+cQ5hM1gzG9DKb2lpt3BojgJ5yXuROIjNnofkbBaQs7kCGBicGRjScWjuAWLFArYPIDZbAZJm3RNA
+HifQEyoMfA3IrgtV4BaF+lUIaOEfBlZwcD5DBFjh3RugQGISYGDgZeA+AAuTraEHeBLWMayD8j8x
+MLB8YOAFh7ni3bvwAFNlA5nODHQR9wFeWKBuU3/3gOc0K7Jm/gSG9wao6SWhlFXZAaqZrwEkXror
+mYEHGAIMPJbmG2CaJRkY6jcwzAcn4bfI8dy3B+pshnQnoAnX2f8xcICkeAzWHYZpzmFgeD+BwYMT
+ZDXLASTNJixAIR6QJ6YCkzdLAPMFBiuIZi4uP6iypcA0dIDzKhc4PC4haeaakA6JKgZGYIDwK3A7
+MNimpaVt4DFgP3cPqkwXFM2bzDaBORXB8IyRzNDWP4GBQwFkF9BL7x+wnSt4ArGZQXkfLHkWIMf6
+lN67yHEKSp6wVGxv84ClAKKZB+ZnngX4MvtqeK6PPh3DwJcESs9AwgFvloQligZUPhfQzygCJXg0
+sxQQKKPY8RRDmxkYAD6Zi3FYdfnKAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsInComplexes</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">Complexes</span><span class="p">),</span><span class="n">domain</span> <span class="o">=</span> <span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsInComplexes"><a class="ProveItLink" href="_proofs_/natsInComplexes.html">natsInComplexes</a>:</strong> <a class="ProveItLink" href="__pv_it/fe5b45e3eeea127c3e03bdd32b4d276afa094fe30/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAAAVBAMAAACOK2zoAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAhtJREFU
+OMtjYKAEPMAnybQBt9whIL4AYpzGocAEqyj3jX7ZVAZWAwaGlSBuHw7NWMWZ9RX41m9hYGhgYCgD
+ctkTsOvlxurqAz4MDJxfGBhOMTBwAD3NOgG7ZkbkAOHbcfcu0DIGngcCQDKEgeEhkL28vLwWh6s1
+kDkW5yA0K7sDkHzNwMAGtPJbWtotHJqjQF7yXiQOYrPnQQWfMi2AMLgCGBicGRjScWjuAWLFArYP
+IDZbAVTQivMAhMEJ9IQKA18DsutCFbhFoX4VAlr4h4EVHJzPYAqsmKCamYB+52XgPgALk62hB3gS
+1jGsg/I/MTCwfGDgBYe54t27kAB7xgx1NjPQRdwHeGGBuk393QOe06zImvkTGN4boKQXjgcOCM18
+DSDx0l3JDDwBoJiwNN8A0yzJwFC/gWE+OAm/hWnmWQDSzAdxNkO6E5B9nf0fAwdYzmDdYZjmHAaG
+9xMYPDhBVrPA/MaQow0kdB8w8IA8MRWYvFkCmC8wWEE0c3H5QZUtBTryAOdVLnB4XIJpZnHbx6eW
+B4kqBkZggPArcDsw2KalpW3gMWA/dw+qTBcUzZvMNoE5FcEw3ab3PzqBPK8ATm9A1z1gO1fwBGIz
+g/I+WPIsQI71Kb13keMUlDxhqdje5gFLAUQzzzp42ODL7KvhuT76dAwDXxIoPQMJB7xZEpYoGlD5
+XEA/owiU4NHMUkCgjGLHUwxtZmAAALmggfvUC+0oAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsPosInNaturals</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">Naturals</span><span class="p">),</span><span class="n">domain</span> <span class="o">=</span> <span class="n">NaturalsPos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsPosInNaturals"><a class="ProveItLink" href="_proofs_/natsPosInNaturals.html">natsPosInNaturals</a>:</strong> <a class="ProveItLink" href="__pv_it/bcce1d2811cf7024aebc933426bfdbf8208738780/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIMAAAAVBAMAAACXjEALAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAi9JREFU
+OMullE9o03AUx79rk6Zpfs1EEPEgVBTcRchhTB2KZdlhopMh7OIfCAqZhx1ymNtJ7MXbLL14VgQZ
+IoQw0YOCFL1ZGL2IIlQy8DAQbfWwk4rvNU37i6tR8Ae/8PL7vd8n733f+wX4/xH+3SUT/HnvJc0m
+G41UxPiQta3tayEu/6ipFvCQF6qpiKG7i1kH6AAVYJleNSeNYAzNY9Z6DuwCXgN5EkOtpSFGZLk+
+3W696xpTVcVixCYg1lZWbqTmMSbZ2dWYZ4+bVUbk6PPbrvt+57nCwLzAqZ65v5ft5X5Eth5MMKIw
+RzawsBOhDsxVmge8XIftgaeN8yIghE56HoJZSUXspiC+Q2XJTUdCKKFNiAzNIoy6dPbYfMnYE8qI
+b4DSQZHrktnfavXktGGWt+h4lqIz6sU4QfPJfF04Pnx1enb6tIQYddC2WM2yFAUmsz2EWel339PD
+X0LRUOEnEtkH3Axwl6+C2ZQRouZEiWBhih7Xn12FIHEhjh8NkohFoF3DjM5hnJURWCOEYCHvENp8
+q/1EnreE5b9KIh5Q/9X1N90yfy7Fq1dY80pUVIyQUMpctonJCFEonEsgjnBbrE+ss63dsnr99tVB
+t5R5hgpKcrRklHHSdd1AWNrGB/KVGtyTCqbP9CoSj83YaIe5De9jFAUOvkg4iXtp7f9ocJVOnQgV
+L0II/x8ue9wH/bbMXGxcgskSjdGjnHRbSkEo3m93i7QY4qal/PgeA78AoROD19qDR+cAAAAASUVO
+RK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsPosInIntegers</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">Integers</span><span class="p">),</span><span class="n">domain</span> <span class="o">=</span> <span class="n">NaturalsPos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsPosInIntegers"><a class="ProveItLink" href="_proofs_/natsPosInIntegers.html">natsPosInIntegers</a>:</strong> <a class="ProveItLink" href="__pv_it/c9051c3914a677405a56d88d3b6d262d5b77358b0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIIAAAAVBAMAAAB4Tis1AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAi5JREFU
+OMtjYKAYPCCsRBu3FI8CA8MFEOM0PgOYHbAIct7/2yHbeIAhmIFhJYjfh88EDmzO5G59wNDABpRk
+YCgDctkT8JmwG5sg6wIGrgmLgN5YALaBdQI+E+SQOa97794A0SwPGEpA3uMTYOBZXl5ei88Apgbk
+MOlBeCmPDcTOZGD4lpZ2C1MfF7J7GRhKdikWgDhlCAN4NpwBUUsZGJwZGNKx+BMRkAeA7hBnyAdz
+kFQ+4wOH3gwGBhUGvgZ8JjACo7z+AEMYiM2HFOTOLGBXKTIw8DJwH0DSahGqwC36AMkEfqAJ/gwM
+t8FhInv3LiQkGZgCtMC0PTBmD/DCPMe3NfQAT8I6hnWsLr4unkgmfGPg+4yWuDgYgC5fDjaBr8EE
+JrpN/d0DntOsDOtQfDGBgf03A+cHPpAVF+DCK7kgCVoRFDpOQKJ0VzIDTwAoiC3NN6CYwHaAge8n
+A0vDZBDHBybK7gC0l0uAgeEEkDMVaBLfdfZ/oBQKNMFg3WEUE7iA5vYwzA0ARSrDWwWYuQV5DHxR
+CeDYZGDcAExiAcwXGKwgJnBx+SGbwAS0oGS3cjZYL3urAURUMUMsrV8MaHgTSM8DUHBxOzDYpqWl
+beAxYD93D6gUETviKHnSAxoXsMAXgDLeP2A7V/AE4gYG5X0oSeMUvjTPtQEW4A/sbR6AkwjQBJ51
+hHM3DLyAezb6dAwDXxKQpQEkUIsUdgc8JrijOQkYDlhUVeM2gNuAAQA45X9+8rGIlwAAAABJRU5E
+rkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsPosInRealsPos</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">RealsPos</span><span class="p">),</span><span class="n">domain</span> <span class="o">=</span> <span class="n">NaturalsPos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsPosInRealsPos"><a class="ProveItLink" href="_proofs_/natsPosInRealsPos.html">natsPosInRealsPos</a>:</strong> <a class="ProveItLink" href="__pv_it/fcbfd7beccf10cb7dac26ae3b9fa8715e47420800/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJMAAAAbBAMAAACKKKCTAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAmpJREFU
+OMtjYKAYTCBFsRJe2QQg5iLSJGYHgkYRUAIHLx4QNIphNxA/IGyUDwNho3gLGBgugBin8SllF8Ai
+yNOf9qOxG2EUN9CHK0GMPnxGsQZgE2Vjd2DObGdg6eiQ6AAayfePgaEMZG8CPqMYFbAbFcCQVwZ3
+FcMdBgYOYGCx4k0a9ii81713b8CMWsyGMCoM6Onl5eW1eIN1I0rC6HmAcBWyUeeB+Fta2i1M/Uhp
+zgNElOxSLADRZQ+QPOiH5EF9oIQzA0M6lrBGMFOAmEmcIR/MSUcKK6Y77SAWJHXaGzAwqDDwNeA1
+qhWI6w+AAgMYUQkIo2TvdiJpqAdGDi8D9wEkIYtQBW7RB8hGXQVifwaG2yA2k+zdu7BgDwrIQ9L3
+Hhh13Ad4Yf7n2xp6gCdhHcM6VhdfF09ko74x8H1GzY5ADwaZoLmKrwEusk393QOe06wM61A82AJM
+eL8ZOD/wgSy7gGQUx2sk79QbgELSCUiU7kpm4AElax5L8w2oRrkBTfjJwNIwGSU/Ao1idnBGqNIH
+RfBUoE1819n/MXCAM5fBusOoRu0F4h6GuQELQJy3CkiJYSVbAVzVeXDG2MDAwBLAfIHBCmIUF5cf
+ilH6oGS1WzkbbAh7qwEsO38z4Mj4CVe1AiwKDHV+BWDWtk1LS9vAY8B+7h5QC8IofgPkVMLpAYlB
+dNANj8oHbOcKnkBcxaC8D0URywIiike+7/Dc/8De5gFLAcQonnWo5fEFIozigaddpujTMQx8SUCW
+RhIsK8BBJhFG8Rqg5WFgWGFRVkGEUUeJqyY4CQcW/sITCZwkqIL1AQM1AQCdqJFosXfudQAAAABJ
+RU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsPosInReals</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">Reals</span><span class="p">),</span><span class="n">domain</span> <span class="o">=</span> <span class="n">NaturalsPos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsPosInReals"><a class="ProveItLink" href="_proofs_/natsPosInReals.html">natsPosInReals</a>:</strong> <a class="ProveItLink" href="__pv_it/3fd828e6464cdab704eb7ed937e232316371156a0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIMAAAAVBAMAAACXjEALAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAitJREFU
+OMullEtoE1EUhv8m80hmbqYiiLoQIlV0U5hFqQ8Ug3ZR8UE33aiLwcJkIzhCHysxG8VFrdkI7hRB
+RIQhVHQhIkE3xUDJRixCZAqCC9EUF12JeE6Tydyx8So4MMOZe8/95v7/PWeA/7+iv6dkan+ee013
+k4OGEjHSZ2xp/fLNHYTWXeAxDywoEX1nvWmM3g2ACjBLr6anIth9dXgzMD7TurdAjszQqyrEgGzX
+l1utlRhhuYRYBcSjubmrSh37pTg7HyW72EAY9Pl13/+weZ2VhOdY6qkH2zmejSQhGguxJoATQHkz
+Qk/Cebp3B8Yax2XZi+ElsjNPfu6BU1EittImfkBny53Ed+9Ka4UtzGwBCrDr0tqDk0V7WyQjvgPa
+Ggp8LpldrVbPzr0Gq8rS7ux6IRboPJusCy9EqI+dGTspIQY9tF3OL0lC9KFSF+FUetX3fN+3SDR0
+hCkhO4FrNdzjVnCashcLL7tCUD5Oj5kXUxBkLsShA7U04hLQrmI8z9s4LSNGNBoSbOQdQjvvzZ/I
+8ZRwwzdpxEOqv3r+3cYxfy1KCKta7hwqBsgobSLbxOEOwrLOphDDXBaLo4scm9fdXptN4cbtKnIM
+FSRysGiXcNT3/ZpwzeWPlCsVeCAdWH68eyLxtRoH7chYDj51doGhV6kkcV9V/k+SVjp2JNKCDkKE
+/9DscR30yjJzvnEBzkVuKnqU0mnTCoQW/NZb5EWfNFPx43sK/ALERoxfbK1ARwAAAABJRU5ErkJg
+gg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsPosInComplexes</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">InSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">Complexes</span><span class="p">),</span><span class="n">domain</span> <span class="o">=</span> <span class="n">NaturalsPos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[24]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsPosInComplexes"><a class="ProveItLink" href="_proofs_/natsPosInComplexes.html">natsPosInComplexes</a>:</strong> <a class="ProveItLink" href="__pv_it/a503e4f7ac56787bfa14a5387ce0f2b346a608890/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIMAAAAVBAMAAACXjEALAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAixJREFU
+OMullE2I01AQx/+bJk3TpE8RRDwsRBQVZLEHP4ti0EVWXKUH96IeimL2IpKD7p7EXrytuhfPFkFE
+hFjWj4OHJejNwtKLuAjVLKgX0a4inkScaZovt0bBQF4n8ya/zvxnXoD/v/y/h0jNP+89o7vNRisT
+sWOgV1+8MXwOShm4x4/XMxEDd3PbTfHgEVAHpuhRrWUR9IF1eOOA9g14ARRIDGU2CzGUlOvjtc4i
+/xr+alpPAEtk352evpxZx9Zk+jN9nqJaDATy9Pffbfv1yveKsXmSSz16ex3bU2FG76VGP7AKHAIm
+VyKU2Jyhe4OTX2Y7iqxoXmBopOcmiHomYg0l8QMKSy4i3StSHyGRJiXoXuLdPROmvtZPIr4C8jJK
+3BdpuNMJ5PyQ6xeSo+x0rxQWKB5PeEbNhauMHhs9kkCsqqFb5ngrdBZ8K0aIejR9T7Z89o2WAjdV
+yHrgShO3+CiIdug0GowQQSGYPEjLpadnYVR5b+/uZhpxHujOYkzjNMZj7zZaRnwYLORNQotX6k8U
+eviy+zyNuENpe9rLXps/maFXPjwvNl8ImoohEkqu5tqoBIhi8XgKMcJjMbdrjm31ajl073z7hdMv
+mL1ZJb1M3cJ+27abRlldeEOxiQF3Eg3TxoKORNdSaHT9/ILzLsgCG+dTQUYja/zvx0fpwD5fdgKE
+4f7DYQ/nIBpL6VTrNMQZPlS0WOmwixkI2fntbJEWA8LUjA/fQ+AXw4mC6X1IqoUAAAAASUVORK5C
+YII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">naturalsLowerBound</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">GreaterEq</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">zero</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[25]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="naturalsLowerBound"><a class="ProveItLink" href="_proofs_/naturalsLowerBound.html">naturalsLowerBound</a>:</strong> <a class="ProveItLink" href="__pv_it/42a2a3164c6c581f5e22174579b701a72054dd900/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAAAVBAMAAACOK2zoAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAg9JREFU
+OMullD1IHEEUx/+3e+d6pzcXuMIurChpLLwiWGiRIxYRbESQgEYRi7vC5go/ivPjELQMBxJI5xZi
+CEE5iQFDEJYcWpxKQhQLQTgbGz8QxRQW4pvdndtVbs7Cgd19b9785r15780CzxnFitYmuek3PX+5
+sC1ZoMbLTrO+HzEEYsBXrn2UwNWeuM5XSmJYZ3tABhgjRRuUwL+8yuf3QtoA1oGCvXkgK4FfPtBe
+tTvCPtCcwjFQ+2V8fFLCKpmHesuQ/b0B3mRRRS7/JxKHEjhgUL6T6TVDTIzM8Ld2S3AOoS6AYknK
+8mUCRkeOXZdmRvcEbCBIcTWCeaNTZ7uxOmDLPh2KfgB2VbLuDriw8oLyjhpT2E57PmArVAw5FYro
+YEQG70R9N1Y8YauXIDQsqlkzNHWBnVyXB+ak34mMLefchJkWzDKvKed9TYvAJrfk59MC9lE+AxlE
+TEvX+k23VAspK2wk3wJnzWY4BstDPnTW6sBVtNpn4E+Rp1vryHqaZJkc8uWfqL2n1hFJqVZJ8jAW
+HZgXY1rHUpDaGGO6255ZFrWt8PGTdKIe6kEiMUzwxLkDK7RtPWE/H1+M3jXarprvVsuXRtGjsLjt
+WWkTGayrdF2PhaBdItqAdzaMgoALleBvpS4eRK+JEwpEmdPhL3clJ4/4+OfG/qjxsURn9g4tLnfs
+Tz31k0rLTd+Be6fUjPtjtxU8AAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">naturalsPosLowerBound</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">GreaterEq</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">one</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">NaturalsPos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="naturalsPosLowerBound"><a class="ProveItLink" href="_proofs_/naturalsPosLowerBound.html">naturalsPosLowerBound</a>:</strong> <a class="ProveItLink" href="__pv_it/470e836f7439223b2b91489ed535733df819359a0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIMAAAAVBAMAAACXjEALAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAgVJREFU
+OMtjYKAcPCBCjTZuqUNAfAHEOI3XBGYHHBJ5DAysBgwMK0HsPrxGcCC59O06BPvZPyDRwMBQBqTY
+E/AasRuZMyMcxnriAjLiFMQK1gl4jZBD4ak5w1jcICMeMjDwLC8vr8VrAlMDKt8sCdkINqD139LS
+bmHRuADOYgUytdOrt8BFSpqQjOAKYGAAuisdixEBiNA8ADTQYwPfZ7hI6WWEEZxAN6ow8DXgNYJR
+gYFJ4RoD3ye4yNk4hBFMAgwMvAzcB5ATQWsQw8Y4ZCP4FRj4gPo5/0H5fHvXIXmE+QOQcYAXHu+v
+Q2MYjnE94HoQ4nLFZQLCCJB+Fqhb+dZuYEAzgq/BBB5LSXXvGM5sCOB6gOIRoFmsDQz8B8A2scce
+QIlUkEcY0p2AURutvYSB4ShI4vDkalQj2IB6GBcwnH8AihJ2D0QaAhvBA3LcVGA2eaN/gNeAAezU
+w1xvrFCMAEVbvQLDMk5gdmAoU2BANQIky8AI9FvdDgb+AmZwzB9mWLAExQgmoBWKQM070eKMNfBH
+DDDKQWbygPzoDVTFfC0tLRtoRM1boEgBQq04vrT7EM4SZghl4nOAuILJGrUQOYXPiNUwBvsHBmFl
+BneIEQynHuDM7LV3QeASnI9IlkwJDFEHGJ4B/cXUpsDAgmoRuwNuR7AUoAksA4YFFlCN24jNDAwA
+Of2NBGq3icoAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># ACTUALLY, PROBABLY WANT TO DO THE SUBSET THING</span>
+<span class="n">intervalInInts</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">InSet</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Integers</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Interval</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="intervalInInts"><a class="ProveItLink" href="_proofs_/intervalInInts.html">intervalInInts</a>:</strong> <a class="ProveItLink" href="__pv_it/806af43d76081600142b2b72adc71f5636e860a50/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO8AAAAZBAMAAAArlWSOAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA3VJREFU
+SMfFlk9IFFEcx387+8/d+bOBoadipSJJwj10qDBcMjAKYkHsoB4Wo7GQZIRSwbIpCOyQCRV0HCIV
+K2IPFqYFczCILFs6KERLcwgJLZOCPETR+zM782Z3dVZY6Ac6+958335++/vz3gNwtUBmAUpsezNa
+ESoRSm/B+P8DG8WAjc1+cc36r4QoBafxYNYF7C5ymrdQJEOf/gxuu6JDEwWP47khF7C7yGllhULE
+XzNADaCXFNyDH0kXsLvIadOFJv0ahIfvoVhrBIyd8w+7gN1FTtvODqTJTEZFT58B53EOpC0ELIz1
+9l5yKy53kcM4lR3tn7M+dgVwDs7Sdvolyx9c28lVlBtUqOnonyC7RLDLLujUG/wYoeAGgA7L1cF1
+wKyINuIjx7BaBc6eKdMBtKMp6SfZ+BRrflEidXKXgneCZEdmJLtNbh05nWDADhG2bsUxDCOxP7sA
+PFHgovMg/SA0W9XgI6uqKFgEXrdeXcfF8KRZF5XwssGAWdFycxvx2tE/qPJClmuRKEiIGvpLMJkM
+LS7gEnvI63oK5nXR7ro19Pd094ohQN1FNtSMiG8fWMkDR5QcMKb6yMQ+2ztAE2MWWFLxqwtTp7BP
+vycMgUYskWDBRCS01twHeAlmnsw1xGqnTzBgD/r9fhUiOnb2mwUeD0fJJmiGGjoOoy9eCOK48Gkh
+XkYL8EDMcUhg0ddaXYyBmgWba4i9gBkGHEBp8WjwzsBl7dOtgwE5H0ZN/MoE30FO+BJevB8HUkL6
+IFEtLTlPJywamEQh9dKT9Ji1hlgnvAWpki21y1EYDWHnpfdZd5QukFqSVjuBJ4WzwpOPMX/ykCzL
+KdAewwALxiI4jqLknZflTqiOW2uIlcNJFMJsdjgaz55nZNTXRGerzlTINyuQ5qoJFlAmvhuBOVQf
+ERD1z2TpLR2XgQ3GIvT1zZxEYS3WGmKr8JH5xVDpqLzbNzJsL5pbplkORn2d0aeIKHek1/x+4rbz
+IhBchfId0JjNMV1jBIegz0ijBDMb5euN9rVwigFzrbNtUK9zrRpI7Wg8c+TBuXgumEtCiw6LURNM
+1yjeNfRv1xTbToWPxax9yb/60PoL4xxvcPUZRTnO7WNy0KvFXaka8wRepfg718Zg6F+fy8fywMIm
+Lnvd+U7ae3WpbpmF7tXBh3mH8PPN3Kvj/wD58vApYC64GwAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsPosInNats</span> <span class="o">=</span> <span class="n">Subset</span><span class="p">(</span><span class="n">NaturalsPos</span><span class="p">,</span> <span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[28]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsPosInNats"><a class="ProveItLink" href="_proofs_/natsPosInNats.html">natsPosInNats</a>:</strong> <a class="ProveItLink" href="__pv_it/6cf6db93b72e3f3763d4cbf4b003ef5973922f230/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEcAAAAUBAMAAAAthD11AAAAMFBMVEX////c3Nx2dna6uroQEBCI
+iIhUVFTMzMyYmJiqqqoiIiJmZmZEREQyMjLu7u4AAADjlg78AAAAAXRSTlMAQObYZgAAANFJREFU
+KM9jYIADTgYiAM+gUfT2z9kHDLt+TcCmCCF3gv0AA8MHhty7V+7eDUBTBZVjYMgqCGVgcMBuHVwu
++R5bAZqi2FWrVi1mQJZLL+O7h6qoKg7GgsulcwbUoChiXAg3Ei6XzrCZIwDEYIPKsBkgFMHk0hnY
+HqQ7IHucAUkRVC6dgS/hLbKiMmRFULl0BoYidpyKoHJABseEA0iKuFAUQeSADAZFZEXcE5AVQeQO
+g8QvICniWwxnwuRsvwBV8l1AidftUAYWOQQwuwWNFigAAJ/jTCysLkbkAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsInInts</span> <span class="o">=</span> <span class="n">Subset</span><span class="p">(</span><span class="n">Naturals</span><span class="p">,</span> <span class="n">Integers</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>WARNING: Redefining natsInInts
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[29]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsInInts"><a class="ProveItLink" href="_proofs_/natsInInts.html">natsInInts</a>:</strong> <a class="ProveItLink" href="__pv_it/04813def94bfe331e141faec306a92129663360c0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAAAPBAMAAACsFXoGAAAAMFBMVEX////c3Nx2dna6uroQEBCI
+iIhUVFTMzMyYmJiqqqoiIiJmZmZEREQyMjLu7u4AAADjlg78AAAAAXRSTlMAQObYZgAAAPJJREFU
+GNNjePvn7AOGXb8mMKCAWf/XXlnrAWScYD/AwPABVZIhdh8DLwNQnCGrIJSBwQFNdhMDgyaTAZCR
+fI+tACYbu2rVqsUgRh4DY0IZiJFexncPKlsVh9DN8+AcWJYzoAYiy7gQyexWjgawLMNmjgCwLJsB
+QpLvwBsGiCzbg3Sw7FskrWwFiVBZvoS3YNkyJFlrZgWoLEMRO4bsBV4GBiYBsCzHBJDHGbgQkkwT
+lCF8oCyDIliWGxGcYuwJDAwqQMZhkPgFsDsXw2UP8jxgeK3DwGD7BaiPDyzL8HY7VJLZ58qZs19O
+owWv2S1oSEIBAJyrQZauZbLWAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">natsPosInInts</span> <span class="o">=</span> <span class="n">Subset</span><span class="p">(</span><span class="n">NaturalsPos</span><span class="p">,</span> <span class="n">Integers</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[30]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="natsPosInInts"><a class="ProveItLink" href="_proofs_/natsPosInInts.html">natsPosInInts</a>:</strong> <a class="ProveItLink" href="__pv_it/4cd5b830d506ea21ad2281ce6db5c1139b46d2730/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEYAAAAUBAMAAADCRlZLAAAAMFBMVEX////c3Nx2dna6uroQEBCI
+iIhUVFTMzMyYmJiqqqoiIiJmZmZEREQyMjLu7u4AAADjlg78AAAAAXRSTlMAQObYZgAAAQxJREFU
+KM9jYIADTgbCgGdQqHn75+wDhl2/JmBTw7n+112vKw0MDCfYDzAwfGDIvXvl7t0AVDWstx8wXABp
+zSoIZWBwwGoXtwID0wRlICP5HlsBqhrWW6tWrTIAMtgeMIixJwAZ6WV891DUsC99gDDqHA+Ik84Z
+UIOiRkoAoYQjoANEpTNs5ggAqWGDiicjuegN3wGIGrYH6Q4IYb4LSGrS2QQgavgS3iKpATsSCpg3
+GEGUMjAUseNQw8sANFQRrIZjwgEk8xcgmJpMBmA+UA2DIrKanXAWY0IZAwMT0I7DoABFducrA3gs
+C5xj4Nt0gMH2ywE0v/DdLoCyTM76nLnvswFbUmDOhcYFFAAAMcdHko4zLuwAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong><em>A set of inBool theorems, which are accessed by the respective NumberSets to implement their deduceMembershipInBool() methods:</em></strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># In progress</span>
+<span class="c1"># For Naturals</span>
+<span class="n">xInNatsInBool</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">inBool</span><span class="p">(</span><span class="n">InSet</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Naturals</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[31]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="xInNatsInBool"><a class="ProveItLink" href="_proofs_/xInNatsInBool.html">xInNatsInBool</a>:</strong> <a class="ProveItLink" href="__pv_it/87ac5c849d5490ea46d3bceebd0b1a2f533866a00/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJoAAAAVBAMAAABMN+opAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAjRJREFU
+OMutlD1oFEEYhr/b3fvJ7mY8RAQLIYJFQAIbFNuEBNRCbGxEm7W5IKikkAsq4kWwi3fXKIKC2wR/
+ArJIFNTCawQlzYEgKjmyhYRDEdQits4338zezF3WEPCF95h9vp33dn4B/quSAWLF5Cz5I9m8jY0V
+nR6S7hdrVOqQX/sMJ/sKjzYa8x+bgPwxPtf1Yr0fKBVahwF2AJT6C+EBVn8ieJU/FUOt5MXkQTkf
+OM/xIUUDafCsJHiJT1y+qZVyCbmn77c6n0TaaDKNaaxscky77yTI/Ydzc9f0vqPSqewFme0cnOwm
+PA3OmVx8W5X4RqXyRe98WvrK8uXnYsBV1ckJ7tkhpi2CwXmavXqR+DTAjJ62QGaRv5oTC55WnSA/
+soJpd8HgEI6t/YqJ7wdW09N2kl3wfg4FuDHCXhqccMZ5Yx8YHEf6+g7xYfBaetpvMgOHXrf2djpy
+FQL4yuZ5Y8LkmFawIsG91nCySRpfWNom9qT2bXY0rtJ6XKRBKDir4cZfmloOqLRHGq4H4tixtpYG
+7wvpSNsDachnpvgsJUdyctOdJ/uzb8ATH31cT3NxJ7wDg6cjRX6b/4klllJokfygdRauCvBDnfIC
+Nk6lOyTlmPb2heQ0P39UaYy8/urbEq1O8SbNgdXYzX+73DcMjqf+wq6m5D6Oxy7b6mTNknsaOibX
+Tl0m5X9zmHBrrrqmok3OtSE33oKvvzzzdMsbSam7HX5JOlNHt8OLMTlLXpDJ/wJ62Z8oLdAWHAAA
+AABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For Positive Naturals (NaturalsPos)</span>
+<span class="n">xInNatsPosInBool</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">inBool</span><span class="p">(</span><span class="n">InSet</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">NaturalsPos</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[32]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="xInNatsPosInBool"><a class="ProveItLink" href="_proofs_/xInNatsPosInBool.html">xInNatsPosInBool</a>:</strong> <a class="ProveItLink" href="__pv_it/cee29a7d2cafbc2310b55fd410ae501b7d61f1320/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK0AAAAbBAMAAAD8EhIYAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAArpJREFU
+SMe1VU9o02AUf23SpjZtLCIiiDDBgzBkEYd4kZUNJniQgijCQHLqDqLUS+dFzG6FaVvwz8F56M25
+wRgyRJloL1NkqMOBoqwsBxlDGK0WNgQZvi/N9+Xv18DAB/kl+f2SX973vscLwO6iuot3oj0U+KHh
+UeNoSQ7fz6C7L+8RIRtIK2UKIb7yHEdcwMPwsWKdQogvfOWI6QLAMrlYcrI3GPhWUsmXIbb2jfrO
+e/Sprcr4F9xRGQvxlBCuRV9k4It4/RTAXhBLpYOlCYCmd7Far1Kexu/vABTxVtKc4j4G/hKtYE0j
+rA7pus8XniXwvAqQwG/GnN0otCjY63/RaOim7zFjyOEb0zw6+j4W0fASQOrJ2Ngtp4mcocDi9Eea
+78nshmH7ploeneRLCvAJj618/rtrrboF0szZyRHCSNeZpk4Kmu0b3QG3rvUKq+SmD3MeAhh17U3W
+gp/woX7YZAq2b6xnyfQ1W19og1vXjq/9Ik09oAIcBUV3+iZyFtTgDdwjzLq9FhXOiyfYrfQb3DrW
+YeEhnm/jEEiD7NrWdM4CA4Y7zJFGg+6bCj+UcXs//3h09I1HcWw0SRPX00agL8Ahx7yg+Qo1X779
+znzjpPQkX0Un/MzgvGrVIUtBaoNCmE2nL7yP276d+m76fYnX6CCONmM4YjWxqFnwTm7Ba3DNCuKb
+LNoDdRvcOq1DH9nJBzgionCH9e9yB/b8jWckc2Ipn1mvkKF8mfla/Wvr6Lv43OpfiJgvb7MkWh1Q
+rs5Ov+pQNy9YUuUA4oY9wHW3jnPn2n6y7Cnzq2TbhIxAn24zYHH/bkMPGBeJOY4+QS8Gkjr7e5xj
+EBbNQjCvsMWvvxyZpddnGITFWw6f0gKHbJVCWKzw/hdqECvpFEIileMIi8H0Iwbdo8jhJY2TR5VC
+97jC4WMG/Lf4B9iJu/0YVPICAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For Integers</span>
+<span class="n">xInIntsInBool</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">inBool</span><span class="p">(</span><span class="n">InSet</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Integers</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[33]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="xInIntsInBool"><a class="ProveItLink" href="_proofs_/xInIntsInBool.html">xInIntsInBool</a>:</strong> <a class="ProveItLink" href="__pv_it/b1c86db27f9fb988509be4557073be722ea380560/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAAAVBAMAAACnAFEqAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAldJREFU
+OMutVE1oE0EU/rJpNmazXXOqhxLZgiDoJQev0tJCqyAS8GYuOaUtQulB2oMIq1Dw0NqACIKXIEip
+gRLQS1F08aBSFeJNhOD2IqUiFITqQdH3dmZ/JrvBiw8+ZuYb3rfz/hb4r+YlqdMSA8y00/mXhC5v
+3sbZ7IRAwgqff98q33BxSaWN9bmf5XkgVwE2mbgdvz3iCSSsuOLB0emyj9e1zt5+C3CAJTrm6/HL
+pxIJy7VgNB9QqK2EWtEmqR3xilwzfnlcIrSva72PvA55uMopsEoqT2oF9yKwSx/aWF6+HvfVHIEo
+j6tR2As67+dVnt92ksLT6VGHjcanvnh85Nsz92tMLEViZucdLw+h8KR29hUdjCowBcwqRXAF9vHe
+LTMRu/1i+Rm+B4XXtd6fUa45RXQCVjwuZGyBFl7gDp2tWImmhhZ5GYPCc6TbdNIon8MounG1o7aA
+h2mRx3KvJ7INrXrKX8dVntRQp5vsAXWRO+ylqQGjYTMHSeCW2pBqEe+r6ULNcs4Q0558UpGRNgWQ
+/w6LI+qGapuG7Q+PiLTbr8aRYnaSyuFNZ2TT6a7A6+IBnjNxIfDKT9B3DXJ5A4UPIjU5/3fpIxpW
+w7Gr+ij80kv5DhPfginXFxdgXa4HHRLxWses1YUnMr7Pj7B7uz6sK1uPnoknrcgcjM2NNNZHyOWm
+wtPUH344z2lleZOLkC1lA7ljEtG/45ysqbRgsvr53WAzbjhGsN+RGGhGJ51vh02+Xdv65x8psL10
+Wh2CqHQCA20mnRZzkrBrEgOsWEnnHwN/AeCOoFHKMKGFAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">differenceInNaturals</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">InSet</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">Naturals</span><span class="p">),</span>
+                              <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">,</span> 
+                              <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">LessEq</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[34]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="differenceInNaturals"><a class="ProveItLink" href="_proofs_/differenceInNaturals.html">differenceInNaturals</a>:</strong> <a class="ProveItLink" href="__pv_it/6238790e88c85a5727e2e83b6b2b047f06ca42e90/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOUAAAAXBAMAAAAGvZU3AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA0ZJREFU
+SMfFVk1oE0EUfkk2m6TZbAoKBQ8lRYsFD82hiJaWRqMn/4Kil1YMiqnQWnOotuBP9+BBaS2BKnhR
+cmmLihKwLaVRWKQHabGEXsSfwAqipVKNFiJSLM6bmXQ3yfaHgPrgm8x+O3nfvDfvTQLwH0wr/as7
+OEztxRp8CifTpUjaAgxFJu8hTu3+fHIue06Dk79jyD9Aor8UTafGYPIGd6IUkO22MECG8pfIoyNc
+imaSo9i8MTJMFZCH/GRxOeVxp/ZYKZqVHMVWi9F/4IkeT6dpyHv7BT9qEl4a7uq6WoqkVWEwscc4
+iCyQXTOcDNbJ/aiJfDYSeVuKpj3OAJ0TVdH8V9eTBwHKQjh1dOTIoCuxEzWRDwK0ruz9RlE0dKwx
+icepMlgr4EJB3WbB6wcX/Y64sp0gHJUSRBP5bSDrHgf5p7h58Czdp0gf2Z7B1WHwbPEx9KhwIl/T
+tQyWOFjLcf4JdE1BCxIOeQ+41ZUXN3Gbo8dVT7Tsi6ZrOunZuHqNneH1MRwBeIfP3Wm0Wcy6At4Q
+2DLIViGpME05MEf0kHerHt3VT4Kx7V81CRqugK7pxQxJvfkNwTWzIC/mx+kJQa3KNesMcUK9jWvK
+CvIXJ87g6S2NaBLLYyhk0KxNHgZ3H62J5iF+wVhiFI4lcGXkwvY8pfHcLhg1pViY5RZa9xLh145l
+MnWnpICTrpB2+w2az2HS9YbOFqI9PCuiSiH/AkEZyNf0wxbigWZUUA2aMBzm/B1yOwohG168YkJK
+1dMV8/Ng0GyDV/KQD2f7oZH7wLpC9MG9UDxPU4jZA7m6k2dz7Gl20oy3JPBg3HhHWvz2cGMkEklA
+/Alc0zU3kdKUx7CQfsBIrotSDJ3JrW2+/F450IJ1x8juY4ys+R4G2iGUl0iyvmniDKkTL3jUj9Th
+gArDumYG3pNxPAbyMrR/5q4rOFYxfvfB7VtpxYwHi9bUoHVHPXAXBKxRu53GkNNMsQZ/qUKlbTF3
+mU2ZXOQGe7Qeb22eboEm1docBxkTP7nv4fmArlk9wZbdh+pno+q6v2U0wcrGeOatDM8zZ+LqgTgC
+DOYmRDfE20yWraEJlzlM7enGeAnW0HSRco50/JO/aMJf8PkHqm/beoaY6YgAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">differenceInNaturalsPos</span> <span class="o">=</span> \
+    <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">InSet</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">NaturalsPos</span><span class="p">),</span>
+           <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">,</span> 
+           <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">Less</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[35]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="differenceInNaturalsPos"><a class="ProveItLink" href="_proofs_/differenceInNaturalsPos.html">differenceInNaturalsPos</a>:</strong> <a class="ProveItLink" href="__pv_it/76e860cd4a8cbe8e31b073630882e081c2ae76020/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPUAAAAbBAMAAABW0dSkAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA5hJREFU
+SMe9Vl1IVFEQnt29d9X9uUpEfyCsFeRLuFEIheKSkUZRC5VE9rD0sxEV7YOpD5UWCSv+ggRBRPsi
+Wg+xgYYowX0oSIRciMh+pPuwgihlJCliSDPn/m+7S12lgVnOzpl7vjkzc75zAP6/dK/FIlutfRZC
+da0S2hGwjm31W1WmJevYMIIqWcc+gmqPZ5j0+LJjeyMACRqMWYHOKcCfPelmkoX4c9xsE7rCncB/
++aBiuzHpj2nQaQWbD2b88i5qborNKZYC5AMXjW6KtmEsKwD1tIOQFWwbZtWdPuVLlPSY2ca9RWeb
+lnP4jOFhwXlLJ66C8NO2i32Fklwg/5ntmJxg2MVSpRG7BsPra2i4aanVnqEWp51xsSa6JB/EdiU8
+bndgWjJgj6MuhMMfLWFXo56mQd1wUcQ0k3t4QAToZeN6NTOc/4EjZMAuwYlKgItasqKpAL70ZpLz
+qO00uxGumWfmQjAPcJ+NtbU5P+8bY9gyrVT4AbaD0Kx91as25freC0E9RsWcY6puC+o61CaRameU
+RxJsAShiRyukY8NRbpfu1ITb8oJb1Ayt5D54UvRGXLOSjt0qH9EaU2rfof5APQbwiQLrmCShRJ0C
++Cn3ItgL0TahYCeF24bkYIO7Ra++nUXU5zu+SR4ou6FzEDOD0G+mKhV7AYR5SJmx/1Kwdd5GbEcs
+Zd9CM3HT9eFzFOXygORhuYZgUMcmM8BQt+anEchm3O8y5H0XUo43v6LmPGHAhlGnAdtP3bAfXd7n
+0Jl0JzwBmY88e/06NplhiCqj+DE5iHoFTUvANfeYsOfBhsTyWiN9DdtVrzuVUAHvYWhc0EEBOuOe
+xD42MzNj4H0ylzMGU/yYvFCasB0eBs0cdghOaA36VS2UU+kEVcYZN+Kq+T7idrD5+VB5OByOQ+wp
+3NKwyTx1lkaKnxw46k463iPbLps7ITlIObojn40WOYH2rg107epO/Sy9WMs5yfkmQlTvFZPMs0eE
+Pg2bzDBFhVb8mOTjorZIRupROTWvWu7zVGnT7gWpokxqjHiREDhajufBntDvWsYTdVWKn1rA2J8X
+hpFY41lZUVjUCK127AxUiPbaGAiU3JcHnlwN6H1eyyBKq2Q/9cmUyHr7TmdnZE/K3SlzjIvqbXpj
+qFLqN7nTZVGXcfGq7Nhe81qOSIb3TQZppFbKlFm3Pzv2q5Q0wL9h58Wsv/X+5rmS9Sk7ah2bX8Ub
+dS3kN4ry7Iyw5OErAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> theorems
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Theorems may be imported from autogenerated _theorems_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-01-16 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>

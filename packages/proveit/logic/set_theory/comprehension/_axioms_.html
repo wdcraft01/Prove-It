@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Axioms for context proveit.logic.set_theory.comprehension</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../../../../../index.html"><img src="../../../../../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Axioms-for-context-proveit.logic.set_theory.comprehension">Axioms for context <a class="ProveItLink" href="_context_.html">proveit.logic.set_theory.comprehension</a><a class="anchor-link" href="#Axioms-for-context-proveit.logic.set_theory.comprehension">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">And</span><span class="p">,</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">InSet</span><span class="p">,</span> <span class="n">SetOfAll</span><span class="p">,</span> <span class="n">Exists</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fy</span>
+<span class="kn">from</span> <span class="nn">proveit.logic._common_</span> <span class="k">import</span> <span class="n">yIter1l</span><span class="p">,</span> <span class="n">f_yIter1l</span><span class="p">,</span> <span class="n">iterQ1k</span><span class="p">,</span> <span class="n">iterQ1k_y</span>
+<span class="kn">from</span> <span class="nn">proveit.logic.set_theory._common_</span> <span class="k">import</span> <span class="n">generalComprehension_fy</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Exp</span><span class="p">,</span> <span class="n">Naturals</span><span class="p">,</span> <span class="n">NaturalsPos</span>
+<span class="o">%</span><span class="k">begin</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining axioms for context &#39;proveit.logic.set_theory.comprehension&#39;
+Subsequent end-of-cell assignments will define axioms
+%end_axioms will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Define general set comprehension as any mapping $(x_1, \ldots, x_l) \mapsto f(x_1, \ldots, x_l)$ of the elements of a subset of any set $S$ where the subset is defined by any number of conditions $Q_1, \ldots, Q_k$:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">comprehensionDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">Forall</span><span class="p">((</span><span class="n">S</span><span class="p">,</span> <span class="n">iterQ1k</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> 
+                                         <span class="n">Equals</span><span class="p">(</span><span class="n">InSet</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">generalComprehension_fy</span><span class="p">),</span>
+                                                <span class="n">Exists</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Equals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fy</span><span class="p">),</span> 
+                                                       <span class="n">domain</span><span class="o">=</span><span class="n">S</span><span class="p">,</span> 
+                                                       <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">iterQ1k_y</span><span class="p">]))</span><span class="o">.</span><span class="n">withWrapBeforeOperator</span><span class="p">()),</span>
+                          <span class="n">domain</span><span class="o">=</span><span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="comprehensionDef">comprehensionDef:</strong> <a class="ProveItLink" href="__pv_it/07c85cc485cb3afaa795ff934025fb2c189998d40/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>NOTE: Comprehension defines a subset of some set $S$, and a "universal" set must not be allowed.  Otherwise you could define Russel's set,  $R = \{x~|~x \notin x\}_x$, which results in paradox upon asking whether or not $R \in R$ (if it is, then it cannot be; if it is not, then it must be).  But if $x \in S$ can only be true if $S$ is a "proper" set (the universal set is not a proper set), then this can be avoided.  Comprehension can then only be used to define a subset of a "proper" set and Russel's set cannot be defined without additional axioms making improper definitions.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Axioms may be imported from autogenerated _axioms_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-01-16 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>
