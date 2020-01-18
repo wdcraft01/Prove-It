@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Proof of proveit.number.sets.integer.induction theorem</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../../../../../../index.html"><img src="../../../../../../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Proof-of-proveit.number.sets.integer.induction-theorem">Proof of <a class="ProveItLink" href="../../../../_context_.html">proveit</a>.<a class="ProveItLink" href="../../../_context_.html">number</a>.<a class="ProveItLink" href="../../_context_.html">sets</a>.<a class="ProveItLink" href="../_context_.html">integer</a>.<a class="ProveItLink" href="../_theorems_.html#induction">induction</a> theorem<a class="anchor-link" href="#Proof-of-proveit.number.sets.integer.induction-theorem">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">proveit</span>
+<span class="kn">from</span> <span class="nn">proveit</span> <span class="k">import</span> <span class="n">defaults</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">y</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">zero</span><span class="p">,</span> <span class="n">Naturals</span>
+<span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">InSet</span>
+<span class="kn">from</span> <span class="nn">proveit.number._common_</span> <span class="k">import</span> <span class="n">Pzero</span><span class="p">,</span> <span class="n">Pone</span><span class="p">,</span> <span class="n">Pm</span><span class="p">,</span> <span class="n">P_mAddOne</span><span class="p">,</span> <span class="n">Pn</span>
+
+<span class="kn">from</span> <span class="nn">proveit.number.sets.integer._theorems_</span> <span class="k">import</span> <span class="n">inductionLemma</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">proveit</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">)</span> <span class="c1"># the theorem&#39;s context is in the parent directory</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">proving</span> induction presuming [proveit.logic]
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Beginning proof of induction
+Recorded &#39;presuming&#39; information
+Presuming theorems in proveit.logic (except any that presume this theorem).
+Presuming previous theorems (applied transitively).
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="induction">induction:</strong> <a class="ProveItLink" href="../__pv_it/fad3901ec083ce758131ba87ecbafc7a6969893b0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfsAAAAaBAMAAABCyuhyAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABsBJREFU
+WMPlmH2IVFUUwM+++dj5fLPoH1KBjBURLOL80V+F7FALihJOHyu2mkwFu/RhO5G4wpoOlbll2ED4
+T/6xg/iRVjDlJtoqTm5JbJGbX0G08oQyQWsX129KO+d+vTvvvZndpkWCLuyZt/fdd8793Xvuuede
+AK9iJKWYsKwYycFtKbNHigDFKVQYqfrmASUmLMNwu0pjerJ9mlzxpau8MDdJ8V/Dj5amUOEA/lke
+9f6yFHZp5j+H3fjmlPTFqAV2WOLDjx5vD75hTcpEs6btm2MA8ZyYvW8r270iRXTRpdZH5wlPMZd+
+noJAyoUfp59YfdPSf6u19USu9lJ7GbhVht/v0WCrJ4TLhHJ2pm0r0mHFLqpw+HmbEok8wDP0bciC
+eNI8DpAXbdYq/EiBv6+rXAMIzvDogl3O3gRuleGPWl74u2ppkCbsLuY5vomaV5HibOUH05RowVDb
+V+Tr5CDAPoAh0Wa9wmdfr6oz/NwACN8Ar0X9G//5pZXwhyR+XFuSlsL3gnCZGFBVQxwffuZjEihU
+fjAmBRzCze9oBh9mApwAmJODM6LNCkuFPhr2p+rDj17EdXMZHxpcs7pFNiH8MxI/oEFuUvgeEG4T
+M1XVGYG/GN/s7O5+zfFBkxTQhX+LUK+B/oIqWgoQ5Fb8zSWFP9Td3V3nBhDEQfZfx4f7oSY+WWX4
+sTG7xb0K3wPCZcLI21UFjn8U/650dPzkCPx5KWjdmFdo0IvQiA7UUoJIhrU5J3c8/El0dKyYVD7y
+qnwIyweKLaM0oe3Yv73dAwuMgee98MkqwzduanlLSeJ7QIDTBCJAc2dPf5FrI/w56DSPAHRih7ra
+nuyUg5OWgtbNXOINlTl+EcJ8ED+W7o74/hQEq6V+PHPk2hvVGPnkEyr0naSHd7FT/o0wuhX6vPDJ
+KsP3jbPYPcLKZYXPITyLNIEIUJxfMse5NsJvSZELmUT0JcAn4oNQRoropd3bd1JVQ1LiG02CerXC
+N9LoDJXRY/3j8OlyehJLlWkP6sGal0MLdrfnRKC9O56F0ZI3Plll+I0XNTPh16UyAeG2b5tABCN5
+CsyLXBv1YB1OThyiFE1bcSmI8BPPSBGUrpZISufnIRG3eX9KZX3DcECzfb5tGRyJWBFLw2fat9ht
+5HB1yYiHnbJGk9BnwRIvfLLK8M3r+jCfmybwBYTbvm0CEUxkD9/k2gh/FGNAtBy3+CYwH5z4iWEb
+n4W+ssDHT0QWQS0OwGktcD679g/4rpSpwGfaNfcUYwd/gY1P7E8D3En/Lunt/aG39003fsXs+96x
+BL6AcNu3TRACslNMk/g0+2aeEi5cEjGZUIbSUrRkRFVDgW18fTnh/Jvxb4PCP0dD8fVnX6QHnsNf
+qh18v0fH59qb7EZim/ddliR3EDPASTCumjWdX1/7pyzp/AwitrR5m9O+bYIQAnlIlC3b+WkSOh8m
+/Td2L1NTk5XikDzzBsss7cHoEGNrbIMYAo4fXImOdfhPHKCvRFo4GLnwoIbPtPvydiMjrfZkXl4C
+mnd0Tn9+jQd+TIY+46q29NN2ICGIC3PK8ZTDvm2CEBqKuAaLTBuL/BQTNhNBRIsc0WEp1NKkrSJe
+MKfzJ/ARVVzhh9FnG8/nYRy2i6A+CMVtGj7TjsiyEQ0F6LGF6tCvcVcPlYq1Nj5931+txVGCWLsP
+EjmHfdsEqUBv3xFOqY3vKPMKcsRgRjt8jXFhLr61UFahdrO9H50lRA7hT6o8lUWHu6iu5GuCt8F3
+qqPjRTS/5ncNn2mnyRKNBP6vXZdkrjubOXgkC+GFqQr8wGPXlnGrDF+fpk4Nn0EshFlO+7YJQpiF
+2fl+ro0++pBFcWqX0FPGcSVUmaEnjGDYezrD/546kIpmG8eSZpqPvvGQhs+0G1nViD1XlIZctaxP
+WWX4Ie1skNLwGcR0aDMc9r0QVNK70U4OdPMLlKg4JbDyUbXrjnU4tbFsEeZx8zCk4TPt5rDdKObM
+El0V6nSurPITX87rxCfuQ8Zg+j0O+14ITBvFSxVHIu89oTWcq4Qq8rRYkV1U4N8H8ZTvhRycRacw
+3kqCHxS+0H7abhRw3SPWvFsy1YH3CFTHR5dqLzvseyBwbfhRrMoZkR1rggXnTRPbFXITXnbtwLWn
+im5hv9YV11cra+Ezq6wLx2vge9n3QODaKFdKVblVy0thlx7+s+cf3vXp+GerLGxus9Z10R7Z/VjG
+67Lr+OSOlz2atoPHRIbgVT5Q4t9eder4YfuqIl3nVWedtyre+rLV3sQKUkxYRmrf81dwDqpQU8fV
+2OwR1LV8CvEDFvzfy9/JAk+MWbL5fAAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>(see <a class="ProveItLink" href="../__pv_it/fad3901ec083ce758131ba87ecbafc7a6969893b0/dependencies.html">dependencies</a>)<br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-01-16 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>

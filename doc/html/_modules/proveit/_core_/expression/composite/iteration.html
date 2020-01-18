@@ -1,0 +1,883 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>proveit._core_.expression.composite.iteration &#8212; Prove-It 0.3 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for proveit._core_.expression.composite.iteration</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">proveit._core_.expression.expr</span> <span class="k">import</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">MakeNotImplemented</span>
+<span class="kn">from</span> <span class="nn">proveit._core_.expression.lambda_expr.lambda_expr</span> <span class="k">import</span> <span class="n">Lambda</span>
+<span class="kn">from</span> <span class="nn">proveit._core_.expression.composite</span> <span class="k">import</span> <span class="n">Composite</span><span class="p">,</span> <span class="n">ExprTuple</span><span class="p">,</span> <span class="n">singleOrCompositeExpression</span><span class="p">,</span> <span class="n">compositeExpression</span>
+<span class="kn">from</span> <span class="nn">proveit._core_.defaults</span> <span class="k">import</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">USE_DEFAULTS</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<div class="viewcode-block" id="Iter"><a class="viewcode-back" href="../../../../../api/proveit.Iter.html#proveit.Iter">[docs]</a><span class="k">class</span> <span class="nc">Iter</span><span class="p">(</span><span class="n">Expression</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    An Iter Expression represents an iteration of  Expressions to be </span>
+<span class="sd">    inserted into a containing composite Expression.</span>
+<span class="sd">    </span>
+<span class="sd">    Upon substitution, it automatically expands to if it contains an </span>
+<span class="sd">    Indexed expression whose variable is substituted with a tuple or </span>
+<span class="sd">    array.  To ensure such an expansion is unambiguous and sensibly </span>
+<span class="sd">    defined, Iter expressions must only contain Indexed variables with</span>
+<span class="sd">    indices that are &#39;simple&#39; functions of an iteration (the parameter </span>
+<span class="sd">    itself or a sum of terms with one term as the parameter).</span>
+<span class="sd">    For example</span>
+<span class="sd">    a_1*b_1 + ... + a_n*b_n</span>
+<span class="sd">    when substituted with </span>
+<span class="sd">    a:(x_1, ..., x_j, y_1, ..., y_k)</span>
+<span class="sd">    b:(z_1, ..., z_k, x_1, ..., x_j)</span>
+<span class="sd">    under the assumption that j&lt;k will be transformed into</span>
+<span class="sd">    x_1*z_1 + ... + x_j*z_j +</span>
+<span class="sd">    y_1*z_{j+1} + ... + y_{k-j}*z_{j+(k-j)} +</span>
+<span class="sd">    y_{k-j+1}*x_1 + ... + y_{k-j+j}*x_j</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_or_parameters</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">start_index_or_indices</span><span class="p">,</span> <span class="n">end_index_or_indices</span><span class="p">,</span> <span class="n">styles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="nb">tuple</span><span class="p">()):</span>
+        <span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">InSet</span>
+        <span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Interval</span>
+        
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">compositeExpression</span><span class="p">(</span><span class="n">parameter_or_parameters</span><span class="p">)</span>
+
+        <span class="n">start_index_or_indices</span> <span class="o">=</span> <span class="n">singleOrCompositeExpression</span><span class="p">(</span><span class="n">start_index_or_indices</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start_index_or_indices</span><span class="p">,</span> <span class="n">ExprTuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">start_index_or_indices</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">start_index_or_indices</span> <span class="o">=</span> <span class="n">start_index_or_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_index_or_indices</span> <span class="o">=</span> <span class="n">start_index_or_indices</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start_index_or_indices</span><span class="p">,</span> <span class="n">Composite</span><span class="p">):</span>
+            <span class="c1"># a composite of multiple indices</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_index_or_indices</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># a single index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_index_or_indices</span>
+            <span class="c1"># wrap a single index in a composite for convenience</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span> <span class="o">=</span> <span class="n">compositeExpression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_index_or_indices</span><span class="p">)</span>
+
+        <span class="n">end_index_or_indices</span> <span class="o">=</span> <span class="n">singleOrCompositeExpression</span><span class="p">(</span><span class="n">end_index_or_indices</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end_index_or_indices</span><span class="p">,</span> <span class="n">ExprTuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">end_index_or_indices</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">end_index_or_indices</span> <span class="o">=</span> <span class="n">end_index_or_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_index_or_indices</span> <span class="o">=</span> <span class="n">end_index_or_indices</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end_index_or_indices</span><span class="p">,</span> <span class="n">Composite</span><span class="p">):</span>
+            <span class="c1"># a composite of multiple indices</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_index_or_indices</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># a single index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_index_or_indices</span>
+            <span class="c1"># wrap a single index in a composite for convenience</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_indices</span> <span class="o">=</span> <span class="n">compositeExpression</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end_index_or_indices</span><span class="p">)</span>                        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">ndims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndims</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end_indices</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inconsistent number of &#39;start&#39; and &#39;end&#39; indices&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inconsistent number of indices and lambda map parameters&quot;</span><span class="p">)</span>
+        
+        <span class="n">conditions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">start_index</span><span class="p">,</span> <span class="n">end_index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_indices</span><span class="p">):</span>
+            <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">InSet</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Interval</span><span class="p">(</span><span class="n">start_index</span><span class="p">,</span> <span class="n">end_index</span><span class="p">)))</span>
+        
+        <span class="n">lambda_map</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="n">conditions</span><span class="p">)</span>
+        <span class="n">Expression</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Iter&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">lambda_map</span><span class="p">],</span> <span class="n">styles</span><span class="o">=</span><span class="n">styles</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="n">requirements</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span> <span class="o">=</span> <span class="n">lambda_map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkIndexedRestriction</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    def __init__(self, lambda_map, start_index_or_indices, end_index_or_indices, styles=None, requirements=tuple()):</span>
+<span class="sd">        if not isinstance(lambda_map, Lambda):</span>
+<span class="sd">            raise TypeError(&#39;When creating an Iter Expression, the lambda_map argument must be a Lambda expression&#39;)</span>
+<span class="sd">        </span>
+<span class="sd">        if isinstance(start_index_or_indices, ExprTuple) and len(start_index_or_indices)==1:</span>
+<span class="sd">            start_index_or_indices = start_index_or_indices[0]</span>
+<span class="sd">        self.start_index_or_indices = singleOrCompositeExpression(start_index_or_indices)</span>
+<span class="sd">        </span>
+<span class="sd">        self.ndims = len(self.start_indices)</span>
+<span class="sd">        if self.ndims != len(self.end_indices):</span>
+<span class="sd">            raise ValueError(&quot;Inconsistent number of &#39;start&#39; and &#39;end&#39; indices&quot;)</span>
+<span class="sd">        </span>
+<span class="sd">        if len(lambda_map.parameters) != len(self.start_indices):</span>
+<span class="sd">            raise ValueError(&quot;Inconsistent number of indices and lambda map parameters&quot;)</span>
+<span class="sd">        </span>
+<span class="sd">        Expression.__init__(self, [&#39;Iter&#39;], [lambda_map, self.start_index_or_indices, self.end_index_or_indices], styles=styles, requirements=requirements)</span>
+<span class="sd">        self.lambda_map = lambda_map</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">_checkIndexedRestriction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subExpr</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        An iteration is restricted to not contain any Indexed variable</span>
+<span class="sd">        that is a complicated function of the iteration parameter.</span>
+<span class="sd">        Specifically, for each parameter, the index of an Indexed </span>
+<span class="sd">        variable may  be a function solely of that parameter or that </span>
+<span class="sd">        parameter added with terms that don&#39;t contain the parameter.</span>
+<span class="sd">        For example, you can have x_1, ..., x_n and you can have</span>
+<span class="sd">        x_{1+k}, ..., x_{n+k} or x_{k+1}, ..., x_{k+n} but not</span>
+<span class="sd">        x_{1^2}, ..., x_{n^2} or x_{2*1}, ..., x_{2*n}.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.indexed</span> <span class="k">import</span> <span class="n">Indexed</span>
+        <span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Add</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subExpr</span><span class="p">,</span> <span class="n">Indexed</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">subExpr</span><span class="o">.</span><span class="n">indices</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">index</span><span class="o">==</span><span class="n">parameter</span><span class="p">:</span>
+                        <span class="c1"># It is fine for the index to simply be the</span>
+                        <span class="c1"># parameter.  That is a simple case.</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">Add</span><span class="p">):</span>
+                        <span class="n">terms_to_check</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">operands</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">terms_to_check</span><span class="p">:</span>
+                            <span class="c1"># Remove first occurrence of the parameter.</span>
+                            <span class="n">terms_to_check</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">terms_to_check</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">term</span><span class="o">.</span><span class="n">freeVars</span><span class="p">():</span>
+                                <span class="c1"># Invalid because the parameter occurs</span>
+                                <span class="c1"># either in multiple terms of the index</span>
+                                <span class="c1"># or in a non-trivial form (not simply</span>
+                                <span class="c1"># as itself).</span>
+                                <span class="k">raise</span> <span class="n">InvalidIterationError</span><span class="p">(</span><span class="n">index</span><span class="p">,</span>
+                                                             <span class="n">parameter</span><span class="p">)</span>
+                        <span class="c1"># Valid: the parameter occurs solely as a term </span>
+                        <span class="c1"># of the index. </span>
+                        <span class="k">continue</span> <span class="c1"># Move on to the next check.</span>
+                    <span class="k">if</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">index</span><span class="o">.</span><span class="n">freeVars</span><span class="p">():</span>
+                        <span class="c1"># The parameter occurs in the index in a form</span>
+                        <span class="c1"># that is not valid:</span>
+                        <span class="k">raise</span> <span class="n">InvalidIterationError</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
+        <span class="c1"># Recursively check sub expressions of the sub expression.</span>
+        <span class="k">for</span> <span class="n">sub_sub_expr</span> <span class="ow">in</span> <span class="n">subExpr</span><span class="o">.</span><span class="n">subExprIter</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_checkIndexedRestriction</span><span class="p">(</span><span class="n">sub_sub_expr</span><span class="p">)</span>
+            
+    
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_make</span><span class="p">(</span><span class="n">subClass</span><span class="p">,</span> <span class="n">coreInfo</span><span class="p">,</span> <span class="n">styles</span><span class="p">,</span> <span class="n">subExpressions</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">InSet</span>
+        <span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Interval</span>
+        <span class="k">if</span> <span class="n">subClass</span> <span class="o">!=</span> <span class="n">Iter</span><span class="p">:</span> 
+            <span class="n">MakeNotImplemented</span><span class="p">(</span><span class="n">subClass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coreInfo</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">coreInfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;Iter&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expecting Iter coreInfo to contain exactly one item: &#39;Iter&#39;&quot;</span><span class="p">)</span>
+        <span class="n">lambda_map</span> <span class="o">=</span> <span class="n">subExpressions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">conditions</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expecting the same number of parameters and conditions&quot;</span><span class="p">)</span>
+        <span class="n">start_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">end_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">condition</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">lambda_map</span><span class="o">.</span><span class="n">conditions</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">InSet</span><span class="p">)</span> <span class="ow">or</span> <span class="n">condition</span><span class="o">.</span><span class="n">element</span> <span class="o">!=</span> <span class="n">param</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">domain</span><span class="p">,</span> <span class="n">Interval</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expecting each &#39;Iter&#39; condition to define an &#39;Interval&#39; domain for the corresponding parameter&quot;</span><span class="p">)</span>
+            <span class="n">start_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">lowerBound</span><span class="p">)</span>
+            <span class="n">end_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">upperBound</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Iter</span><span class="p">(</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">lambda_map</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">start_indices</span><span class="p">,</span> <span class="n">end_indices</span><span class="p">)</span><span class="o">.</span><span class="n">withStyles</span><span class="p">(</span><span class="o">**</span><span class="n">styles</span><span class="p">)</span>
+            
+<div class="viewcode-block" id="Iter.remakeArguments"><a class="viewcode-back" href="../../../../../api/proveit.Iter.html#proveit.Iter.remakeArguments">[docs]</a>    <span class="k">def</span> <span class="nf">remakeArguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Yield the argument values or (name, value) pairs</span>
+<span class="sd">        that could be used to recreate the Indexed.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">parameter_or_parameters</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">body</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_index_or_indices</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_index_or_indices</span></div>
+        
+<div class="viewcode-block" id="Iter.first"><a class="viewcode-back" href="../../../../../api/proveit.Iter.html#proveit.Iter.first">[docs]</a>    <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the first instance of the iteration.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">substituted</span><span class="p">({</span><span class="n">parameter</span><span class="p">:</span><span class="n">index</span> <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span><span class="p">)})</span></div>
+
+<div class="viewcode-block" id="Iter.last"><a class="viewcode-back" href="../../../../../api/proveit.Iter.html#proveit.Iter.last">[docs]</a>    <span class="k">def</span> <span class="nf">last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the last instance of the iteration.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">substituted</span><span class="p">({</span><span class="n">parameter</span><span class="p">:</span><span class="n">index</span> <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_indices</span><span class="p">)})</span></div>
+        
+<div class="viewcode-block" id="Iter.string"><a class="viewcode-back" href="../../../../../api/proveit.Iter.html#proveit.Iter.string">[docs]</a>    <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatted</span><span class="p">(</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Iter.latex"><a class="viewcode-back" href="../../../../../api/proveit.Iter.html#proveit.Iter.latex">[docs]</a>    <span class="k">def</span> <span class="nf">latex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatted</span><span class="p">(</span><span class="s1">&#39;latex&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Iter.formatted"><a class="viewcode-back" href="../../../../../api/proveit.Iter.html#proveit.Iter.formatted">[docs]</a>    <span class="k">def</span> <span class="nf">formatted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formatType</span><span class="p">,</span> <span class="n">fence</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">subFence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">operator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">outStr</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">operator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">formatted_operator</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span> <span class="c1"># comma is the default formatted operator</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">formatted_operator</span> <span class="o">=</span> <span class="n">operator</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">formatted_operator</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">formatted</span><span class="p">(</span><span class="n">formatType</span><span class="p">)</span>
+        <span class="n">formatted_sub_expressions</span> <span class="o">=</span> <span class="p">[</span><span class="n">subExpr</span><span class="o">.</span><span class="n">formatted</span><span class="p">(</span><span class="n">formatType</span><span class="p">,</span> <span class="n">fence</span><span class="o">=</span><span class="n">subFence</span><span class="p">)</span> <span class="k">for</span> <span class="n">subExpr</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span><span class="p">())]</span>
+        <span class="n">formatted_sub_expressions</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;\ldots&#39;</span> <span class="k">if</span> <span class="n">formatType</span><span class="o">==</span><span class="s1">&#39;latex&#39;</span> <span class="k">else</span> <span class="s1">&#39;...&#39;</span><span class="p">)</span>
+        <span class="c1"># put the formatted operator between each of formattedSubExpressions</span>
+        <span class="k">if</span> <span class="n">fence</span><span class="p">:</span> 
+            <span class="n">outStr</span> <span class="o">+=</span> <span class="s1">&#39;(&#39;</span> <span class="k">if</span> <span class="n">formatType</span><span class="o">==</span><span class="s1">&#39;string&#39;</span> <span class="k">else</span>  <span class="sa">r</span><span class="s1">&#39;\left(&#39;</span>
+        <span class="n">outStr</span> <span class="o">+=</span> <span class="n">formatted_operator</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">formatted_sub_expressions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fence</span><span class="p">:</span>            
+            <span class="n">outStr</span> <span class="o">+=</span> <span class="s1">&#39;)&#39;</span> <span class="k">if</span> <span class="n">formatType</span><span class="o">==</span><span class="s1">&#39;string&#39;</span> <span class="k">else</span>  <span class="sa">r</span><span class="s1">&#39;\right)&#39;</span>
+        <span class="k">return</span> <span class="n">outStr</span></div>
+    
+<div class="viewcode-block" id="Iter.getInstance"><a class="viewcode-back" href="../../../../../api/proveit.Iter.html#proveit.Iter.getInstance">[docs]</a>    <span class="k">def</span> <span class="nf">getInstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_or_indices</span><span class="p">,</span> <span class="n">assumptions</span> <span class="o">=</span> <span class="n">USE_DEFAULTS</span><span class="p">,</span> <span class="n">requirements</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the iteration instance with the given indices</span>
+<span class="sd">        as an Expression, using the given assumptions as needed</span>
+<span class="sd">        to interpret the indices expression.  Required</span>
+<span class="sd">        truths, proven under the given assumptions, that </span>
+<span class="sd">        were used to make this interpretation will be</span>
+<span class="sd">        appended to the given &#39;requirements&#39; (if provided).</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">LessEq</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndims</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">index_or_indices</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">index_or_indices</span>
+
+        <span class="k">if</span> <span class="n">requirements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># requirements won&#39;t be passed back in this case </span>
+            <span class="n">requirements</span> <span class="o">=</span> <span class="p">[]</span> 
+        
+        <span class="c1"># first make sure that the indices are in the iteration range</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_indices</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="ow">in</span> <span class="p">((</span><span class="n">start</span><span class="p">,</span> <span class="n">index</span><span class="p">),</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">end</span><span class="p">)):</span>
+                <span class="n">relation</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">relation</span> <span class="o">=</span> <span class="n">LessEq</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">],</span> <span class="n">reorder</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">assumptions</span><span class="o">=</span><span class="n">assumptions</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">IterationError</span><span class="p">(</span><span class="s2">&quot;Indices not provably within the iteration range: </span><span class="si">%s</span><span class="s2"> &lt;= </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">))</span> 
+                <span class="n">requirements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">relation</span><span class="p">)</span>
+        
+        <span class="c1"># map to the desired instance</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">mapped</span><span class="p">(</span><span class="o">*</span><span class="n">indices</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Iter.substituted"><a class="viewcode-back" href="../../../../../api/proveit.Iter.html#proveit.Iter.substituted">[docs]</a>    <span class="k">def</span> <span class="nf">substituted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reservedVars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                    <span class="n">assumptions</span><span class="o">=</span><span class="n">USE_DEFAULTS</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns this expression with the substitutions made </span>
+<span class="sd">        according to exprMap and/or relabeled according to relabelMap.</span>
+<span class="sd">        Attempt to automatically expand the iteration if any Indexed </span>
+<span class="sd">        sub-expressions substitute their variable for a composite</span>
+<span class="sd">        (list or tensor).  Indexed should index variables that represent</span>
+<span class="sd">        composites, but substituting the composite is a signal that</span>
+<span class="sd">        an outer iteration should be expanded.  An exception is</span>
+<span class="sd">        raised if this fails.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.composite</span> <span class="k">import</span> <span class="n">_generateCoordOrderAssumptions</span>
+        <span class="kn">from</span> <span class="nn">proveit</span> <span class="k">import</span> <span class="n">ProofFailure</span><span class="p">,</span> <span class="n">ExprArray</span>
+        <span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">InSet</span>
+        <span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Less</span><span class="p">,</span> <span class="n">LessEq</span><span class="p">,</span> <span class="n">dist_add</span><span class="p">,</span> \
+            <span class="n">zero</span><span class="p">,</span> <span class="n">one</span><span class="p">,</span> <span class="n">dist_subtract</span><span class="p">,</span> <span class="n">Naturals</span><span class="p">,</span> <span class="n">Integers</span>
+        <span class="kn">from</span> <span class="nn">.composite</span> <span class="k">import</span> <span class="n">_simplifiedCoord</span>
+        <span class="kn">from</span> <span class="nn">proveit._core_.expression.expr</span> <span class="k">import</span> <span class="n">_NoExpandedIteration</span>
+        <span class="kn">from</span> <span class="nn">proveit._core_.expression.label.var</span> <span class="k">import</span> <span class="n">safeDummyVars</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkRelabelMap</span><span class="p">(</span><span class="n">relabelMap</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">relabelMap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">relabelMap</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        
+        <span class="n">assumptions</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">checkedAssumptions</span><span class="p">(</span><span class="n">assumptions</span><span class="p">)</span>
+        <span class="n">new_requirements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">iter_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="n">iter_body</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">body</span>
+        <span class="n">ndims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndims</span>
+        <span class="n">subbed_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span><span class="o">.</span><span class="n">substituted</span><span class="p">(</span><span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="p">,</span> 
+                           <span class="n">reservedVars</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span> <span class="n">new_requirements</span><span class="p">)</span>
+        <span class="n">subbed_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_indices</span><span class="o">.</span><span class="n">substituted</span><span class="p">(</span><span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="p">,</span> 
+                         <span class="n">reservedVars</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span> <span class="n">new_requirements</span><span class="p">)</span>
+        
+        <span class="c1">#print(&quot;iteration substituted&quot;, self, subbed_start, subbed_end)</span>
+        
+        <span class="c1"># Need to handle the change in scope within the lambda </span>
+        <span class="c1"># expression.  We won&#39;t use &#39;new_params&#39;.  They aren&#39;t relavent </span>
+        <span class="c1"># after an expansion, this won&#39;t be used.</span>
+        <span class="n">new_params</span><span class="p">,</span> <span class="n">inner_expr_map</span><span class="p">,</span> <span class="n">inner_assumptions</span><span class="p">,</span> <span class="n">inner_reservations</span> \
+            <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">_innerScopeSub</span><span class="p">(</span><span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="p">,</span> 
+                  <span class="n">reservedVars</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span> <span class="n">new_requirements</span><span class="p">)</span>
+        
+        <span class="c1"># Get sorted substitution parameter start and end</span>
+        <span class="c1"># values demarcating how the entry array must be split up for </span>
+        <span class="c1"># each axis.</span>
+        <span class="n">all_entry_starts</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">ndims</span>
+        <span class="n">all_entry_ends</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">ndims</span>
+        <span class="n">do_expansion</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndims</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">empty_eq</span> <span class="o">=</span> <span class="n">Equals</span><span class="p">(</span><span class="n">dist_add</span><span class="p">(</span><span class="n">subbed_end</span><span class="p">[</span><span class="n">axis</span><span class="p">],</span> <span class="n">one</span><span class="p">),</span> 
+                                  <span class="n">subbed_start</span><span class="p">[</span><span class="n">axis</span><span class="p">])</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># Check if this is an empty iteration which</span>
+                    <span class="c1"># happens when end+1=start.</span>
+                    <span class="n">empty_eq</span><span class="o">.</span><span class="n">prove</span><span class="p">(</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">automation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">all_entry_starts</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_entry_ends</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">do_expansion</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">continue</span>
+                <span class="k">except</span> <span class="n">ProofFailure</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="n">param_vals</span> <span class="o">=</span> \
+                    <span class="n">iter_body</span><span class="o">.</span><span class="n">_iterSubParamVals</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">iter_params</span><span class="p">[</span><span class="n">axis</span><span class="p">],</span> 
+                                                <span class="n">subbed_start</span><span class="p">[</span><span class="n">axis</span><span class="p">],</span> 
+                                                <span class="n">subbed_end</span><span class="p">[</span><span class="n">axis</span><span class="p">],</span>
+                                                <span class="n">inner_expr_map</span><span class="p">,</span> <span class="n">relabelMap</span><span class="p">,</span>
+                                                <span class="n">inner_reservations</span><span class="p">,</span> 
+                                                <span class="n">inner_assumptions</span><span class="p">,</span>
+                                                <span class="n">new_requirements</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">param_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">subbed_start</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">param_vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">subbed_end</span><span class="p">[</span><span class="n">axis</span><span class="p">]:</span>
+                    <span class="c1"># The last of the param_vals should either be</span>
+                    <span class="c1"># subbed_end[axis] or known to be </span>
+                    <span class="c1"># subbed_end[axis]+1.  Let&#39;s double-check.</span>
+                    <span class="n">eq</span> <span class="o">=</span> <span class="n">Equals</span><span class="p">(</span><span class="n">dist_add</span><span class="p">(</span><span class="n">subbed_end</span><span class="p">[</span><span class="n">axis</span><span class="p">],</span> <span class="n">one</span><span class="p">),</span> <span class="n">param_vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">eq</span><span class="o">.</span><span class="n">prove</span><span class="p">(</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">automation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="c1"># Populate the entry starts and ends using the</span>
+                <span class="c1"># param_vals which indicate that start of each contained</span>
+                <span class="c1"># entry plus the end of this iteration.</span>
+                <span class="n">all_entry_starts</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">all_entry_ends</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">param_vals</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">param_vals</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                    <span class="n">all_entry_starts</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">eq</span> <span class="o">=</span> <span class="n">Equals</span><span class="p">(</span><span class="n">dist_add</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">one</span><span class="p">),</span> <span class="n">right</span><span class="p">)</span>
+                        <span class="n">eq</span><span class="o">.</span><span class="n">prove</span><span class="p">(</span><span class="n">assumptions</span><span class="p">,</span> <span class="n">automation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="n">new_requirements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">prove</span><span class="p">(</span><span class="n">assumptions</span><span class="p">,</span>
+                                                         <span class="n">automation</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+                        <span class="c1"># Simple single-entry case: the start and end</span>
+                        <span class="c1"># are the same.</span>
+                        <span class="n">entry_end</span> <span class="o">=</span> <span class="n">left</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="c1"># Not the simple case; perform the positive </span>
+                        <span class="c1"># integrality check.</span>
+                        <span class="n">requirement</span> <span class="o">=</span> <span class="n">InSet</span><span class="p">(</span><span class="n">dist_subtract</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">left</span><span class="p">),</span> 
+                                            <span class="n">Naturals</span><span class="p">)</span>
+                        <span class="c1"># Knowing the simplification may help prove the </span>
+                        <span class="c1"># requirement.</span>
+                        <span class="n">_simplifiedCoord</span><span class="p">(</span><span class="n">requirement</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span> <span class="p">[])</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">new_requirements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">requirement</span><span class="o">.</span><span class="n">prove</span><span class="p">(</span><span class="n">assumptions</span><span class="p">))</span>
+                        <span class="k">except</span> <span class="n">ProofFailure</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">IterationError</span><span class="p">(</span><span class="s2">&quot;Failed to prove requirement &quot;</span>
+                                                  <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">requirement</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="n">right</span><span class="o">==</span><span class="n">subbed_end</span><span class="p">[</span><span class="n">axis</span><span class="p">]:</span>
+                            <span class="c1"># This last entry is the inclusive end</span>
+                            <span class="c1"># rather than past the end, so it is an</span>
+                            <span class="c1"># exception.</span>
+                            <span class="n">entry_end</span> <span class="o">=</span> <span class="n">right</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># Subtract one from the start of the next</span>
+                            <span class="c1"># entyr to get the end of this entry.</span>
+                            <span class="n">entry_end</span> <span class="o">=</span> <span class="n">dist_subtract</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">one</span><span class="p">)</span>
+                            <span class="n">entry_end</span> <span class="o">=</span> <span class="n">_simplifiedCoord</span><span class="p">(</span><span class="n">entry_end</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span>
+                                                        <span class="n">requirements</span><span class="p">)</span>
+                    <span class="n">all_entry_ends</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry_end</span><span class="p">)</span>
+                <span class="c1"># See if we should add the end value as an extra </span>
+                <span class="c1"># singular entry.  If param_vals[-1] is at the inclusive</span>
+                <span class="c1"># end, then we have a singular final entry.</span>
+                <span class="k">if</span> <span class="n">param_vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">subbed_end</span><span class="p">[</span><span class="n">axis</span><span class="p">]:</span>
+                    <span class="n">end_val</span> <span class="o">=</span> <span class="n">subbed_end</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+                    <span class="n">all_entry_starts</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">end_val</span><span class="p">)</span>
+                    <span class="n">all_entry_ends</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">end_val</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Otherwise, the last param_val will be one after</span>
+                    <span class="c1"># the inclusive end which we will want to use below</span>
+                    <span class="c1"># when building the last iteration entry.</span>
+                    <span class="n">all_entry_starts</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>           
+                <span class="n">do_expansion</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="n">EmptyIterException</span><span class="p">:</span>
+                <span class="c1"># Indexing over a negative or empty range.  The only way this</span>
+                <span class="c1"># should be allowed is if subbed_end+1=subbed_start.</span>
+                <span class="n">Equals</span><span class="p">(</span><span class="n">dist_add</span><span class="p">(</span><span class="n">subbed_end</span><span class="p">[</span><span class="n">axis</span><span class="p">],</span> <span class="n">one</span><span class="p">),</span> <span class="n">subbed_start</span><span class="p">[</span><span class="n">axis</span><span class="p">])</span><span class="o">.</span><span class="n">prove</span><span class="p">(</span><span class="n">assumptions</span><span class="p">)</span>
+                <span class="n">all_entry_starts</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_entry_ends</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">do_expansion</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="n">_NoExpandedIteration</span><span class="p">:</span>
+                <span class="k">pass</span>
+        
+        <span class="k">if</span> <span class="n">do_expansion</span><span class="p">:</span>
+            <span class="c1"># There are Indexed sub-Expressions whose variable is</span>
+            <span class="c1"># being replaced with a Composite, so let us</span>
+            <span class="c1"># expand the iteration for all of the relevant</span>
+            <span class="c1"># iteration ranges.</span>
+            <span class="c1"># Sort the argument value ranges.</span>
+            
+            <span class="c1"># We must have &quot;substition parameter values&quot; along each</span>
+            <span class="c1"># axis:</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">all_entry_starts</span> <span class="ow">or</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">all_entry_ends</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">IterationError</span><span class="p">(</span><span class="s2">&quot;Must expand all axes or none of the &quot;</span>
+                                      <span class="s2">&quot;axes, when substituting </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+            <span class="c1"># Generate the expanded tuple/array as the substition</span>
+            <span class="c1"># of &#39;self&#39;.</span>
+            <span class="n">shape</span> <span class="o">=</span>  <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">all_entry_ends</span><span class="p">[</span><span class="n">axis</span><span class="p">])</span> 
+                      <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndims</span><span class="p">)]</span>
+            <span class="n">entries</span> <span class="o">=</span> <span class="n">ExprArray</span><span class="o">.</span><span class="n">make_empty_entries</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">indices_by_axis</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span> <span class="k">for</span> <span class="n">extent</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">]</span>
+            <span class="c1">#print(&#39;shape&#39;, shape, &#39;indices_by_axis&#39;, indices_by_axis, &#39;sub_param_vals&#39;, sub_param_vals)</span>
+            
+            <span class="n">extended_inner_assumptions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">inner_assumptions</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">axis_starts</span> <span class="ow">in</span> <span class="n">all_entry_starts</span><span class="p">:</span>
+                <span class="c1"># Generate assumptions that order the</span>
+                <span class="c1"># successive entry start parameter values</span>
+                <span class="c1"># must be natural numbers. (This is a requirement for</span>
+                <span class="c1"># iteration instances and is a simple fact of</span>
+                <span class="c1"># succession for single entries.)</span>
+                <span class="n">extended_inner_assumptions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_generateCoordOrderAssumptions</span><span class="p">(</span><span class="n">axis_starts</span><span class="p">))</span>
+            
+            <span class="c1"># Maintain lists of parameter values that come before each given entry.</span>
+            <span class="c1">#prev_param_vals = [[] for axis in range(ndims)]</span>
+            
+            <span class="c1"># Iterate over each of the new entries, obtaining indices</span>
+            <span class="c1"># into sub_param_vals for the start parameters of the entry.</span>
+            <span class="k">for</span> <span class="n">entry_indices</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">indices_by_axis</span><span class="p">):</span>
+                <span class="n">entry_starts</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis_starts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">axis_starts</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> \
+                                <span class="nb">zip</span><span class="p">(</span><span class="n">all_entry_starts</span><span class="p">,</span> <span class="n">entry_indices</span><span class="p">)]</span>
+                <span class="n">entry_ends</span> <span class="o">=</span> <span class="p">[</span><span class="n">axis_ends</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">axis_ends</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> \
+                                <span class="nb">zip</span><span class="p">(</span><span class="n">all_entry_ends</span><span class="p">,</span> <span class="n">entry_indices</span><span class="p">)]</span>
+                                
+                <span class="n">is_singular_entry</span> <span class="o">=</span> <span class="kc">True</span>                
+                <span class="k">for</span> <span class="n">entry_start</span><span class="p">,</span> <span class="n">entry_end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">entry_starts</span><span class="p">,</span> <span class="n">entry_ends</span><span class="p">):</span>
+                    <span class="c1"># Note that empty ranges will be skipped because</span>
+                    <span class="c1"># equivalent parameter values should be skipped in</span>
+                    <span class="c1"># the param_vals above.</span>
+                    <span class="k">if</span> <span class="n">entry_start</span> <span class="o">!=</span> <span class="n">entry_end</span><span class="p">:</span>
+                        <span class="c1"># Not a singular entry along this axis, so</span>
+                        <span class="c1"># it is not a singular entry.  We must do an</span>
+                        <span class="c1"># iteration for this entry.</span>
+                        <span class="n">is_singular_entry</span> <span class="o">=</span> <span class="kc">False</span>
+                
+                <span class="k">if</span> <span class="n">is_singular_entry</span><span class="p">:</span>                    
+                    <span class="c1"># Single element entry.</span>
+                                        
+                    <span class="c1"># Generate the entry by making appropriate</span>
+                    <span class="c1"># parameter substitutions for the iteration body.</span>
+                    <span class="n">entry_inner_expr_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inner_expr_map</span><span class="p">)</span>
+                    <span class="n">entry_inner_expr_map</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">param</span><span class="p">:</span><span class="n">arg</span> <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> 
+                                                 <span class="nb">zip</span><span class="p">(</span><span class="n">iter_params</span><span class="p">,</span> 
+                                                     <span class="n">entry_starts</span><span class="p">)})</span>
+                    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">iter_params</span><span class="p">:</span> <span class="n">relabelMap</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">entry</span> <span class="o">=</span> <span class="n">iter_body</span><span class="o">.</span><span class="n">substituted</span><span class="p">(</span><span class="n">entry_inner_expr_map</span><span class="p">,</span> 
+                                <span class="n">relabelMap</span><span class="p">,</span> <span class="n">inner_reservations</span><span class="p">,</span> 
+                                <span class="n">extended_inner_assumptions</span><span class="p">,</span> <span class="n">new_requirements</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Iteration entry.</span>
+                    <span class="c1"># Shift the iteration parameter so that the </span>
+                    <span class="c1"># iteration will have the same start-indices</span>
+                    <span class="c1"># for this sub-range (like shifting a viewing </span>
+                    <span class="c1"># window, moving the origin to the start of the </span>
+                    <span class="c1"># sub-range).</span>
+                    
+                    <span class="c1"># Generate &quot;safe&quot; new parameters (the Variables are</span>
+                    <span class="c1"># not used for anything that might conflict).</span>
+                    <span class="c1"># Avoid using free variables from these expressions:</span>
+                    <span class="n">unsafe_var_exprs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+                    <span class="n">unsafe_var_exprs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">exprMap</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                    <span class="n">unsafe_var_exprs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">relabelMap</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                    <span class="n">unsafe_var_exprs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">entry_starts</span><span class="p">)</span>
+                    <span class="n">unsafe_var_exprs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">entry_ends</span><span class="p">)</span>
+                    <span class="n">new_params</span> <span class="o">=</span> <span class="n">safeDummyVars</span><span class="p">(</span><span class="n">ndims</span><span class="p">,</span> <span class="o">*</span><span class="n">unsafe_var_exprs</span><span class="p">)</span>
+                                        
+                    <span class="c1"># Make assumptions that places the parameter(s) in the</span>
+                    <span class="c1"># appropriate range and at an integral coordinate position.</span>
+                    <span class="c1"># Note, it is possible that this actually represents an</span>
+                    <span class="c1"># empty range and that these assumptions are contradictory;</span>
+                    <span class="c1"># but this still suits our purposes regardless.</span>
+                    <span class="c1"># Also, we will choose to shift the parameter so it</span>
+                    <span class="c1"># starts at the start index of the iteration.</span>
+                    <span class="n">range_expr_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inner_expr_map</span><span class="p">)</span>
+                    <span class="n">range_assumptions</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">shifted_entry_ends</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">new_param</span><span class="p">,</span> <span class="n">entry_start</span><span class="p">,</span> <span class="n">entry_end</span><span class="p">)</span> \
+                            <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">iter_params</span><span class="p">,</span> <span class="n">new_params</span><span class="p">,</span> 
+                                             <span class="n">entry_starts</span><span class="p">,</span> <span class="n">entry_ends</span><span class="p">)):</span>
+                        <span class="n">start_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+                        <span class="n">shift</span> <span class="o">=</span> <span class="n">dist_subtract</span><span class="p">(</span><span class="n">entry_start</span><span class="p">,</span> <span class="n">start_idx</span><span class="p">)</span>
+                        <span class="n">shift</span> <span class="o">=</span> <span class="n">_simplifiedCoord</span><span class="p">(</span><span class="n">shift</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span>
+                                                 <span class="n">new_requirements</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">shift</span> <span class="o">!=</span> <span class="n">zero</span><span class="p">:</span>
+                            <span class="n">shifted_param</span> <span class="o">=</span> <span class="n">dist_add</span><span class="p">(</span><span class="n">new_param</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">shifted_param</span> <span class="o">=</span> <span class="n">new_param</span>
+                        <span class="n">range_expr_map</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">shifted_param</span>
+                        <span class="n">shifted_end</span> <span class="o">=</span> <span class="n">dist_subtract</span><span class="p">(</span><span class="n">entry_end</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span>
+                        <span class="n">shifted_end</span> <span class="o">=</span> <span class="n">_simplifiedCoord</span><span class="p">(</span><span class="n">shifted_end</span><span class="p">,</span> 
+                                                       <span class="n">assumptions</span><span class="p">,</span>
+                                                       <span class="n">new_requirements</span><span class="p">)</span>
+                        <span class="n">shifted_entry_ends</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shifted_end</span><span class="p">)</span>
+                        <span class="n">assumption</span> <span class="o">=</span> <span class="n">InSet</span><span class="p">(</span><span class="n">new_param</span><span class="p">,</span> <span class="n">Integers</span><span class="p">)</span>
+                        <span class="n">range_assumptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assumption</span><span class="p">)</span>
+                        <span class="n">assumption</span> <span class="o">=</span> <span class="n">LessEq</span><span class="p">(</span><span class="n">entry_start</span><span class="p">,</span> <span class="n">shifted_param</span><span class="p">)</span>
+                        <span class="n">range_assumptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assumption</span><span class="p">)</span>
+                        <span class="c1"># Assume differences with each of the previous</span>
+                        <span class="c1"># range starts are natural numbers as should be</span>
+                        <span class="c1"># the case given requirements that have been </span>
+                        <span class="c1"># met.</span>
+                        <span class="n">next_index</span> <span class="o">=</span> <span class="n">entry_indices</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+                        <span class="n">prev_starts</span> <span class="o">=</span> <span class="n">all_entry_starts</span><span class="p">[</span><span class="n">axis</span><span class="p">][:</span><span class="n">next_index</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">prev_start</span> <span class="ow">in</span> <span class="n">prev_starts</span><span class="p">:</span>
+                            <span class="n">assumption</span> <span class="o">=</span> <span class="n">InSet</span><span class="p">(</span><span class="n">dist_subtract</span><span class="p">(</span><span class="n">shifted_param</span><span class="p">,</span> 
+                                                             <span class="n">prev_start</span><span class="p">),</span> 
+                                               <span class="n">Naturals</span><span class="p">)</span>
+                            <span class="n">range_assumptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assumption</span><span class="p">)</span>
+                        <span class="n">next_start</span> <span class="o">=</span> <span class="n">all_entry_starts</span><span class="p">[</span><span class="n">axis</span><span class="p">][</span><span class="n">next_index</span><span class="p">]</span>
+                        <span class="n">assumption</span> <span class="o">=</span> <span class="n">Less</span><span class="p">(</span><span class="n">shifted_param</span><span class="p">,</span> <span class="n">next_start</span><span class="p">)</span>
+                        <span class="n">range_assumptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assumption</span><span class="p">)</span>
+
+
+                    <span class="c1"># Perform the substitution.</span>
+                    <span class="c1"># The fact that our &quot;new parameters&quot; are &quot;safe&quot; </span>
+                    <span class="c1"># alleviates the need to reserve anything extra.</span>
+                    <span class="n">range_lambda_body</span> <span class="o">=</span> <span class="n">iter_body</span><span class="o">.</span><span class="n">substituted</span><span class="p">(</span><span class="n">range_expr_map</span><span class="p">,</span> 
+                        <span class="n">relabelMap</span><span class="p">,</span> <span class="n">reservedVars</span><span class="p">,</span> 
+                        <span class="n">extended_inner_assumptions</span><span class="o">+</span><span class="n">range_assumptions</span><span class="p">,</span> <span class="n">new_requirements</span><span class="p">)</span>
+                    <span class="c1"># Any requirements that involve the new parameters </span>
+                    <span class="c1"># are a direct consequence of the iteration range </span>
+                    <span class="c1"># and are not external requirements:</span>
+                    <span class="n">new_requirements</span> <span class="o">=</span> \
+                        <span class="p">[</span><span class="n">requirement</span> <span class="k">for</span> <span class="n">requirement</span> <span class="ow">in</span> <span class="n">new_requirements</span> 
+                         <span class="k">if</span> <span class="n">requirement</span><span class="o">.</span><span class="n">freeVars</span><span class="p">()</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">new_params</span><span class="p">)]</span>
+                    <span class="n">entry</span> <span class="o">=</span> <span class="n">Iter</span><span class="p">(</span><span class="n">new_params</span><span class="p">,</span> <span class="n">range_lambda_body</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_indices</span><span class="p">,</span> 
+                                 <span class="n">shifted_entry_ends</span><span class="p">)</span>
+                <span class="c1"># Set this entry in the entries array.</span>
+                <span class="n">ExprArray</span><span class="o">.</span><span class="n">set_entry</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span> <span class="n">entry_indices</span><span class="p">,</span> <span class="n">entry</span><span class="p">)</span>
+                                                                                
+                <span class="sd">&#39;&#39;&#39;      </span>
+<span class="sd">                    # Iteration entry.</span>
+<span class="sd">                    # Shift the iteration parameter so that the </span>
+<span class="sd">                    # iteration will have the same start-indices</span>
+<span class="sd">                    # for this sub-range (like shifting a viewing </span>
+<span class="sd">                    # window, moving the origin to the start of the </span>
+<span class="sd">                    # sub-range).</span>
+
+<span class="sd">                    # Generate &quot;safe&quot; new parameters (the Variables are</span>
+<span class="sd">                    # not used for anything that might conflict).</span>
+<span class="sd">                    # Avoid using free variables from these expressions:</span>
+<span class="sd">                    unsafe_var_exprs = [self]</span>
+<span class="sd">                    unsafe_var_exprs.extend(exprMap.values())</span>
+<span class="sd">                    unsafe_var_exprs.extend(relabelMap.values())</span>
+<span class="sd">                    unsafe_var_exprs.extend(entry_start_vals)</span>
+<span class="sd">                    unsafe_var_exprs.extend(entry_end_vals)</span>
+<span class="sd">                    new_params = safeDummyVars(len(iter_params), </span>
+<span class="sd">                                               *unsafe_var_exprs)</span>
+<span class="sd">                    </span>
+<span class="sd">                    # Make the appropriate substitution mapping</span>
+<span class="sd">                    # and add appropriate assumptions for the iteration</span>
+<span class="sd">                    # parameter(s).</span>
+<span class="sd">                    range_expr_map = dict(inner_expr_map)</span>
+<span class="sd">                    range_assumptions = []</span>
+<span class="sd">                    for start_idx, param, new_param, range_start, range_end \</span>
+<span class="sd">                            in zip(subbed_start, iter_params, new_params, </span>
+<span class="sd">                                   entry_start_vals, entry_end_vals):</span>
+<span class="sd">                        shifted_param = Add(new_param, subtract(range_start, start_idx))</span>
+<span class="sd">                        shifted_param = _simplifiedCoord(shifted_param, assumptions,</span>
+<span class="sd">                                                         requirements)</span>
+<span class="sd">                        range_expr_map[param] = shifted_param</span>
+<span class="sd">                        # Include assumptions that the parameters are </span>
+<span class="sd">                        # in the proper range.</span>
+<span class="sd">                        assumption = LessEq(start_idx, new_param)</span>
+<span class="sd">                        range_assumptions.append(assumption)</span>
+<span class="sd">                        assumption = InSet(subtract(new_param, start_idx), Naturals)</span>
+<span class="sd">                        #assumption = LessEq(new_param,</span>
+<span class="sd">                        #                    subtract(range_end, start_idx))</span>
+<span class="sd">                        assumption = LessEq(new_param, range_end)</span>
+<span class="sd">                        range_assumptions.append(assumption)</span>
+<span class="sd">                    </span>
+<span class="sd">                    # Perform the substitution.</span>
+<span class="sd">                    # The fact that our &quot;new parameters&quot; are &quot;safe&quot; </span>
+<span class="sd">                    # alleviates the need to reserve anything extra.</span>
+<span class="sd">                    range_lambda_body = iter_body.substituted(range_expr_map, </span>
+<span class="sd">                        relabelMap, reservedVars, </span>
+<span class="sd">                        inner_assumptions+range_assumptions, new_requirements)</span>
+<span class="sd">                    # Any requirements that involve the new parameters </span>
+<span class="sd">                    # are a direct consequence of the iteration range </span>
+<span class="sd">                    # and are not external requirements:</span>
+<span class="sd">                    new_requirements = \</span>
+<span class="sd">                        [requirement for requirement in new_requirements </span>
+<span class="sd">                         if requirement.freeVars().isdisjoint(new_params)]</span>
+<span class="sd">                    range_lambda_map = Lambda(new_params, range_lambda_body)</span>
+<span class="sd">                    # Obtain the appropriate end indices.</span>
+<span class="sd">                    end_indices = \</span>
+<span class="sd">                        [_simplifiedCoord(subtract(range_end, start_idx), </span>
+<span class="sd">                                          assumptions, new_requirements) </span>
+<span class="sd">                         for start_idx, range_end in zip(subbed_start, </span>
+<span class="sd">                                                          entry_end_vals)]</span>
+<span class="sd">                    entry = Iter(range_lambda_map, subbed_start, end_indices)</span>
+<span class="sd">                # Set this entry in the entries array.</span>
+<span class="sd">                ExprArray.set_entry(entries, entry_start_indices, entry)</span>
+<span class="sd">                &#39;&#39;&#39;</span>
+            <span class="n">subbed_self</span> <span class="o">=</span> <span class="n">compositeExpression</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span>     
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># No Indexed sub-Expressions whose variable is </span>
+            <span class="c1"># replaced with a Composite, so let us not expand the</span>
+            <span class="c1"># iteration.  Just do an ordinary substitution.</span>
+            <span class="n">new_requirements</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># Fresh new requirements.</span>
+            <span class="n">subbed_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_map</span><span class="o">.</span><span class="n">substituted</span><span class="p">(</span><span class="n">exprMap</span><span class="p">,</span> <span class="n">relabelMap</span><span class="p">,</span> 
+                                <span class="n">reservedVars</span><span class="p">,</span> <span class="n">assumptions</span><span class="p">,</span> <span class="n">new_requirements</span><span class="p">)</span>
+            <span class="n">subbed_self</span> <span class="o">=</span> <span class="n">Iter</span><span class="p">(</span><span class="n">subbed_map</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">subbed_map</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> 
+                               <span class="n">subbed_start</span><span class="p">,</span> <span class="n">subbed_end</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">requirement</span> <span class="ow">in</span> <span class="n">new_requirements</span><span class="p">:</span>
+            <span class="c1"># Make sure requirements don&#39;t use reserved variable in a </span>
+            <span class="c1"># nested scope.</span>
+            <span class="n">requirement</span><span class="o">.</span><span class="n">_restrictionChecked</span><span class="p">(</span><span class="n">reservedVars</span><span class="p">)</span>      
+        <span class="k">if</span> <span class="n">requirements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">requirements</span> <span class="o">+=</span> <span class="n">new_requirements</span> <span class="c1"># append new requirements</span>
+        
+        <span class="k">return</span> <span class="n">subbed_self</span></div></div>
+
+
+<div class="viewcode-block" id="varIter"><a class="viewcode-back" href="../../../../../api/proveit.varIter.html#proveit.varIter">[docs]</a><span class="k">def</span> <span class="nf">varIter</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">proveit</span> <span class="k">import</span> <span class="n">safeDummyVar</span>
+    <span class="kn">from</span> <span class="nn">.indexed</span> <span class="k">import</span> <span class="n">Indexed</span>
+    <span class="n">param</span> <span class="o">=</span> <span class="n">safeDummyVar</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Iter</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Indexed</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">param</span><span class="p">),</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span></div>
+
+<span class="k">class</span> <span class="nc">IterationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg</span>
+
+<span class="k">class</span> <span class="nc">InvalidIterationError</span><span class="p">(</span><span class="n">IterationError</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Iterations must only contain Indexed variables with &quot;</span>
+               <span class="s2">&quot;indices that are &#39;simple&#39; functions of an iteration &quot;</span> 
+               <span class="s2">&quot;(the parameter itself or a sum of terms with one term &quot;</span>
+               <span class="s2">&quot;as the parameter), not </span><span class="si">%s</span><span class="s2"> with </span><span class="si">%s</span><span class="s2"> as a parameter.&quot;</span>
+               <span class="o">%</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">parameter</span><span class="p">))</span>
+        <span class="n">IterationError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> 
+
+<span class="k">class</span> <span class="nc">EmptyIterException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+ 
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../index.html">Prove-It</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.asExpression.html">asExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.asExpressions.html">asExpressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.compositeExpression.html">compositeExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.expressionDepth.html">expressionDepth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.maybeFenced.html">maybeFenced</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.maybeFencedLatex.html">maybeFencedLatex</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.maybeFencedString.html">maybeFencedString</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.reset.html">reset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.safeDefaultOrDummyVar.html">safeDefaultOrDummyVar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.safeDummyVar.html">safeDummyVar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.singleOrCompositeExpression.html">singleOrCompositeExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.varIter.html">varIter</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Assumption.html">Assumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Axiom.html">Axiom</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Composite.html">Composite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Context.html">Context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ContextException.html">ContextException</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.DuplicateLiteralError.html">DuplicateLiteralError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ExprArray.html">ExprArray</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ExprTuple.html">ExprTuple</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ExprTupleError.html">ExprTupleError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Expression.html">Expression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Function.html">Function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Generalization.html">Generalization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.GeneralizationFailure.html">GeneralizationFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.HypotheticalReasoning.html">HypotheticalReasoning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ImproperRelabeling.html">ImproperRelabeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ImproperSubstitution.html">ImproperSubstitution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Indexed.html">Indexed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.IndexedError.html">IndexedError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.InnerExpr.html">InnerExpr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.InvalidAssumptions.html">InvalidAssumptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Iter.html">Iter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.KnownTruth.html">KnownTruth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Label.html">Label</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Lambda.html">Lambda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.LambdaError.html">LambdaError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Literal.html">Literal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.MakeNotImplemented.html">MakeNotImplemented</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ModusPonens.html">ModusPonens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ModusPonensFailure.html">ModusPonensFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.NamedExprs.html">NamedExprs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Operation.html">Operation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.OperationError.html">OperationError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.OperationOverInstances.html">OperationOverInstances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.OperationSequence.html">OperationSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ParameterExtractionError.html">ParameterExtractionError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Proof.html">Proof</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ProofFailure.html">ProofFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.RelabelingFailure.html">RelabelingFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.ScopingViolation.html">ScopingViolation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Specialization.html">Specialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.SpecializationFailure.html">SpecializationFailure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.StyleOptions.html">StyleOptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Theorem.html">Theorem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.TransRelUpdater.html">TransRelUpdater</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.TransitiveRelation.html">TransitiveRelation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.TransitiveSequence.html">TransitiveSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.TransitivityException.html">TransitivityException</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.Variable.html">Variable</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.compose.html">compose</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.concludeViaImplication.html">concludeViaImplication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.defaultSimplification.html">defaultSimplification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.evaluateTruth.html">evaluateTruth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.inBool.html">inBool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.isIrreducibleValue.html">isIrreducibleValue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.reduceOperands.html">reduceOperands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.And.html">And</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Card.html">Card</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Difference.html">Difference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Disjoint.html">Disjoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Distinct.html">Distinct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Equals.html">Equals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Exists.html">Exists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Forall.html">Forall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Iff.html">Iff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Implies.html">Implies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.InSet.html">InSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Intersect.html">Intersect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.IrreducibleValue.html">IrreducibleValue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Membership.html">Membership</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Nonmembership.html">Nonmembership</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Not.html">Not</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotEquals.html">NotEquals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotExists.html">NotExists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotInSet.html">NotInSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotSubsetEq.html">NotSubsetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.NotSupersetEq.html">NotSupersetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Or.html">Or</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Set.html">Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.SetOfAll.html">SetOfAll</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.SimplificationError.html">SimplificationError</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Subset.html">Subset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.SubsetEq.html">SubsetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Superset.html">Superset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.SupersetEq.html">SupersetEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.logic.Union.html">Union</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.GreaterEqOnlySeq.html">GreaterEqOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.GreaterOnlySeq.html">GreaterOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.LessEqOnlySeq.html">LessEqOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.LessOnlySeq.html">LessOnlySeq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.dist_add.html">dist_add</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.dist_subtract.html">dist_subtract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.frac.html">frac</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.greaterSequence.html">greaterSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.isLiteralInt.html">isLiteralInt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.lesserSequence.html">lesserSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.num.html">num</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.subtract.html">subtract</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Abs.html">Abs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Add.html">Add</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Ceil.html">Ceil</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.DecimalSequence.html">DecimalSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Div.html">Div</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Exp.html">Exp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Floor.html">Floor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Greater.html">Greater</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.GreaterEq.html">GreaterEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.GreaterSequence.html">GreaterSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Integrate.html">Integrate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Interval.html">Interval</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.IntervalCC.html">IntervalCC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.IntervalCO.html">IntervalCO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.IntervalOC.html">IntervalOC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.IntervalOO.html">IntervalOO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Len.html">Len</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Less.html">Less</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.LessEq.html">LessEq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.LesserSequence.html">LesserSequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Max.html">Max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Min.html">Min</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Mod.html">Mod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.ModAbs.html">ModAbs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Mult.html">Mult</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Neg.html">Neg</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Numeral.html">Numeral</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.RealInterval.html">RealInterval</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Round.html">Round</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Sqrt.html">Sqrt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/proveit.number.Sum.html">Sum</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../index.html">Module code</a><ul>
+  <li><a href="../../../../proveit.html">proveit</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Wayne Witzel.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

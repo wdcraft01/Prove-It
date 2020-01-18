@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Theorems for context proveit.number.division</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../../../../index.html"><img src="../../../../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Theorems-for-context-proveit.number.division">Theorems for context <a href="_context_.html">proveit.number.division</a><a class="anchor-link" href="#Theorems-for-context-proveit.number.division">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">proveit</span>
+<span class="c1"># the context is in the current directory:</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">proveit</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="c1"># adds context root to sys.path if necessary</span>
+<span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">InSet</span><span class="p">,</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">NotEquals</span><span class="p">,</span> <span class="n">Implies</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Integers</span><span class="p">,</span> <span class="n">NaturalsPos</span><span class="p">,</span> <span class="n">Reals</span><span class="p">,</span> <span class="n">RealsPos</span><span class="p">,</span> <span class="n">Complexes</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Div</span><span class="p">,</span> <span class="n">frac</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">subtract</span><span class="p">,</span> <span class="n">Sum</span><span class="p">,</span> <span class="n">Mult</span><span class="p">,</span> <span class="n">Exp</span><span class="p">,</span> <span class="n">zero</span><span class="p">,</span> <span class="n">one</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">S</span> <span class="c1">#, wMulti, xMulti, yMulti, zMulti, wEtc, xEtc, yEtc, zEtc, PyEtc</span>
+<span class="kn">from</span> <span class="nn">proveit.number._common_</span> <span class="k">import</span> <span class="n">ComplexesSansZero</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">begin</span> theorems
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining theorems for context &#39;proveit.number.division&#39;
+Subsequent end-of-cell assignments will define theorems
+&#39;%end theorems&#39; will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#divideRealClosure = Forall([a, b], InSet(Divide(a, b), Reals), domain=Reals, conditions=[NotEquals(b, zero)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#divideRealPosClosure = Forall([a, b], InSet(Divide(a, b), RealsPos), domain=RealsPos, conditions=[NotEquals(b, zero)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#fractionRealClosure = Forall([a, b], InSet(frac(a, b), Reals), domain=Reals, conditions=[NotEquals(b, zero)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#fractionPosClosure = Forall([a, b], InSet(frac(a, b), RealsPos), domain=RealsPos, conditions=[NotEquals(b, zero)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#divideComplexClosure = Forall([a, b], InSet(Divide(a, b), Complexes), domain=Complexes, conditions=[NotEquals(b, zero)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#fractionComplexClosure = Forall([a, b], InSet(frac(a, b), Complexes), domain=Complexes, conditions=[NotEquals(b, zero)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fracNotEqZero</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">NotEquals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">),</span> <span class="n">zero</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">ComplexesSansZero</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="fracNotEqZero"><a class="ProveItLink" href="_proofs_/fracNotEqZero.html">fracNotEqZero</a>:</strong> <a class="ProveItLink" href="__pv_it/0c344f23b86653c16d442f4fa292e4354b6e62520/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALMAAAAmCAMAAAC4YVoxAAAAPFBMVEX///8LCwsYGBgNDQ0oKCgQ
+EBC6urrMzMxUVFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAACwKje0AAAAAXRSTlMA
+QObYZgAAA1tJREFUWMPNWNm2pCAMZBZZhUD4/38dQMANF3qmdfJwj94WrVSSIoGQxw3sZ+uQI3nJ
+QOYLxcHQQd1fSceXIGtXEES40n/k7rOGA8ss+5giog/FaN/ALEW+4IlhB12rlVfPQ6a+1JGPDKNn
+fesFfx7zKCpjkWEdyMb/nGhWP4lexwQZiWafOf2YCbcqJ+0EMX1vsLEMHtXpYS65oM5AmQTafNAc
+pUCKz+y5he+nxs1EUMvdAwWAqAtDaIjRNVpfpxzu7iB8yb4LN+gKaB5IVnUr/f4mI90HNENaBOPS
+70Kv0F/H7OQnNPNJ2FVR+MC4NSqZ+34J+ntCxeR+EfO61IROO1I0Z74OGf29KpdstYuYCSosX8LT
+I1I1er/7zZ8yqX0xBiIt1NjmJnbe4ogx2e9f8S/fYi6cpgsaf8YWPLOLJdrRcCd2fKmpDwaTX0eE
+aEmd7aa5gTm92R0ND2MpSwQhRHiCMRkqlo27PNKTy0mRUhukxxbmucz9bNvockJOciNjjnhdS5xL
+rYKkCjE8YVVaSQ8wY4Lr9A3MJx2FahXuHKPpPuQFy84pAabGhnqAOIPZEmfKckej2pjZhBkOMV/k
+swv284dLJtdap2t3lcVHqqyI6FQIBi7U3IYV9fOA9mCvnCDSc8zqjm5sac57iqlSnBNbl36LBx9Y
+/VWGT1hHmLnGzM2GZ2wNp/5aT+m+qY+5VkeyWXxKv+UD3VBXxefCwMZcEvDgAaW0LNWyGEZR5Fk7
+I9BBTyPqXjkG0U9z7JEMcLYrikxfqiFpMa+LFe0swdl1jtDOZ2Gql1PlNnke5eq4YthvvfrSK72d
+VAaM/WLwQEV/XU5LXp9iIjW2AAdal/RZHp5FiGHtQiMPLntLs9NGARaSEMesCXeJPpS1Z0ETEoXT
+gxqM3oBAclCDgaMVpL30XdNM5MnevJIlM+XzScTGq3/MQ+B+Bu+gmZxoD+ubb+9hXk+gZp/OtGMK
+vqD5Rou0LTnRjLIdVukctqzegyHzD1tmZZYxowdnn+jp4joWa++hzPD86ZeRm4Ic+tp2PbxwxDjz
+KsaO0aUW6RuHjHUWTUN/0I4uENaRN6wexybdEx7/ptKfyo5yUpGypC+dR03eMZXbIK57j2Y5kLdM
+5V6dpy6hI0JFJ/8AY5kopRzGvdIAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fracZeroNumer</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Equals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">zero</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">zero</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="fracZeroNumer"><a class="ProveItLink" href="_proofs_/fracZeroNumer.html">fracZeroNumer</a>:</strong> <a class="ProveItLink" href="__pv_it/c2fae6e68c85a9a0afecc7c76deff5247c2107dd0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIcAAAAyBAMAAACEztX/AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAuFJREFU
+SMetV01oE0EU/tJN2nSz2RSKinqJVhC8JAfxIEhDC96kEfGSHKwi6cFLThYt0hwUpIikiNCLJDeR
+oOSQiFo0OQqCDSqFikKEtof6k15UrFKdmd0NsebNDMV3mFkyj2/mfe+b9yaAysyoZHG5CS1LyRZ7
+bmphmAk22OlqvPvycy2QO3wIR+3X3Zf9SQ2MvkE+PgUeEQ67NUCCRT6+AWLZ7g6zGtQWhM9XYDhP
+7KIRzx4R0wYDKRP5+a7EsDbbIEXC5ZoSJJxQgiwoSYlFVeEgUlaBnHQmTmydcPE3VCA7nImluECk
+GP0qZo0fzszEdp/ysX8qQEKbLr95e5B0WgSk3PYOuLulKnHSaQwQtLwg1n3jkh1W5k+JuZbFPT5T
+VaFVlIC8wmdxvEIeF7kOqA1jdQlfDYRy/IMpKMhICeQpNealYnbuTSsJ6+7k5BXKsUbTiUjSVUCE
+xfEtk3lLOZ7J0iDTRRhCIj4W1CgwQWZvqwAC14UlXJANERdL8AHYuU6/TzMn0h0SkJ7EAWFiCiPk
+5cCunq4bR5rGzBaQ38KocIIMJFQPe4d+ePBL05oCDumchBP7ywOxc4fZV2mkErd4uRy6xXRDggTe
+Cxt3UuxcYB4OJkZYi2oe9+WD/KdnLzuz05SKzWx4xOI2G3pwAzj6L4gkxVjCh7iXYvhEfWMnO5bJ
+ZMr7hzTFhpXSKDyxweJnNgYMLItq97GDk4WoRn9reZ1n2MyZ8PPDG6ks5nUuYNvaJXz1cfoB7HP8
+c23xfFSrFLSb5N+31GSc6BelNnFZ+bpXHqU2plmoL1cuVcketVOvZdhF652vsd2W4TYvE6H1fkoy
+lvJZ4LRRG36aYXUbjbn7++iuHVHKIOyqcTpOdjn108JaF2O2hhDle1Utgr1Ck/WzmMK2n1uYFZfi
+yVqJukW9Gg+/oIq2fRpP0L5dCoclnWf5nHw5oPMsV3nN6f1VufAf/qogICuRq4LWP7cuyAPR16GI
+AAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fracOneDenom</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Equals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">one</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="fracOneDenom"><a class="ProveItLink" href="_proofs_/fracOneDenom.html">fracOneDenom</a>:</strong> <a class="ProveItLink" href="__pv_it/c7ac80f1a00ea9c77476597ba745faf6b4f4177b0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAAAnBAMAAAA84v3UAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAAlhJREFU
+SMdjYCAA9uCT5PNjIAy4ExgY2Fe7z47GLq1BhBFzgfgVw9kDsrhtIAD4hIHEAob9DJNxKOghaARb
+AJB4wOCGU0F9ASEj9B+AKWmcClgdCBnRCibZPzPw4VDA/p2ACcxgBce5PzDsw28JbsB6AUhw/mET
+YN+AS8l5UFjhAYwgnXzZ61bhTmDvJzCA7GE4jUPe3oBgnPEGMKwE0X045PcTTnssFxjKQMGKK43l
+EpEDPjBwAAODdQIO+WuEjWD6zMCzvLy8Fpf8V8JGMP9kYPiWlnYLVw75jVsrLPuC1DgzMKTjUvYH
+TSCiAwRaGJCz7y8GBhUGvgZkZW+6fGGFA/Mf3K6AZ1+gZ3kZuA/AHL419ACz2QPmLiR/MjDw/weB
+D2hGwLMv0AjuA7ywFLpN/d0DnmoGBi0UI3ABabgRfA0mQMZqpy0GPKDCQRnoOnZcHom9CwLXULIv
+KNbSnRgYuB64MU7gAInsO4cUnHhiBJ59gcHJMBWYTZhAJZgVuhFgaewAnn3BsQbOjgzAksE2LS1t
+g5IykkJR3IUqLPuCw4sHFJrMAswMT8DZ5jUiLBjaYEUo7iKBE1Zs2XM1cDGwgIpS5qgCht0w+UCo
+lfm4jeCCxfazndHrGPiSwMnuWooCTH4+WCufiz9uI9gaUE0EhgV6kQQpN3Abwb8BfzbkCCBohD2B
+ioRHgKARawnVh58IGiFDqEBZRsgITgFCRrw3IGAE7wGChWsDASPOEi4ae/AbwS5O2Ii3BniN4JhA
+2Aj2drxGeBPRUGIoAuJQ+VbsocanwEAVAAC5+66mjcWGBgAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">distributeFractionThroughSum = Forall([xMulti, y], </span>
+<span class="sd">                                      Equals(frac(Add(xEtc), y),</span>
+<span class="sd">                                             Add(Etcetera(frac(xMulti, y)))), </span>
+<span class="sd">                                      domain=Complexes, conditions=[NotEquals(y, zero)])</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;\ndistributeFractionThroughSum = Forall([xMulti, y], \n                                      Equals(frac(Add(xEtc), y),\n                                             Add(Etcetera(frac(xMulti, y)))), \n                                      domain=Complexes, conditions=[NotEquals(y, zero)])\n&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">distributeFractionThroughSubtract = Forall([x, y, z], </span>
+<span class="sd">                                          Equals(frac(Sub(x, y), z),</span>
+<span class="sd">                                                 Sub(frac(x, z), frac(y, z))), </span>
+<span class="sd">                                          domain=Complexes, conditions=[NotEquals(z, zero)])</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;\ndistributeFractionThroughSubtract = Forall([x, y, z], \n                                          Equals(frac(Sub(x, y), z),\n                                                 Sub(frac(x, z), frac(y, z))), \n                                          domain=Complexes, conditions=[NotEquals(z, zero)])\n&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">distributeFractionThroughSummation = Forall([P, S],</span>
+<span class="sd">                                    Implies(Forall(yMulti, InSet(PyEtc, Complexes), domain=S),</span>
+<span class="sd">                                            Forall(z,</span>
+<span class="sd">                                                   Equals(frac(Sum(yMulti, PyEtc, domain=S), z),</span>
+<span class="sd">                                                          Sum(yMulti, frac(PyEtc, z), domain=S)),</span>
+<span class="sd">                                                  domain=Complexes)))</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;\ndistributeFractionThroughSummation = Forall([P, S],\n                                    Implies(Forall(yMulti, InSet(PyEtc, Complexes), domain=S),\n                                            Forall(z,\n                                                   Equals(frac(Sum(yMulti, PyEtc, domain=S), z),\n                                                          Sum(yMulti, frac(PyEtc, z), domain=S)),\n                                                  domain=Complexes)))\n&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">fracInProd = Forall([wMulti, x, y, zMulti], Equals(Mult(wEtc, frac(x, y), zEtc),</span>
+<span class="sd">                                                   frac(Mult(wEtc, x, zEtc), y)), domain=Complexes)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;\nfracInProd = Forall([wMulti, x, y, zMulti], Equals(Mult(wEtc, frac(x, y), zEtc),\n                                                   frac(Mult(wEtc, x, zEtc), y)), domain=Complexes)\n&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prodOfFracs</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="p">],</span> <span class="n">Equals</span><span class="p">(</span><span class="n">Mult</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">),</span> <span class="n">frac</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">)),</span>
+                                           <span class="n">frac</span><span class="p">(</span><span class="n">Mult</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">Mult</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="p">))),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="prodOfFracs"><a class="ProveItLink" href="_proofs_/prodOfFracs.html">prodOfFracs</a>:</strong> <a class="ProveItLink" href="__pv_it/37c47c07f22d89e08ebd0a8b16273f95f89c24d70/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQ4AAAAmBAMAAADHF2h5AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABHZJREFU
+WMOtmF+IVFUYwL+ZO7N3Zu6dO2tiIvowZWKYsROIUiCzGPTQUmyRELtJU9r4JFx8UCt156U2RGSh
+P4IQDYFKSHEDXaqJdnwTxBwIRKTgbsgGa7pDUmLmbuc73+zOOdOZOedWH3jOHe/vnPvd+/09C/Cv
+5Fs+OvWugPe88V4R0E5xSnyaZP/eOvvmuUDc9WQVxkKAR9UrRVyDGsjHfEw32F5V98dYQ7iViTdh
+qq1q57uLeG/U5Esu59N0ge0FTjNdEO49mWxAGS+OqlYu4be0qIH0DfPpDVQJEvLbhLEA7uHFmK96
+gxbu3deiBjIQ4hif5z9igXzzk9C6jXNyULmWcO9BA1Qr7/AxRV9lrAChePNlcPpxtu8o14q4BtWJ
+RcuK+DVdfwqcUFayb1DQVhYZ74nqJUkOv4N/2vpr8LZ09yUYoLRyWbFUxkU0jK5HyyNW4zDzzewZ
+OZvN1F4lt5ub+OdSGRdR/m4XI+lR5HFKLqaSz2nKDuu3aqOf4Xwskh5TlFObypuJhrdq8Uqzj4Tu
+Q3+NltD2UBJRPyZb7atCL0W7oCnmIMmJSHpcoV3UyqdrL7au4rc1+0ioe3r//kPR/PR3PuZ05rfu
+mmcChv5RLl+LVl3ukY8HZpzplk8D7I6kh/0XJca6DvyTss17XAZ16CPgVfQP//XIc6OLH5H0KHbo
+4YVq+5maOturreIPOLe9bm0OrSOy3YvcuRe4cDth/OTo90JTrceCQhZRp57tnVMn198KXZaMN6j0
+aMt06b99D6+yiV2c2XaWZcn4JMSYUtbVX/Ahj5XsyrTvYlysfZ/5RW+7dIur5E9cSlp09zbWJ4XP
+xNijb+T8JzC9bRxBewR3nFIqn0Luu+8FP6U4GAvM/NRIEP2QGTZOvdnhx3nvCx5+DvvnRiJw/Kc6
+9Wjtn6uaxZVxCFL5pJ7iWRjCaS9l/SCWz8DWcrkcPLxWWLWCqu7/nMfARTe1+i38jwcAW2CrYGE9
+zhbmwIHrXKUbbf+Ad6kd0xWltHmXtYQWM5UMHPBhebxpj8OmTz8CNmULRTgOCVTJGvGhtrjqBfK/
+fs3mmaaxHkvozNejX2AEfDBZYeEQPDSOUREfqo1OgPc6ArNXduXbnTB/h3ldV18x1qMDrdt+IgC3
+1UouKcv8Q8Ko0fJ05s8FxnrIqOX3VdkZbwv92tJ1VatR1zW3RfNTiYy6rCNgwdjKT93TlEuecZ5a
+h2V5sU+eHQG34q4Uej5JRFqDGlTp38g83GH2XdwuBs7wADsLpLnJ1iiWirQGNZBT5Dd8xxCuC+XJ
+mtgBuTrsRD9WxVOLxtqsQw1kjjfsHvV99qB0fl2NxsZUm1UalmiszVrU4M8fFGZf8XGd7ADz8CXw
+zS8pl65r12YdaiD0h4IUvkZaLjPJCuwCmwW2vVKZOKvGqIncJMP8wIYTAKJh2IH1GisGTEnlGUCk
+NahRfRznEysE1tFXLuTFDF2yVsBBdjGkrGci3Rs1EyrIdh6ScHmVdGekNoMnWC+vPKFLtIj+DTiC
+gDcUKCrmAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prodOfFracsLeftNumerOne</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span> <span class="n">Equals</span><span class="p">(</span><span class="n">Mult</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">one</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">frac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">)),</span>
+                                                 <span class="n">frac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Mult</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="prodOfFracsLeftNumerOne"><a class="ProveItLink" href="_proofs_/prodOfFracsLeftNumerOne.html">prodOfFracsLeftNumerOne</a>:</strong> <a class="ProveItLink" href="__pv_it/b5984c8de278e0b58c29aa04800e70dbf36796390/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAAAyBAMAAABhUBCTAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABHZJREFU
+WMO9WH+IFFUc/97Mzu7tzt7cpiCJBGsk5B+iYZH+EXdcoWCkm3QieeIZsUIXMkFoEdkSChEiKxpE
+/uEQlpQoG3QHcdHtP4cHFrd/6IGCsIIspKGXB10/7Oq9mb2d9915b+Y7R9vnj/28mfnw3e+8932f
+ee8BxMPnbRzA7To1FF0pwHAwB6GdoMaiKwWcQ3xQJpkiB5uK///pmsiNBZkmUaBGoytbeGuDwLdf
+kCYAK8nhVsZO4GPEpjyBk+TiOhm3DNMLiBUJdJN7tjvuGHQ5iHECqQtbz+xxq3teGaClac6D+ZgJ
+TNcR4wTuwE/Vx9zWMWUAXwMRSjmuYsYJODABp1CeQfgaiFDKneMBZpxAHbY0W70VVQRfE6WU22AO
+c3sRrlqc3zV1jFXYCWrxarCAuS2B1BxY3iQJqcJFDUQpZegrY8YJXDZn4Qe3Zf2liuBrIEIpxUQd
+M0og/TCZSzWHdEblI4KmpYxRh/sxGy//PiS8zMilr79vtncoAoialtItgyukBFa0sbqrbHKn2vAV
+Z9KX2foTsxpny9QEmPIQr81hkg08xBxSreTpzZTdrAgMUsbZPzCrcZ/8kWHK7PnDh98nic05zGr0
+DlMT4MrfisUbNCOcxxziWCWytzHl8wAHaCuoBcxq9HgOu/sjjqNRyifAUidsTZ27tlhRiVnMLdwL
+hM1Re4Are8CsSh/eHRyCjQdhkyNP4B8O3rT+dkezdc1WOoEEvKcILaVZ7ZG6ofnakXtwuQKaE9ED
+VsCYusk9wJVW6WnWujDwLVvpamPQxbN57sS7MMmn/GZ2044aAlAMwd6bHDORygMDAJn6li5mBnd7
+7af4/YFJB3hhmL8InWMsYI4sQkoNcOUn7EeD4/z6yDoYcx/8DLoTSKBD0xC63DL3om6DF911Qx70
+mWJxRHt8Q+eNCLL8LfWczm8sg+WcNsKzVj9vbK/4NZB9gPk/suLmRyFTysA7NizXZhnp29YOw1Z+
+/5nzYFY6+zHy0PhuzyXoq8LpsRIjU3vUhkaeT7GLxYEOf45FVFN2gqXU9KUviyP/x4JEgG4nnSc5
+0ZZkauwgr/KwMgvpcYcTaVFqfeHAB6KHao/k31N20Z1XIeX7x+plzbXpCogDvCzPsHqdEB8fujI4
+rFxsO+vBbDlo6s3RXUtZluONyWajBkW872oeO2WDTqWX90KSp2dxiQXWdpWSvjWrMwPDL5DqV264
+LLYnczeC971nby9pa6bNIT5b17Enrlm0N0d6ttHHXfWWO0paQa0MwzXEu8FEn920E7LpNkrwjX/1
+2dK25zCN+Bgk+8WnLKp3fVR+GvO6mGpCqQytworIr8B6cSmlHx+ayisPXox+wcE3Tf744ZKOaNI5
+kRvj+0TLMmDaO3ZLFqTbwlH/3wrZX8tKZYxjOrgoFa2WD2ymRlWGHVTaPidqlvyg8brs5ktwq0xT
+ho9ByeceJymdRIa0X2/AG0RlOAZ9To/vlEo+ld49M5onKsORrGCWuFVnj+thZxsH0CAXlqf8F2/Q
+ffsi7EgWAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prodOfFracsRightNumerOne</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span> <span class="n">Equals</span><span class="p">(</span><span class="n">Mult</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">frac</span><span class="p">(</span><span class="n">one</span><span class="p">,</span> <span class="n">z</span><span class="p">)),</span>
+                                                 <span class="n">frac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Mult</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))),</span> <span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="prodOfFracsRightNumerOne"><a class="ProveItLink" href="_proofs_/prodOfFracsRightNumerOne.html">prodOfFracsRightNumerOne</a>:</strong> <a class="ProveItLink" href="__pv_it/fddd0bf47bb6f7147028361d818c757b16cd3b300/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAP8AAAAyBAMAAABhUBCTAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABJtJREFU
+WMO9WG9oFEcUf7d3e3uX3WyiolaLcBEL9oPEYkX9IAlRFCxqFCKiEa9FTmhEThCtiHKIQhGRC1UQ
+RVxEFBXlBBMQxdyXkIDK+aEGFIQIEqiKpgZsrRqd2Zkcu3szu28Prw+y73bnNy9vZt68fwDhqC7F
++HkZ4PkwVhQe6aRNjKmWDKAcx4rCI50b0Mr4BeHoTvoYRAsbrEKBs4wlH4oGR8bpM9aOFYZHlkmb
+wviu+aIzXW4rADPQ4maEViDBj/6ocFRnCnSjjas7tBmeYzOS434KJNA7mwh9BjMZi9gboV1deWaz
+QAHlH/kRuqf4IMVk8JWX7I14AQ+KswQKwBGpAO+UIyEVqOeX8E/7aUEf/CFSoCQ9Wu+UUkgjaGZu
+UHlrs2FYIbQBaCjIBHinyJFiWsfdYCN//1asQOyhXIR7ih9SRFO5DXLj1cbAFCmQ9LFC95RkOCuM
+vme8JW+zAX0U7ooUMD/IJHinyJF+9xz6bNNJfow3agXROAxJBFROGaJ2gaY4P/ufmfZd16/ccQ6r
+6/7tZL/WSgRUTKFI2wzuoRSIpBmfFgTsy2LXRJCXKcdF5jcsEpj/BXrsPNq352EPtc00zg0UmRv4
+GARsQV9vgkwQI1BxGpcYzHgfuFXoIEOQxqW9ew8gD4xlAfpYELAhjVWAIt9lMk9w6K3MttRA7xHJ
+YRWgyGUA23HotezKxsYDgxbzsBt/p3Q4CDkHTLnC5uCFRwXHpbUVGPWiXnvFNqLjK0HWg14UDr7s
+6IQFO2GxJVag4TMl+tv8RN/LryTTqVCAgV1URurFeqE31H85+BoGCqBYQTtgej1TAr0DFGnmfiS/
+rrbdJDau9EKEarP0+D7op1d+CfmYDTwCEB/BlqeUhgKR29tIwTG8IkJu+cuG7A/0e1u/BdQw9FfO
+zdnKXlSsEWJsgCJPkocCx+j7wXnQaw/8BVGrUoHaXEOI2GbOpK6Cn+y8IQXRoUymS5k9v/aOCAy6
+ymhjlH6YDHbtswAWmXYCuqbgsIESSwmNt1/VFfOgUJerg9+yMEUZJSy66vs0rKTfF14CvVDbYMTr
+ylubr0NLEU705gjTlW+yMELXa17LtNU4HDupqGVjRCXuly5muv6PhMSZdGbj1lzKUCmZX9BAZ3lu
+pAHJ2xZlqKQUXmwCzekSlEmp/dItcoObJvPcdBqEIU9abjWD7nSKe+51pKXJtgus7ejZUE1a7i5M
+ovktEE+76i7edjIqPVUZbAdOE8w1MiS+NDNJmeWu7bRWacE1AWaBE2B3daVZM3OFythEm6LF1ar5
+bsK9CVpoHMwDp9IuR/qGDj7vEduIHNxw/Q/Lp+h2g09XWZ4b3IxKEw2Wbc5RIpWdwWFxN2abU9WY
+FOlLvLhm4UttdTnl6LHOwZS08eICL+6/f6iqFg108xUwK+zqcQpQocTabvF2YVnoALcbf+elyDBt
+ujqhETeJD1YAbgrdptOm80Yl9dar4Zkw6DwWfRSCH4duVMIpfgY0kXkCv4ogqnBfRWA1fKu2PKeD
+/J3pSfno6CER+BRUQTxCx6UpR43b9aDyhayXAUbQhsWQXwCt13LKGhgR0QAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fracCancelLeft</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">],</span>
+                   <span class="n">Equals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">Mult</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">Mult</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">z</span><span class="p">)),</span>
+                         <span class="n">frac</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)),</span><span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">NotEquals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="fracCancelLeft"><a class="ProveItLink" href="_proofs_/fracCancelLeft.html">fracCancelLeft</a>:</strong> <a class="ProveItLink" href="__pv_it/b4ba7f63ce1bfb659a172921bbe1a90102ed2b850/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAAAmCAMAAAD0i1fJAAAAOVBMVEX///8oKCgUFBQJCQkQEBC6
+urrMzMxUVFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAACP9cC6AAAAAXRSTlMAQObY
+ZgAAA81JREFUaN7NWQey4ygQZWbJIjX3P+wSBEISkrFrLEPVr+/QRv06B4QmOsZ+6WJggKY7RuT/
+UhsmleHmzLbmOhL4Ae53tGSZDq1yhU+ErLMIuxOJRsRHufiB6/a0RZTTHMC08JmZVLR+tSqTKsSj
+DMQA70faxc4FV/ACLvyxFhB4V7/B0cK9GZDegVZ6ORNasvNHbHZ6r+BVpKKeDjnHnpazmeAuvHkj
+E5OdeMRjyDF46MYD7VTqpRszVub4YuBCKIKNC7Ch3Qn0x4e7zQYtEkEnsueg0SKJH4s6R1rr+xbz
+i7M5KwijQet+yRG+NHzQKo+04BVCW3Kz5pe2TIdptUOf0bpgzVpV2/6hoocKh5CfXIzT6kPa+Iks
+QV7+su4QYxpzoQQRGn1Im2RalMrVD+G6MVmr4I1ktCY90ZLoMVbLdNwvI5XnjwSIqFEv4nH6h2jB
+m8eewlJQFP+m5rgzNUiPCDnmpErpPy7g+dKcF/WHjyolkQg+agjBLpq5tjG980Ee5Wr0+sS9mdnn
+XMa9O0gAwzkPP6BUxCp80UNwZQLpIuZje569auVp6LyG1qHNcCNU90bSNYJIiD2ozYUeGYOb3AUS
+Uqeu4X5du8GQ6Wpe2jBi2FrhkDQCwEUQ1C0gA1u2uB6hawcu+3B3l61CoRmu+WfGzF1zxFD8F5Ll
+EKMhNtZrKQIGhYqT1g6KEZumP9XLDdiTTTQPrJexFEb+C39mbWuPcOUjkTmHqpCRSz9C2iGHBOL2
+Qx6IcqB6EO7ushIc+totjHz31PjfDA/adoMFJtj2lSTZplOeFkFThNAbuLvLQJTcFz86lb34uTIj
+NkNVS9F2KwYc8OH6joZXVCLYsggDc+e75TIRzPjvnyUZc77v1MItTxTs6vBY6pFe0ihQLkkJNA8v
+0zvKNFGRK1Z/RLmOr003726X1SSESt49geP4AbjanxpixUNzXUKlYkYsJXAG48VJCCBq6QQ6WDYj
+XWPeLosfb05uQukO3THa19uum1IqAJSyuu4+T+jsu90r+2b0KhLBE4n3JvwHJ43d4rpsoMMFdR/u
+6wr1gbkZvRn62NwxatRR7ttw7WvV2cZ5r3dEwe1xiJ9yLEsfaPUXWtxPZ9fgm4BwuSNCUthQr4+F
+8SMtnmltoitf1zuiPDcd3V4eaBWeCG1QL23Y7O+IDjltQMENrZtrJ2baeHa1IwoO+UZMa2mtQ3Od
+psC+3BG9TmkXtBLLyeCCy+Z8tyPKCNgbaFfaRaHZTq5c73ZEdLHc2mVo9rqjZQbNd1LLdbcj4nGx
+NbhFaGmhCOh/uygvSxZ9a00AAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fracCancelDenomLeft</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">],</span>
+                             <span class="n">Equals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">Mult</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="p">),</span>
+                             <span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">NotEquals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="fracCancelDenomLeft"><a class="ProveItLink" href="_proofs_/fracCancelDenomLeft.html">fracCancelDenomLeft</a>:</strong> <a class="ProveItLink" href="__pv_it/b512e5c2004c66fbf512398cdd3d568aa03601380/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAAAmCAMAAACYjQXMAAAAOVBMVEX///8oKCgUFBQJCQkQEBC6
+urrMzMxUVFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAACP9cC6AAAAAXRSTlMAQObY
+ZgAAA3NJREFUaN7NWQmyoyAQZWZkFZrl/ocdFnEDDPr9mq5KJRUEeb0/QOhdAX3/mpZa9A0CPH0L
+BVRIYFDuVDEVHnAnNozHb8AmTUaAkDYaDaZ4RCHsghbcFZ29KXYgGUHaviTz0GQoIhELiPm57Y76
+dXCcZSj+Q9fbt87MI0PwVQenVhZOvIwNb+JogI1NZ6gyPEUcObc2oy+DG9lG12Qy4X6bITvAcHLt
+t01HlvdrkTIG2IYKOP2R5p4XZhbP04h72whoOBh2pxOEdnVHeEiWILMclFWqXtD9ILDzTmadRGip
+LBoe9sr+HKHM+fWN90slZy991oidZZmakDvl+fXDRJFzrni4qvM+axhf4Lm6qrxsMCafBWf6lCl9
+xOFrVdS7vVYiink4nzj22zEdrOV4EKOexWbdzflrTx/SC2jMWvxqRT/yGRsX9UmeVVqIy70tG1dC
+m/TBBaw4jNteCmT1qKhZEa+j0GFBb6Cmd+y85t7GvaQPye9NByO2wBjzzxDCQx87qh5wIkIyAWHB
+NVNITNvokg8bLOhDAheAGfuB/WFhA8fSqUXCXeCiq9uIy8gDcDcx3x19SOC8S5LJbTzbx0CncRwJ
+7RAg5ZjBZOKTogpuM33SAEng4D63ZGYlvEkfpnTMBU1pQdnAGad+wALyLR0JT88BCVbvTbwCN0+n
+Mdb/+Q9MrK0AJ+7OlgV9cMm7ZG7Q8ZqgC4tNOo4gqg/cZnoO44bl8rtvZBlb+jCn4xULXvff1L+f
++iFiYink3gwYkza4zXTLc70Jf5Xd4XB3Ed/RhzmoF3MEL5y3P3hThDMcu9iaWjiIuTyde4f8+2eM
+bhlXQCVnGX+jl13RB7l7JXFIjfEsSoxR3SQVRkQXfTAVfkOtzi3T5zKAcp0rkbDhXlx7+qBcYVjJ
+PG/MuUxS4GMawEuX432U4ppbLtPD30tsgncXW8/cdzbiO/rAD9oSD06IFHJRDynmasWsXnQ+pgt7
+c6Hb04eDbExE1EPHwXQd3NiZup84fqoZLuiiI11XwekOq+hW0LUvDq6llp8E8nXSgxvcpXlxcOb4
+6eUDdVX36PLi4EoEDu9i86Yjjf5+e3FwKXe+fhMCzbQz/LDx1Aa9Lq2bpubFQaeIQbwPzpqKYx5d
+HPQqTaIvkNTm7TqXg4uDzgQO6CtE4Epz37446POHvOZ/zOApWMwNT10AAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fracCancelNumerLeft</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">],</span>
+                             <span class="n">Equals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">Mult</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)),</span>
+                                    <span class="n">frac</span><span class="p">(</span><span class="n">one</span><span class="p">,</span><span class="n">y</span><span class="p">)),</span><span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">NotEquals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="fracCancelNumerLeft"><a class="ProveItLink" href="_proofs_/fracCancelNumerLeft.html">fracCancelNumerLeft</a>:</strong> <a class="ProveItLink" href="__pv_it/fbb6c99e9dd01dc133f3e28c9986d34925b0bb270/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOUAAAAyCAMAAACULOyzAAAAOVBMVEX///8oKCgUFBQJCQkQEBC6
+urrMzMxUVFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAACP9cC6AAAAAXRSTlMAQObY
+ZgAAA+BJREFUaN7NWomS4ygMZWa5DeL4/49dQRzf2EziYKjqrnRH2Dz0dCEIeXxY9pvnBhFIN0Pa
+Xz2ZDd3AtOLuJ6oJmxs6AWn83TxVcdagkF2A1JTfbItCLFASanpAOdxvlLBEaWgHpmli+C1KMnTA
+WVpSpbYgtAEJ36JkUT8N0pVUGRC9845Q/y3KDpTpS1HE5tUio/nXKF182DJZLGU9aWFC3WGXhER4
+FqWkpzYL96AU/lmU9MxkdOSjUr9EaZ71PzwWQ7bT2SwJ3IAyPEtZKPoFEx1RSGcNdzzWq484cVdW
+Tcu5KNhgLbgPbF3SOMjVRIGsmG3TNdYsVa04o4mdjKNxNRaibfMig/av3zuqVVtVsujavIgn9/NW
+oWxcpLhoWpEGI5azOo/WwRMib/SmqPKvNLxtjFI2i9Y0HYyIvKeqdYYgvkmj5bAYVydHPtGUJanw
+8UHQ2TljyFuHkU8eoWxW+uTAnKBWR+DgBiv8orw9c80y0QTsuJNnKGPVuLTAQ9Eho0wI/QV9AkiZ
+UgrO00EgX5zXnKDUGZtPUPf0bKfLF0pkK7/gNiimQwgpj85aZFUos62HDNCbW1FKvxiqirG4GjFa
+lwXBQIwunkGan07B3NuuGB/Ld32IcjV93Ar+Qgl7H9sq1/KvIGnkGCxtSCX6eIgZgKCz52kjJtcE
+wW3XtkA5TRfZ9/2HP4A5Tgll00iyqMtRo8PkhnRgPnEV1WHrUK6mvx1aSZeNs4KUbc1LX+6wQHQC
+l8d9ThwUKoYxXka5mh7UO8FK/9ofcrvI2oDMGd4mtUWCTjgoriMd8YfZN4kAJ3b5nq6Qq3//DJmx
++QlkT8+22frqb2KHfE6oh6wAjmvJ2KY1cmnTZziKl/P0KYqQd7xUz1ZemxrdSCzT04LTRhsBanh9
+MbErWKSvYEeMnaeTZX8NtwRkeLaKLhZGqA79MsvsPl92eRQUjzfwWlGKtkqYy2RGhMoSdp3eHqMc
+avZ4peBiayTY3K7WNfH1SPaEM5mwABWmc/gMZ2q8glmtr9QasS/nADW50oHsPSeVn3fMV6fOu9ZI
+GNXBDclJi6ow4yNZ93DXa9VB2LZGQvTTFzlpqVHJkezTHQS2zX6WrZEwm1Pu5fK6VGkvG+2zKIlf
+JyWl1ohMrgzqPPJO9vHOHq5g8bncGsmNVlVn/zvZQZCnx0zRs9aIFPX54Fa2g447MXSRNxVbI/gd
+1NZpW1nVw42f6psw9h885UKW9XAThmh6raIUCkLl9aStrO/iVhMx16lgOg9XlTrfyMo+bqjVLAQT
+TVlbcK9lTS+3DXHrf9Y27ejmKGrzV7eA5xL3f3X2L4XgPNRkAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">multFracLeftCancel</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">],</span>
+                      <span class="n">Equals</span><span class="p">(</span><span class="n">Mult</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">y</span><span class="p">),</span><span class="n">x</span><span class="p">),</span>
+                      <span class="n">domain</span> <span class="o">=</span> <span class="n">Complexes</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="n">NotEquals</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="multFracLeftCancel"><a class="ProveItLink" href="_proofs_/multFracLeftCancel.html">multFracLeftCancel</a>:</strong> <a class="ProveItLink" href="__pv_it/46bf1f5bc440cdfa173ce5146d6fbdfc544416580/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAAyCAMAAACEafVGAAAAOVBMVEX///8oKCgUFBQJCQkQEBC6
+urrMzMxUVFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAACP9cC6AAAAAXRSTlMAQObY
+ZgAABH1JREFUaN7dW4eSnDAMdRJcceX/Pza2aaYJoyWwF83czGlvHxhZ7QkfIW+LobAOSuABc08k
+7J+IMLB+IrRFPQoS9i/2n8P6qbgWdV8k7HbRHtYrhAvUnZGwm0U1DNSrpNGoeyNh90prYL3OixpU
+PCNh9wZAF0C91ow4b27fD4LGHOrKWK60FbYmpXcKVQlwsBvFrTa80EM0hfOONP5/dgHPD/XkCraL
+QcEwlkRuwNNCO3qop5VxWX2pzqJWgITd1gM2sN7UL4971AqQsNtSoAB11bHBFWrKCSqf6VfTIOv0
+se5UTgHE1hkg4Jw5vBoDdpWCSl13jsgYEap2gV6i1pBgryVC2RzrQVoTjLGuOpo7XBKIsDkPuGf9
+oZGwftGdFBZmpsh7liKHzoD61XSmsTA1Gl7JRx2Adg7Ur2ZUi4aNGy+epYdutWeu0x/5k0DDnFFZ
+Hm4KbMdA/WpTJ/GwTibx5lkDiFXaEhfSWDB5cqiKwtlUjLh2GGaG8Wx6+XBTxFdtAL/ATEzMGANb
+mip66cCiLYRDDDPDaPpKQA8JoSl2yFaNBV2cVu7zSh5GCzFNRFq4LNzeNxVm2zLMHpYuVt1zBNca
+7gs3goJPpHtZMxi53gBdIXPC8jNVzESpzPztuQH2GGYPSw/vTxwwWCFE/B5jMn6TFcM7wAAqP7ZP
+Vtg4+GUPCEWnlGdnrEybFQbYY5g9LLo/OxnHW0lVSD7o+vacVhkg55WQn93rj0NgEeRpTeUzL0JA
++EIkxDAHmFR8iOSYJ6nlg2WpTeA0PHVjDFM2RJDaM8AMILOVWG8Au6kCAdTPh1my3DR/XsX3GOYA
+02KAm5CiZJiYB0tiaWLJRlOGtMGt1ymLMBkBPOffP/HHxoR9YAB8GSSCr1vH8zK4yzBH2Bga0Q/a
+6bIqUJ+cP26iqTLADCBkzqsHHvBRIxTZol1a7LwR2mWYI6x4qvKyPD44jytnPvdKMm4npezQADOg
+v+GYvdMVN+9h3GoiuNbPq5q/qRVe0YPoJNMjNnFN6WVVmKONB3ucAyaAjM7/+1ebQyB/QDYO/gkZ
+SrO8sDDpJ2RooRPT5o5BtXnbWN9yET4tnwmTfrf7fcAEGEsgGfsAeScdTm27NDfR4VWYaBEjJZki
+7YfmVrb9H+jcUMZ44HQ/BCZA/HiOKhsDNtw5ENHxgvSugchh0YibqOaINn0O2Cv2RZmdAfp0P6GR
+GGq2dS+Mqexl9JwiFAYoAG2F9QOg7xC+K/M15Fhu6QDJ0yriUi5ccwA4XZGAgLH4HuEDs/mLY3GO
+BUIvRvYIHzheQqUA9+77YejV2B7hO6mLmL1799UYXfV+S31L+KDJFm6c1ZlXDUC8APQt4YNc+Ue+
+Ho8LAPQt4QPIIS4PtZy8LOvxRKlvCR8QSz/0iAzRzbG+JXzHhRh31EV+wUnBk2NypipLU9x5N/oF
+x+SIatSBviV8x7kU90rJf8NBSaLbA31L+A7bCZwni684Krtdx6hvCV+lCZGWf0/WFFNea89//HH5
+uOcU1mE6I3H/MDHD/gKQGzXL6QK5qwAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">multFracRightCancel</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">],</span>
+                             <span class="n">Equals</span><span class="p">(</span><span class="n">Mult</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">frac</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)),</span><span class="n">y</span><span class="p">),</span>
+                             <span class="n">domain</span> <span class="o">=</span> <span class="n">Complexes</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="n">NotEquals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="multFracRightCancel"><a class="ProveItLink" href="_proofs_/multFracRightCancel.html">multFracRightCancel</a>:</strong> <a class="ProveItLink" href="__pv_it/1291896c36aff00563773bb0bec0bcd574463f060/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAAmCAMAAADA8pbVAAAAOVBMVEX///8oKCgUFBQJCQkQEBC6
+urrMzMxUVFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAACP9cC6AAAAAXRSTlMAQObY
+ZgAAA/BJREFUaN7NWYmSpCAMZXe55f7/j13AC5Uo2D06qZrqifqEHCQ8ROhdMRZSLsUz3zvaDcjP
+WC0gpT5tzXX8kSHPngzd492A/IAoByl10YiE5J/Q6qdzP78kHlNAqQtViCffiHnug+0e8wbk2yI4
+pABuQgib+BvMdEEG2TvmDciXhQQPKPCqSE/RsOQFZ92j3oB8VwYOKfCcU0ky+JPYvR1uWo5P2yaT
+nSNYr7dgbz8v3EHKeYaSUFQlG7rHzZD3+jc2kHJS1IQxvEwMH1R3/0iQ1cvWPJzjFFCumvcmMVx/
+yiaIXrw1PBt4EyAFFuZSf1f7S52SIHJu/fLh/YtwkHISp7g1FRr2XofD5yBz9azZTkDKSduOK5vs
+mz/tHTlDrJZZ3LNWo8AhpbNEqHuQIJI4/fB+PJiqIrVhUhlu7rynhbfNEJazRNzeu5CTAfNLtTa8
+slmyNcXHCVpnEW5OvqDLTVwhDOBtE4Sk+76ViHo7aObKYJwsS548avQ0xi7TbE3R0/zUsmK971gs
+TbxtgriGgw1vOOfxGUpFIgODbjFbZmNdsuBANDZrclXSY0xskniJeyikw+wDb5sgyWTnL9g5kT75
+3coMJk1m54Xjs8VOtZl92LF5LD6M9pG3jZCY4HRKwlhPiGHTfZKPInAydn41oVP2yarZG/jkGzqa
+bdqSPC902rNpLs3mrhAB8rYJIiQb65L2KcOmbZA3KO5+aXp6WfjG28N81tcvcJZryr/4ZyYifTBb
+lhV4VawcS4/xd0paI2+bIGrmP6Q8dJGeuPHwieo2szfwuVwA0d5Od1ZUDLuIjpbN/GDTEdp42wIp
+VlNJb1icDIu3qMutXcTQEUJhszdwL+aalC7hw6YC84oSGZb2seG1H3i1bFd2vG2BrCFMOb0YhmP4
+0sGeX/ODeXOytme4iOn998+Qkzy/AR1PEQYBKV2iGg9LCt62h9CA9JB7pxxyiOjY6BFbPcV1+t/U
++vYKX5oXmvv20SyOIaVL9DUV2fO2PSQmg+Ixy+bSqpgRw3iDrDu9mPGM1JJ8haeraw0wMcV8vatU
+lT4id73P2vO2M0g0W8pxaWcPjWu7OnA19y7r6+Zc5MYhyVxMrovfnredQKjMHmr5eFI1uwF34+D0
+4hzyc4gdvdRCy2pm24bgWQwpcLc60DPdz5f1dyj23eN2HwigwAzyQM9w/7cd/PLnIC0gBQIc6Jnq
+7wAKv2t1jDAFFJhLbekZcv2Rc69/+zMDpJykaFmGbf8ytQ69Lpuvrk2fYDf0TOL+L2BYvm+2dxRQ
+6pHa0bOhv9kPCv0CGTfBNaW6/d7SM9b/GYcZ9CtEEkipEqmSnnnSn10z5D+XrzA+mOS9DwAAAABJ
+RU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fracCancelComplete</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Equals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">one</span><span class="p">),</span> 
+                            <span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="n">NotEquals</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">zero</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[24]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="fracCancelComplete"><a class="ProveItLink" href="_proofs_/fracCancelComplete.html">fracCancelComplete</a>:</strong> <a class="ProveItLink" href="__pv_it/5e6f770e1a3913a7d52bc8adb8c9d5e07491cf6d0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALMAAAAmCAMAAAC4YVoxAAAAOVBMVEX///8oKCgUFBQJCQkQEBC6
+urrMzMxUVFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAACP9cC6AAAAAXRSTlMAQObY
+ZgAAAshJREFUWMPNWIuyqyAM5JzDGwmE///YCyhK1dqKr5uZTp12wGXZhCWE3B3gGgeiQPJMgOq/
+tQWhO5Dw/VBmnoHc+YE0S4jzjlDfsN57AynvH2yCEOIa+J7hxj2AWckCPn7Ebtp00LdDZqFOIwq7
+J5DidsxGvpDGB8L/Z6L59Eans5wJ4IFV3xFyLBJdcETRyNteebiwe2+OxSRgVGDR2v3nC4aOkKk+
+OrhcGry13EzM+igO241SuZryLOCWoq6qciMiyboUSX35IaN8E2IhRIU5L7zQK7urMXvVvEFYlfgo
+MGd1Dn95CgZ5AmaekpAElcLby71GgBMw97OInM1qxwHDtpDleWIZk8sz7ENlk6YK8QYzCYlclv7G
+994UnbHC10Z3S5cyMQB2mPa11LkTeB4U5ldvDwhSyvgr56k6cmO/wqwzUp+AB5xjnrI8VNGEOeH1
+uPDXTCNicgaZYfYd5iwxzO/w3XvMh3mOuuDDRsYLD4MkcFfkyPhgy/U65nEEmVbGe8ywUxvSV6G2
+MUdyRJ9WFpMRp5GPUd6AbnE+VvONI0TOnL/4gcEmzzHrU+pGn4PRZRXDxcr1hdsvMbOXC8+QFes8
+l7cdwzxWn+rG0Ftc7nPRVpEzxvgG5nFEbwxKDU0/0bl8aduZIiUNRrp5VkxU8mhqeTrkJ1OCsKXn
+MkJFVfz+mKwNkm+qiyuFOcPRdLNpeSDW9HdiMf7DpU3PsFqfqxGlzpFSnxcIJT0Bsw1z0wedjGY8
+P46HHdooFMFWtVGNeHG5ACBxSdEJbldtNWZsr+fVceu79inFMJxgHVuLzzrmz52pEy6gvPXivYrZ
+fSbRVYJu6Nfl3W+1zK2NEQxVkjT061K9vL37ZccdauvXkY7eDTkSzQ/164h/oMkI5lC/znnyQFTm
+ZH+/TlP9BGb0vL1fZzrySGijW/t1AshDoVljvw5LofwHVtYhlNkXw10AAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">reverseFractionOfSubtractions</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">([</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span> <span class="n">Equals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">subtract</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)),</span>
+                                                           <span class="n">frac</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span> <span class="n">subtract</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">))),</span> 
+                                       <span class="n">domain</span><span class="o">=</span><span class="n">Complexes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[25]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="reverseFractionOfSubtractions"><a class="ProveItLink" href="_proofs_/reverseFractionOfSubtractions.html">reverseFractionOfSubtractions</a>:</strong> <a class="ProveItLink" href="__pv_it/ed7aaa407f3f231e62f03d6069a402fe70d89dbc0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQwAAAAyBAMAAABbpfjJAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABJhJREFU
+WMO1WX1oW1UU/yXvJS/JS17qZMxZlMxNFKekg+EXyIKi/lHmMrFSosOgNZNWJIisk/kRh1IZKhGZ
+iEX6EPwsjgxMxWW08Q9xMLXRwZDC4CljwiYuMrTMheq9L/elfR8Zzc3NoeS+e9477/3uueeerwJ8
+FElADGkPdCOdgSi60eCXjaSEwYgW+GU/gDi6l1tSuVIgDF+RVzKkC4QRvpZXcsoQCAOv8QpebR61
+j3Qcwzd5+3ZN3z/5iHsT3dyzGWKc0XX0MpnnNO4l+hvw1zGCKfvOnsUP1WtcAh7cdBLBVPiiucVp
+Phgx87jeEaihgeCA7ZaOObzjEnBzpeIuxKt4YnlVnVPSdKGGryQtIkJ1/uYpSpRr4D4PAYu7/KCG
+fmzLo2nql/hg7GRoDLXPhGGjfk8RF9e/hMNgMLbzwVjbHIbJ7uJ5pzVeICt126iLGygQw1KahjXF
+ZaPSxeY4gpiOkv3ed2odsy4JDy5ZwQLU5vX5Eg8MlZnUx9iSVqp2V9QI9imul3pxI1lpLV5gJp8F
+hyMK9jG9Ts+OHnWE7bFDnx91B3MvbqZyZpqtQa6jRsfjnQWBLMSSuojP6PhWR1LndcEwiBfbQ+24
+s+Ulq4JhSJcQIsYR6CzUzhcFw9D+RvST8fEXO5OaGxAMA/+Qv1xuoTOhx/KiYVwF3APs7kxox6oO
++fDrlF5d1RtPAZugrSIp/ePA9lbCsEO0MvATcWFQL2/5WnmoKt1qSAccMP5rS3XHG+LtH20+8Arx
+HdXY5ZU8c8OfRnQfcFPvtEFgaIWtJOzOYK9GM7LIl5uJsWBzFjRRlX75vRiludFGkrQoncHYZaYW
+J1e7Kdh9N3Aunp/BfjI5JGfXE2ilRYkGDvnmDEL0udkfV54UQ7Q2iIniIAkrL92CQXxFJokQNRTl
+t5pqelatiDvdMHpxYOGjIXgQa5qpUNz8hqzLZmB+Frgrl8uVrtvYa/eFKNXxCa3ezGC2gH7El/DR
+QRqQ8qdNWOdW2MZ8QjAK4swZnZDq4bwyIdU/ha5MwDeQBBm2fvguZKoeKZNHpZehjdGmSvlrSA1t
+7OARQ2ogPPgUmaG0YQLa42alcXIk0ctAb6+DrGGcGIs1ixDb6HnaY6PbrGHUX2jN2iaBwkh2uN2q
+NUweWZ61TYlpHao4Kq4NaxTPNNt/RWKf3SxJBfyy0Y16rQIBehKqfSHK0+WHPWX2HB+yfytCKuA5
+dFMgWOUSrUOD9pdr7VpqBk7bfS+tgHOWB+Dzhzutb/YjThey1wwfP5vM59o1iMzye/lJUgG3alfO
+4jHJ3Gh4CdscHtXfrklwvbtVI11gl/9yNhbSrTr0sOPW++1cg8vXDEPtW9ku4WizMLsMpUkd6/ya
+7ClC4KWcraYg44RSnAedtQkCKX/DfuP2b7/f73m43nj0mCMSPdQKCrxNJ7xt1aZlh/9LR//yLGIC
+mF/vYJ2pWAnDk103JCO1LpznF8yquRuSyjp20H7lLuDkmsb0E+MvAt8zfxcwyv2GmB5kKh3i12fA
+PLKTZf4EKFx5kF0UutjXMWHhtZt/ZCAgKhHUnqG//wMpQm0vG698zwAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fracIntExp</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> 
+                              <span class="n">Equals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">Exp</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">Exp</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">)),</span>
+                                     <span class="n">Exp</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">n</span><span class="p">)),</span>
+                             <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="n">NotEquals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">zero</span><span class="p">),</span> <span class="n">NotEquals</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">zero</span><span class="p">)]),</span>
+                    <span class="n">domain</span><span class="o">=</span><span class="n">Integers</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="fracIntExp"><a class="ProveItLink" href="_proofs_/fracIntExp.html">fracIntExp</a>:</strong> <a class="ProveItLink" href="__pv_it/3bf75414490b380bb03d53f344827dc34f5dfa390/expr.html"><img src="data:image/png;base64,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
+pglJQT7/gtYAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fracNatPosExp</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> 
+                              <span class="n">Equals</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">Exp</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">Exp</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">)),</span>
+                                     <span class="n">Exp</span><span class="p">(</span><span class="n">frac</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">n</span><span class="p">)),</span>
+                             <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="n">NotEquals</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">zero</span><span class="p">)]),</span>
+                    <span class="n">domain</span><span class="o">=</span><span class="n">NaturalsPos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="fracNatPosExp"><a class="ProveItLink" href="_proofs_/fracNatPosExp.html">fracNatPosExp</a>:</strong> <a class="ProveItLink" href="__pv_it/12f4af24aff691f69e5f94b5f226f918d35abc540/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> theorems
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Theorems may be imported from autogenerated _theorems_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-01-16 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Axioms for context proveit.logic.set_theory.containment</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../../../../../index.html"><img src="../../../../../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Axioms-for-context-proveit.logic.set_theory.containment">Axioms for context <a class="ProveItLink" href="_context_.html">proveit.logic.set_theory.containment</a><a class="anchor-link" href="#Axioms-for-context-proveit.logic.set_theory.containment">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">SubsetEq</span><span class="p">,</span> <span class="n">SupersetEq</span><span class="p">,</span> <span class="n">Subset</span><span class="p">,</span> <span class="n">Superset</span><span class="p">,</span> <span class="n">NotSubsetEq</span><span class="p">,</span> <span class="n">NotSupersetEq</span>
+<span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">And</span><span class="p">,</span> <span class="n">InSet</span><span class="p">,</span> <span class="n">Not</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">x</span>
+<span class="o">%</span><span class="k">begin</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining axioms for context &#39;proveit.logic.set_theory.containment&#39;
+Subsequent end-of-cell assignments will define axioms
+%end_axioms will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>$A \subseteq B$ is equivalent to saying that every element in $A$ is also in $B$:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">subsetEqDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">SubsetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">InSet</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">A</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="subsetEqDef">subsetEqDef:</strong> <a class="ProveItLink" href="__pv_it/dc40b98ce6bc178024a210222a687293ca4b619b0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATUAAAAWCAMAAACWjvsaAAAAM1BMVEX///+/v78QEBC6urrMzMxU
+VFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAB/uxFxAAAAAXRSTlMAQObYZgAAA9JJ
+REFUWMPtmNuioyAMRR2R+/X/v3YwgCZIK9XXw0tKFVlukhBclr/2oMXnQ5mj9mnzbOImF/S/N5M8
+h2x4XgfWeuG8+uNzN05t7YUZEJ4Sz01qYBDb/RDLXqD2kL/xHXj26FnTbtU/ul27n47TqfMRHUqj
+DrVKMCLB33pKteeov48gfBqrBj0l61/Hj8nmHLV1lUKKxPPcEHdLrlrwAW9nVHuM2kNOuCbha3hF
+Nei1VRDmx9WI1Jb3MSIp1A3qw1vUu3wCoLjOqPYYtYPsEnuJBv2Fr+EV1aDnrYIWfsyumto6W54P
+hSL/lOdl5Qj1daSZUe0hag9JvUr7eMtX8YpqpZfk3oL9DURYagtdXEzy5zJ+hC2BqbSsxFbMqPYQ
+9YRU1nFlnDjjVck4wVfxqmrQ47BFSBRLGv02MgkhuOy3Oe2pBZXYmRG+blw5XTjnRDjGmlNfoVHj
+VLUr6jDzX65XyGj3xOuX9XTW8bN6vopXVYMe451beBxkiwdndX3mWRm14Gr7+iRxr1pNGzG0G9g6
+5WsX1GHZkC55oUJamDq/9uECUU7xVbyqWuntyjsUVwIFWV57GMlStygNDSFue4nDEwIJN2nNtZm2
+NKVaj3ok9BwOfoyPIfdw40Qntta6iO4GPV/Fq6qV3o4RzvC2MeAsEyDiRFhuVSu/VjT/p80u8QVv
+ofOqdaj13SRTMcYxfg+5uonit+cbqZZdHo3e3CLResS0wWmij//VUJv9vm07aHBg47RRvYEnc4lQ
+EVCTnWoINSd25vZE54lIHX4PqeB14gk4xTeK0JwSUYnAqWOxlPMiv+400lObS7XB4SDq0WmpVUMq
+Nb/0es7XTlQb92Db5aBD+SAuGqRXkNYWVHlzv0zwebIb1J5B83hTMuZBq8uW0MvWaoVmjxwtyeEg
+J3B9OVHVtLGtxzlnsvJAqKztjBupQ3p8/Pi9KNqnVu4mGi58g8qDBHtOCkLgF5eixGmfoVjAVsk1
+QRB7mZL+LkF+PByNNSpaNJtUDeel4hFbgCJOuiE+hozS2Wgt3U3UJRoGfBWvMjTYszwWCuL6fFCR
+i6VLoK2K2lefq+ZOVBR1y4MyVcQJ/YK/3EMaiAY9gYdOVHRRirx7NlTgOwrWTV23peNI6+171ayb
+Vu1I2JA79rm5GuGPYd/hFYYeNpZiS/GUq2LYSKyGk4E201+KqLOj7fBLDMa5L0VkiHRG5ICDn2yA
+//JL0RAPGG6L7O+XFaf2eePqZ9XotSOv3cK+wiunuu+w2927tL1IvfwC7raZm0LY3kzyHLLhOYiX
+O1i//LUP7T/+MinQ0xlRsAAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>$A \supseteq B$ is equivalent to saying that every element in $B$ is also in $A$:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">supersetEqDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">SupersetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Forall</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">InSet</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">),</span> <span class="n">B</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="supersetEqDef">supersetEqDef:</strong> <a class="ProveItLink" href="__pv_it/a83d5ee395573a1476611e2529e26dbaabc99de60/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATUAAAAWBAMAAABTfhYbAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABCRJREFU
+SMfNV11oHFUU/nZmN5vsTKbBJ32obkHQB0v2oUUQyi7tEisIWTDrgyJNFbcUpNmHklolZEmRtLRN
+86L0rUEIVgJlxUTQIFl9ivpgpASKZnGVtpTWamjT1mqpPffce+dOd2YHH3vg7NyfM9/57rnnnjsL
+PMLSipu06lLjxM2Ghr4+EosaD0l47sksvqXmiuj/0MFum1KSHWGQwY3iwATwSmjm43hUDRkhwgvh
+ZbJI5YBPxdBUB9MpM3eKf8eazeZxHZTEMLAni+4IbrGonSfYSzdzQw0YpV56ONrSqUsVQfrV36Y/
+zqtGnqbyBbgzYW5xqBoyaj+FF8IT3L4nltRLTUebJlpSSQ7vqfrDY6q5RM8fZ+D1hbnFoWpIJddO
+Ni/oNnshPMHtN2L5yaFDYx1AnlVKUl8yKW8V5HMv6U/kZ3+YWxyqhpRinwgwlV72M7cuWtrtSuXn
+DiCvKSU6rTMNM16Tjw3g3QP0nA1zi0NlyPfmDy/w1o4GqCkvs8wtUwJ2Aft4ZpJ/P7pVHsgp2xNK
+gd85ubTskiveWFxYE43T4id1lKWguPmoSnpGykNvGVhvxl1L8GEOWikvp5lbD0XgaXgcB/eGTMc+
+ODqBHlMKZDFeaufm3AGuCy5bIuKmUX35BvjMwGbgrPeIEHjBA6O8bGFuFrHohcPbdekez6cKsO4o
+2xtKYReLgwEQXjC66GVHvJSP4KZRhfuFMjWHgP6qD+shKfGszVSV1FnQXvLMzV4n+EYvb/m5VTbo
+rSO10s7NosNlwtAjQ7iJYub+04GbRiX54pk/qfkL8EYAFgmZI3YhkG7Ki+Hm1bhM2/UKG/yVw7Iu
+F08oBR2ZXlMptkqveYpG8q7e01STZVhxk6hzO+dzLq/Euwl3MgCL8Rxfl96K4aa9mD3Fvp1iIqmW
+1b84f0Abv6M0TW91r+vR7VOmvI2LdS5HxI1RM62BxLS8Nqx/FwdaBtatLsHh/sv+W76XZebmCugP
+mfp3WGKLs5S2GmRW6RWRXffVnXXhJfjlzX681aGGMKoljuQLPJSpwX3SwJ5p7MX73Lnu103fi6kh
+cue91fIIU3qbtlUX9K1SR5+ahDvyd+lhAq/+Vywe5XyfiOIm84lO1Y5KpVJHVwneXQN7+aurc/Ks
+pD9QFct4mWBu3YK0KzilqsizEQH06/qWqEqNl6g7S6HafTYuyoMzDetmADZQ+XabO0vjqTtLyXP0
+eiM9ifR9pFf9q3cGETd5u2TqUdz4tGRqGSSZyXgLY6UAbDye4Dan+xdvIz24Zt/D2Vvl3dNR30jw
+v5HUYUQwT6K5Xf7y9XPw3hT+TpWHjv2PbySFR9zaSjetqK1/UGmsvNiRm4qDyLcQbCwecUu259Lz
+bf10XWqcOLnwN/n5+FdiIQnPaWbxeft445H6K/MA0pk9bF8d5bsAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Define $A \nsubseteq B$ as $\lnot (A \subseteq B)$:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">notSubsetEqDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">NotSubsetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">SubsetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="notSubsetEqDef">notSubsetEqDef:</strong> <a class="ProveItLink" href="__pv_it/72c5fa224af323dd1451c4ea1de0ea5a379bb34f0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARkAAAAYBAMAAAA8FZQ1AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA+5JREFU
+SMfNV19IU1EY/+Y273TbVXooe6gWFARlLoh6ko1aJvSgFAYFohFpgegeopIQR2D6ULYXo7d8kYwg
+BhUERq6IMCOakgTVyKLAF0lEzUqs73znnHvP3a7OHgQ/+N2ze875zv2d7985A/h/yYO1JP7VW3p8
+WSskOKwybHnzBez1DNmZg8FzBSnW8XqJiXsFUMrN3m5Bo2omUnEF4Ji9nhRnmDeprFkv/kYiZwPg
+DoKBu8r6WdJtjt0QXY/TI5tG+U9HPUBdADz2elI83PqeKf7qvZ5Op4U51yOFaYAYGLiAjVZvT8ab
+4GCG+MwXLX8KrqAYDuFQKAy+Xjs9QwZ482aRm+ijGRrOP4gZ7nkBRt0dt2fjGOdAaa2LskZ7DzAh
+hwex620v6MV2eoZspqfW85PatqhCGrt8vwG+gAHfnYsX25Zw1A4BlMQgWdeFzydy+BRiBD98zk7P
+COgY/7J3mtoDylA+bsOPZPPjJuYaGj4sweakAK45fjvJ2gkZ90zQyJease2z05Pi5n7cXbDAGj2m
+DBWFQbuKuymsNnEQoJEGO+l5c7amQgbGNQGArxQklCwFMkycMwOPPrEft+irXSRhMHREENMu9AAL
+EiPBRNwdGahlowUxE9sEYR83pa8YvDIQ1gkABKC9WrDxRBW3T7LVt2baBnXcaSZI3BHg5VubzWKD
+cae/Y4PFJvzgJfrfF7hlw5D3U0yfFgBnJFJVL8rwPtXtXqYUymQzrZSaImKzNxKZoy616rC4G8Rv
+O6dMeJN+SoH7Y7zsJ8CdymSDJ5ODDOhOwlHF7ZQSK2GDjxLqOqFMw7hjOWlho8eocjoTDTTlRxCG
+pC82CgAGu5/cp4/qxu5CuC3XL+kp7pp0vdSTbBysehSw7KOuSfMccTK7VsWtnoJGyjoX1NKcsoGH
+zXJ+k4AWN2rpxKGEWm7amcWGMm3TpLDJZ2HQahRzvSOolhttnoVqzAT00G5fwSDN6Qd4JotXnwDL
+63xeS6EMK/uodLuzZNwuw42OIE9bSpMWvmpepTwZWNztYWeImuHgYLvVx2r49DPoLFmaSzkubOkE
+X8s8JRVsl186jmdeF8X/lUw2pWr1S4F2aj4KL/92WCe5W2YilVQLPAET4GMs3FEIkQ0xEMqkMR1R
+DlVOZ9VIm5NB1dmQ81KjnAxCdmH0J7VO0BZBGzOuLr2QeSZqsazFCrMuQBad4Zxs7ikg+TYHWtUn
+jPL+2ZrKuN2NQpj3M0ucUctiEyu6UQippcyzXNBYVElYN5Xxfl5g2Vvo4ewuVUcL5zCNK2rCIvsz
+3rUEx3J29wazP2DRuZyDzQMFFknm9HH3mvq/EF3V1f8Buwcjt3Hn8BkAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Define $A \nsupseteq B$ as $\lnot (A \supseteq B)$:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">notSupersetEqDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">NotSupersetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">SupersetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="notSupersetEqDef">notSupersetEqDef:</strong> <a class="ProveItLink" href="__pv_it/963dff74b802d69e7cb917523f16f9cd6c2a62b10/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARkAAAAYBAMAAAA8FZQ1AAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAAA+pJREFU
+SMfNV01IVFEUPjPj+MbmJ2nRz6YmcBGUOUHRKmbIoYwWSmFEIOkiK5CcRVQS4iCWLsJmM9EuN5ER
+xEC1EnKKCDOkibIknJyioE0UomY/aOfc3/dm3ji1EDzwvfvm3nvePfec75x7B+D/xQsrSXYu36dz
+Sw06UxxWOWT55Qva6ynZWsKCxyZkqOP5El4QntijezPCjPqZ6L5ugMNLe88V4U2mYNaTxWj0VBDc
+IVC4Tf39Razp12NX2bMzm832DIhRRzPA8SB47PWkeLj3Pd/paaD+xEM5tBZNmAaIg8I5mtNchK4p
+DnLElArph1fiJYxD4Qj4Buz0lAzxZmxBdgTGQsJrvxEzAKOgQKa7E/bWOHIcKB3HYyoMneJ1GNsX
+AxCotNNTspE9jeQP1WO8FUZjl+8Xbg8UfLfOn+8sEqgtAiipYUXWWidnArQgXuLCp+30FKHjfGXv
+tO6r4k05bsOPxpYnNOZaW98VseaYAH4zdyMtHR0HvgCgky+cwfamnZ4UN4/j9oo/JirxZnUEjMu4
+m1UNGrUAJ9lgL3tem23cJ+IKVwQAPjKS8F2mSYXCPjP0YJJerrNV+5hEQOmIldkuAkEiiZQyvkD4
+4FATjVbENapot8RT7kpfJXglEdYIAAShq0F0+kFYQ2H/SqtvzvcN6rizJOgXB4uwE4zZAmuQd4HX
+NFip4afdonzmrnRHwCkJNy0Armi0XuZdUhYcCruXlML51kybSs1qZs3OaHROj/s174Zxbdd3DW/a
+z1Lg7jifmQJ3Jt8aJ+5RkAXDWtEgw85S4l+swcd6PZ5UvKOctFgTiLPK6Uq1sinfQjAik3mDACDZ
+/SJ8WJuqeQKHcVtlP2WkeGiyzVJPWuOg6lFB2afT7D0fJb/WJ6yRgpN7WSyhic2pGbp/Rqq1CRgJ
+WUupNu3q1+Wmizw2ku+bNpM15USDDlXMqfdoTvHOmCeqxjUgyQLzDIbZnEGAR7J43RT4QixZ4CfD
+1MQBUGF3rc/ZZbjqCPG0ZWnSnhMnQ09Cl5sdtDNzhoODcjcw3simwwkMlizN1RznNvWCr32es2VU
+rnQEz7w+xv/ufGuqzdUvA0bLfAyeLl6yTnK3z0TrWC3wBDXAR1a4YxBmeYdEqJH1xhHjKHYginJY
+eDKYddaVvNSYTgYh25D9aaMXjAUwxtXVZQDyz0RxPzDLqoILkEVntKQ1d0xg8mkOjPpJZPngbGNd
+wu5GwaVzSiWOki//dKMQGckS743Vt3EN66byfp8V0PK1cOn9hV1mHSNSwjVlMQ2L7M77baQ4Cm4r
+5stMqHABi87FEtbcM8Ei6ZIxfr+i/i/ElvXrfwFMbSU7/6oJ9wAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>$A$ is a proper subset of $B$, $A \subset B$, means that $A \subseteq B$ but $A \nsupseteq B$; that is, every element in $A$ is also in $B$ but not the other way around:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">subsetDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">Subset</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">And</span><span class="p">(</span><span class="n">SubsetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">NotSupersetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="subsetDef">subsetDef:</strong> <a class="ProveItLink" href="__pv_it/ddd2fbef3d8b5b29d31a436d6504fb2f0850dc1e0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWsAAAAYBAMAAADOqcGQAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABElJREFU
+WMPVV01oXFUU/mZeXt4kM/MaXGhd1I7QhaBtRwh1VWaIQ1vaRQZKRIXSdGHagjSzkNQi0qGo6ULj
+bFK6azallUIZUEGImFFEaos4BqMinXYsFbIRS0hi/GnquX/v5973JiV00R745s3ce753zz33nHPP
+AA+z1PEoilWMnWp34iXrAp0kk3tQvGf1ATus8lUATTZwLebV/RIkO811BxdLu04B+x8QT/rWanoj
+Wfn8+l6pdCQHOw8PH7HxiRizJ/y5D83ZxDBwMIfUffE+a7Vas5E8Rx54SjxTd/ggqf+yV73vcbJ1
+AajCwxjTGY62Ol0XYC66aUZTgaYKRWSm7oO384tYXqosntPi8d2q0nM35eU5/EtYBK7CA9ujXYs2
+O9EWIDlxsGJ4bYaGvp+C27c2z/k5MK3xdtwQz6eE7yf/8qJmt2SlaSjzD/AbPGQuHD/+dkyMPCPB
+StFMzvDaIcIPZN3RtXldweTSeAPCzcmqMDG9oPS68lvEl27aYJZ21V3zsTwy8muM2a9K0Dvb5xqG
+1+jY3jxGz/Nr8+YRy3OrIvNsETPbev5TevMq/DcU4bxH++wt+3gROMwnx/nnmaWhXTKk8L4EcIsH
+ZNhr1uL0p9fZl7N81dNcitG8fsTx0NsQMZri+3NzLJCFfE7+Fsmwb/oAm+2p+thC++XJIw4n04e0
+CtbHJIAcTpZ1r7GI+4OZ+bTubZPXH8/LwuHrJ7hHknCWlGJTmU3J4P7IJvt8ZJHm+/xdHI5dRFIl
+xYIErFJpcFhfnkVcmpEKutkmLxvPu8YPnCKBm91fKi1LvZ6yorFkmCEjrTs+0o0sT/rLc2LzddhN
+ffkkOaOqm00Rx/O7g9keL1irNN4N+VZhNn1sVNurYNJLBlZ6Qma7Vc6y6iNc5c88rshahyclQItm
++3SvFWj/XX+rw7ZbXIajee5sHI98ihRbMMF21sOKjNQbQ1KURosdzWAtHCQ4PMCTDQe4zvbpT46p
+BV6XcGrq8gp6jZXfk8yXV3RvmzzM74/hMZOZ6ehmoXoicK++Yr3c9pLBWWF5V/WBSR4T32KG61wE
+vlQX4nkJlojdq7rXKOKsje2oAmjyKPM/UNdUmLcDsjFiVY0Xh9G2uNzvvlPzk+H5CYQLIBKsRLlz
+Q1wdr1GcKJduFRjbPI7M6Eo57LWXqL85zZP5lG52BM8XjTeg7vVkE86hlQq+ufeuKGmqZ7BHF0t7
+eD1N5Xwgw8y1KyjwakNBt13V7URFICi+17zWwbzcI3imCJ4seyRPhKdTZhMUuNylPEep3HDG4azC
+mfNazClENEq69BqN9fp4V83mV5NLAXC5vQxn8Dql7MWloT21qAY0XuY7Nq7yoHmZme3IC7nXad0l
+wk/h46n6CLtJ+/2GREfZbQ6ti+eE/oK5TYPQVfERkhf0N9UFOkk6b46tj/eW3rNr8nEAIWk8PH9/
+s+1H8l+703H2f8iyd5hOQl6eAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>$A$ is a proper subset of $B$, $A \subset B$, means that $A \subseteq B$ but $A \nsupseteq B$; that is, every element in $A$ is also in $B$ but not the other way around:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">supersetDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">Superset</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">And</span><span class="p">(</span><span class="n">SupersetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">NotSubsetEq</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="supersetDef">supersetDef:</strong> <a class="ProveItLink" href="__pv_it/f61c8db3bee8c33ef01b9b46ac090a26f3d9fd3d0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWsAAAAYBAMAAADOqcGQAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABEhJREFU
+WMPVV01oVFcUPjOTyXvJ/Bi7sOmmHaELQaMpqF2VGeJgU7rIgKQLNSQujC1IMosSFREfUhuhNc4m
+pXTTbEJTCmWgdZVFxiIlJogpNVCqY59FIaDBEJIY/6Ln3J/3e98zBhfmwDd33r33u+/cc8/PfQBv
+smRgXcpU4IgZRouWOcIkmXldvK2+KUOuxz8cYBuaDFh6pwDKR/73ti3k954B2PeaeLEcb2wT68Km
+l5/n859nIN4MFn6m/oEAtQfssQv+0UgXQGcG9FXwTlWr1W9MNU8zXUrqc/wxcb66sSpOZBPqOg9g
+gIU+InaptU6UOchE//m9KYtD2Zz3KAN59/9W8/QCb0d5c3WFG/2GCXvkOTxBLABMgAXaY7ykVjti
+cqCc6CxS00RWk8Nj2HVtCNINL+dxkxeVvN23ePsut/3gQzk5bUgzYFfyMcBtsJD86dixUwE+skUA
+pTxmRdA9abVDiL9Quy9Wx4NoTslr4WaOciUTiXnei38rgliLG0zhrmpLNpa6u/8NUHu/AK5p/ljx
+WQ2P7XgPtsOr5IGh4qWNFGvj3Ge21z3lvaip5G3IgfY17rO+YAMd6Agb7Ge/3y22720W078VAPif
+OaTbarGF0Ys36c/37K3nmORCeMJX3Tyor3Af1dn+0hlyZJ5WfrCC6NPRDhqtM2y8L3woyQ8n2QAJ
+6axvCVC5Ol3wVgHyuFlSc7PX2kG8PSpeCjT2/gjzpihoi1LtfkcQpa/TYIONlPChu0/5WeUg+lBM
+nxeAWD7f1uV9PXlcgkhZr9pBvCkVb1Kst4GpvTOfXxJzYxaTgmEMlYzN2UhUUizof53mmy9DfMr7
++igaw/CqjR7H4jtEbTevrqDi3RKViauNP42s+yDErWDGYKDU41I7bTBWrNzNpjxohnGZs94RAHS+
+VIPXalncf80jedjxKpOuEF6TqeDRXnR6YYQ8vI6SDJs1m5m1yicdTVvJ7SRwpIXGaqCDzdkx+nuP
+nH9UQCvZxcu2GqXf02TLca+11bxdA6DgkcpswVpy1RNWXU1/dQAcaVtbprgzbMAgM94VGGNzRgAu
+ycI2LDBDq654rYYeF2s0VQnQz8Pi/s8ntqc6eLvl8VFWY8mhly8fXcbDy8hg+GAA3AkQIpSi0tPt
+fPph9BNZNJs4+t7rh2TvcsFttc/wfnOOBfMZr9pqnhAPr0XW9egUaIeWi/Dn87NcbcmL9y7kW1k+
+1TM2IEnqxouQZekanW6HzNuRIodDIbRai0dJRXH38VTCeSLtobztHq5t9jEcxV3INgzlitYP2gpo
+0877rv+i5JX6suqe/Oq8CffjcT/jFweY3FkCre0mhuzIYntrSXUBDZaZ0IsrWBdXkWYCebrrjtnx
+rCp92zoew4bbTJ7nLwVC5WN/15p4Wu4lH2Q1RRsu+dC7UpkjTBJ+H1wj72TIBxnJbw64pPLmfP3q
+5rr8aNdCR18A6KB6KB9avA0AAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Axioms may be imported from autogenerated _axioms_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-01-16 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>

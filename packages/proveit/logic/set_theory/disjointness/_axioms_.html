@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Axioms for context proveit.logic.set_theory.disjointness</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../../../../../index.html"><img src="../../../../../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Axioms-for-context-proveit.logic.set_theory.disjointness">Axioms for context <a class="ProveItLink" href="_context_.html">proveit.logic.set_theory.disjointness</a><a class="anchor-link" href="#Axioms-for-context-proveit.logic.set_theory.disjointness">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">Iff</span><span class="p">,</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">And</span><span class="p">,</span> <span class="n">Distinct</span><span class="p">,</span> <span class="n">Disjoint</span><span class="p">,</span> <span class="n">Intersect</span><span class="p">,</span> <span class="n">EmptySet</span><span class="p">,</span> <span class="n">NotInSet</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">l</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">X</span>
+<span class="kn">from</span> <span class="nn">proveit.logic._common_</span> <span class="k">import</span> <span class="n">iterA1m</span><span class="p">,</span> <span class="n">xIter1l</span>
+<span class="kn">from</span> <span class="nn">proveit.logic.set_theory._common_</span> <span class="k">import</span> <span class="n">iter_x_singletons</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Naturals</span><span class="p">,</span> <span class="n">NaturalsPos</span>
+<span class="o">%</span><span class="k">begin</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining axioms for context &#39;proveit.logic.set_theory.disjointness&#39;
+Subsequent end-of-cell assignments will define axioms
+%end_axioms will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>An empty collection of sets are mutually disjoint simply because there are no pairs:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vacuouslyDisjoint</span> <span class="o">=</span> <span class="n">Disjoint</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="vacuouslyDisjoint">vacuouslyDisjoint:</strong> <a class="ProveItLink" href="__pv_it/add73baacee498af3b5ebd0de9fc664f10eff9ca0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFUAAAAVBAMAAADFg78FAAAAMFBMVEX///9UVFQiIiKYmJgyMjIQ
+EBDc3NyIiIh2dnZmZmZERESqqqq6urrMzMzu7u4AAAAx+6HGAAAAAXRSTlMAQObYZgAAAaRJREFU
+KM+Vk79Lw1AQx7+aNLaapAFBB/HXPyDddBDM7OQkCCJ2EicLDhVRCA7WMYs4uOigg4tZRHAxCKKT
+2kVBFLI4KIitKCpR6r33klhLRD14l7vLh3uXuwvwP7k/+RU5Qr8w9nxor8JcHueP0A1FM5A645bu
+Q30TwW0RCV3A5Vr2ADNk4YlXeoB4IWtznafTF7E/iCTYMTo3Iatcc0u5EvUGLnDIWZXd3+gAt4U5
+H9ky1OleU+p0MJlfZe7lyMVsTursbiMsZZFK2lBG0UA1rOMO6ELa0XpQZ5GLwYz+jnqeV86QajIh
+r0Hh7IEHi9iEBeWDsRvAS8AmWDfUIUzlAjZRngexp1TWG2O3vtg0Y7USTjMBqy9UDGIHKP70Axvl
+PYfkE7tPectVbAOrwRE11BsBuwusiHq19yo2ydrFvk0yoX0gxdkdD5vEqsNotCM2ZSZFu4TKFuYe
+7WKl4zg/4xKL4lIzyC1W2veebX19kV3fxRrn1sw07cSOejiacSRq7sGNZdneFL6H5NJh/ArRTupm
+Td7WlnhWMVA3/tffbAI01E/DwozF567pJQAAAABJRU5ErkJggg==
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Define <code>disjoint</code> for a pair of sets to mean that the intersection of the pair is the empty set:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">disjointPairDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Iff</span><span class="p">(</span><span class="n">Disjoint</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">Intersect</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">EmptySet</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="disjointPairDef">disjointPairDef:</strong> <a class="ProveItLink" href="__pv_it/3dc0104424baa4baa08f99caa9e79dce976ee38e0/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWIAAAAWBAMAAAAItosqAAAAMFBMVEX///8QEBC6urrMzMxUVFRm
+ZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAU9Wx4AAAAAXRSTlMAQObYZgAABP1JREFU
+SMfVV22IVGUUPjN3Z+7Mzp07S2BmmDsLRoLJjmFEP2SGHLZYf8ySbNiK7Bi4Ui3uiOIWITtItAsb
+On+KCKIligwhBtKI5sdOZaAmOEGrEJpXs5DAVmz8mFqtc96vuZ9rf33hfpwz5zn3ec8573nfAbhP
+Rlm9WYuZrcbLfMK6l7dw1VdtpIOMAwBifOtVnfy6yNTkskGKH/yhWg5v8bEKZGeYHFnK9UJUYx1/
+rFdUC818336ATX5O1/kAnLhIxo3prCcaXI0uPyPNAX/GMRbd+Qr0DjA5+hfXCxFjxR8CflABQ0WA
+4TTE/Jwe8ALGXbiyG7MPoht5YaDLvfjQi/6MayAYm84SkiJE2D3Bc2xcUOWTRU02B8aM1ycZOwHx
+qb4zGQfupBv0CSTXAlOjS4pjpOLPeIVkHDS+55HhTF8fLkn9LL6dngGzS+QKrydlGC03IG+BNu3A
+XXR/ZxoenS8xNbo0Ph0f3xewoMqS8W4eg92P8R+ECOEl7LGKS9VZtdK24fUj0nq5nauomM4qN8Cg
+Eotl7LioO0bL4flUmqvR5c2RkZ/9GUcwqeZQrbeiF3Kw+tRXcKwF+pajJGrbNtVehWN38uRkiNO3
+PqxLZBPgtZ0sm2wB08x1UZxDbgBbLPEZO65zwMWkBY1UhavR5QaAHUw9ye7v3hjsEyGMocNdaZit
+QDRnFiFJyPUW9KMIsVGYT8Mcs3ub3S+xKuQUm7Wj5+jlPSaufeQ8jtuWMnYAkqorKVyczW7zFI03
+GWO9iIyZGl2uBJMZGNf5cuiChCi/ECbtLYAJYhz+BTqJ8cMoZ5BxtAtSVcH4AXZPw4QMTeIWwFXi
+0MMk3hnC+5WxA2BjLHHhLneME3VkzNQ9hEiwbP62wEshB+Fb3A5LR/9HMIbujRj5VriF6gFiXGwz
+ZlPV8vmCbDk4HUiQuyytlQeFdldOGjsANsYSp11zMV6IWciYqdFlop5k+fqcfz5ZhUhDMQ4vSMZ/
+XMAia1EiUmU/xtiaQ7KPpvD7xt+CMVzmodenwcFYAmyMJc7DePlVmM8oxmaZ7UBadYR3hgwcF8s6
+VGnHWCvB6Qq04hTjnI0xVeIyMsYlmJTJzGLSOlqyKuCD82xwr8vcABtjieNVsZWhztDrK+9D1lJV
+ATueIWUHbOX7We3ITplcdPCTYBzH0Fd5HWfTNsa0xkcpgkggdk3sMdRWJyh+x5mfONExz3Knoy6A
+nbHEGe5N78sN5MqQLt9hRXACZtmPhwC+EXsXdZNsBoYZ4xXUUVvQU4LtoBhvZoyph12hGd4F845o
+q9pDlupu8CJFJC23LwfAwVjiPN3tYgNeAtXdIESZNecGxxjR7e1NLoxT0ftrvXNaoXnpcO0j6hVa
+/8d1FH8tNJ8eWwK/91Oq1+Be3z0JxtjtAbMbFS/8m89PsdXM2wNjt1d8fI0TYGescDH3oc842zkj
+1OTSIKaREoWTNWvolWenpeDp5H4jVLLtk7Z3tUtreP1pM7YDIMEs646Qes5up74TalM1vsdxRdX1
+SdDvgj6nTqWu07J53f8cbDvwGI4PVf2N/U5I9nHYA7KkWrm8fBP0wjltAQ7dGHyu4jxtqnHQ09nB
+cdr0ML5yj9NmwDDLwWq3S8Mp6jmHuPJIyf8Te9qvjqg+G2S8Z1HGHaVgtdvlUy75jf/3H0z3/xOU
+yAQZ64v+a/oiWO1xWb8P/qL+B3CrlaMuC3h2AAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Define <code>disjoint</code> (mutually disjoint) through induction: adding a set to a <code>disjoint</code> collection will maintain disjointness if and only if the new set is disjoint with all of the sets in the original collection:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">disjointInduction</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Forall</span><span class="p">((</span><span class="n">iterA1m</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span>
+                                     <span class="n">Iff</span><span class="p">(</span><span class="n">Disjoint</span><span class="p">(</span><span class="n">iterA1m</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span>
+                                         <span class="n">And</span><span class="p">(</span><span class="n">Disjoint</span><span class="p">(</span><span class="n">iterA1m</span><span class="p">),</span>
+                                             <span class="n">Forall</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Disjoint</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span>
+                                                    <span class="n">domain</span><span class="o">=</span><span class="n">Set</span><span class="p">(</span><span class="n">iterA1m</span><span class="p">))))</span><span class="o">.</span><span class="n">withWrapAfterOperator</span><span class="p">()),</span>
+                           <span class="n">domain</span><span class="o">=</span><span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="disjointInduction">disjointInduction:</strong> <a class="ProveItLink" href="__pv_it/e66a81335e44b2f1f841dc3b829e4fbb875257960/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Elements being <code>distinct</code> is the same as their associated singletons being <code>disjoint</code>:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">distinctDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">Forall</span><span class="p">(</span><span class="n">xIter1l</span><span class="p">,</span> 
+                               <span class="n">Equals</span><span class="p">(</span><span class="n">Distinct</span><span class="p">(</span><span class="n">xIter1l</span><span class="p">),</span> 
+                                      <span class="n">Disjoint</span><span class="p">(</span><span class="n">iter_x_singletons</span><span class="p">))),</span>
+                    <span class="n">domain</span><span class="o">=</span><span class="n">NaturalsPos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="distinctDef">distinctDef:</strong> <a class="ProveItLink" href="__pv_it/21435e5f4344d7d2315d625299a624ba830bea4a0/expr.html"><img src="data:image/png;base64,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
+AAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Axioms may be imported from autogenerated _axioms_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-01-16 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>

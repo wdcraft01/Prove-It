@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Axioms for context proveit.logic.set_theory.membership</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../../../../../index.html"><img src="../../../../../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Axioms-for-context-proveit.logic.set_theory.membership">Axioms for context <a class="ProveItLink" href="_context_.html">proveit.logic.set_theory.membership</a><a class="anchor-link" href="#Axioms-for-context-proveit.logic.set_theory.membership">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">And</span><span class="p">,</span> <span class="n">Not</span><span class="p">,</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">InSet</span><span class="p">,</span> <span class="n">inBool</span><span class="p">,</span> <span class="n">NotInSet</span><span class="p">,</span> <span class="n">EmptySet</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">Exp</span><span class="p">,</span> <span class="n">Len</span><span class="p">,</span> <span class="n">Naturals</span><span class="p">,</span> <span class="n">one</span>
+<span class="kn">from</span> <span class="nn">proveit</span> <span class="k">import</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">Iter</span><span class="p">,</span> <span class="n">Indexed</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">x</span><span class="p">,</span> <span class="n">xx</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span>
+<span class="kn">from</span> <span class="nn">proveit.logic.set_theory._common_</span> <span class="k">import</span> <span class="n">each_x_in_S</span>
+<span class="o">%</span><span class="k">begin</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining axioms for context &#39;proveit.logic.set_theory.membership&#39;
+Subsequent end-of-cell assignments will define axioms
+%end_axioms will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Set membership should be either true or false (though one might not know which it is), and thus we might naively expect to include here an axiom for set membership being in the Booleans, something like</strong><br></p>
+<blockquote><p>$\text{membershipInBool} = \forall_{x, S}\;(x\in S) \in Booleans$</p>
+</blockquote>
+<p><strong>This would be problematic, however, and open up the system to Russell's paradox. Instead we use whether or not membership can be proven to be in Booleans to dictate whether something is a set or not.</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Define an exponentiated set.</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Bob has a good suggestion to move this to a new context, proveit.logic.set_theory.cartesian_product, as a theorem.  The axioms would define S^n = S x S x ... S and the axiom would be a more general one about membership in a general cartesian product.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">expSetDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Forall</span><span class="p">((</span><span class="n">xx</span><span class="p">,</span> <span class="n">S</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">InSet</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">Exp</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">n</span><span class="p">)),</span> 
+                                             <span class="n">And</span><span class="p">(</span><span class="n">Equals</span><span class="p">(</span><span class="n">Len</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span> <span class="n">n</span><span class="p">),</span> 
+                                                 <span class="n">each_x_in_S</span><span class="p">))),</span>
+                   <span class="n">domain</span><span class="o">=</span><span class="n">Naturals</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="expSetDef">expSetDef:</strong> <a class="ProveItLink" href="__pv_it/8befc189645bb22aa3a7bf062e2c23028269ae330/expr.html"><img src="data:image/png;base64,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
+QmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>$x \notin S$ is defined as the negation of $x \in S$ for all $x$ and $S$:</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">notInSetDef</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">NotInSet</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">InSet</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">))))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="notInSetDef">notInSetDef:</strong> <a class="ProveItLink" href="__pv_it/9675a23e9adc2c0ebe46a1cf8c695c3db677fec90/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQIAAAAWCAMAAAAcoWJbAAAAQlBMVEX///9bW1sNDQ0JCQkdHR0P
+Dw8WFhYQEBC6urrMzMxUVFRmZmZERETc3NwyMjKqqqp2dnaIiIiYmJgiIiLu7u4AAAAq2h4+AAAA
+AXRSTlMAQObYZgAAAu9JREFUWMPdV+nWnCAMtavIoqzv/6oFFDWQCM5pe06bP/ebL0xuJmRjmv6g
+MD/9C/KRl8xAJMQRxi17RzOu6Eghhugu/bDdhUPsHDsJuBDCJ1qxvKEZV1C/vCEGqLdycB1OiHKy
+8w0BL3u1KelkyH+/oRlXEMcR4jsqeXw4/+iKMRDJOgCfuM6wZXKrx2nGFbigxABLSMU2anP2ELEO
+Y1b384e7XbYKe+4t2X8/j9OMK3beKPckw4kBWq2yuOFeuELEinW1fpIKfCvsIV52h+Q2SjOuOHjr
+4zgxwCCTOD0aAqEhKm242oy40lPJ6IiHnqoQzK0JajFKQyoI3loIYoA8H4B3doZVaG3s0naXC330
+yDo7zVcaZVt1xZoQ5WTZrgCJ9Sa8ocG7G83btg6UGCBLtB7NLiZyJlWlyADqzBJtnYHyEm3byvI5
+lDpm3WZwmBfuFD3Ei+QBRgwxhdFYuqdXlgMDmExzcITN0d/v36q2tPsdDp4l9EIQGLENPPM6h/G2
+xBDTz0cXOR/yf+1jCPLFmMZXDfudLRZ/WwgI3mYtIoghxiIo344dhhl+ppabdbvLzhvEMnfOIHrX
+LAVelJOqKYRbqjsnG5rmFz7z1rdIEVcoFT/qy6fcuji8mEOoXZEWoFW5JCdz5RG3exe5pDQfUS7K
+dvdDaYkQPPLWQhJXuIkjfqxtxIrXjQuOlS1mmIxH1C0nvWMcThHhstrI8aHYnlgGeJsJShHXeKup
+cA0Wz/YqqseEu6OXRvs0OUHc1q8wBDzOHc5vF7t2H4vMPSoI3voBRhLXeO1Uy3xGe9pyCSzNqJkV
+RKwJfeEr2pknuJ8+TkX1VpF8fubFF+R7poVJr3niqjXSCInvG/VTAytk1cnygZcOad4OL7I0cY3X
+bmE2EfMrBcOmx3R8Zgv1wWO59+r0f/WxjBDXiIf6Qac4xHYntZ33qxrxlzSv+KchKMQ1oo+DRydL
+G1ZEPneSwCxjDlPmacU0Rlzj6yT4z+QX8HMygUNBMOAAAAAASUVORK5CYII=
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Axioms may be imported from autogenerated _axioms_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-01-16 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>
