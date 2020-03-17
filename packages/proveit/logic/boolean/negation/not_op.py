@@ -91,12 +91,14 @@ class Not(Operation):
     
     def doReducedEvaluation(self, assumptions=USE_DEFAULTS):
         from ._theorems_ import notT
+        from proveit.logic import EvaluationError
         from proveit.logic.boolean._common_ import TRUE, FALSE
         from proveit.logic.boolean.negation._theorems_ import falsifiedNegationIntro
         if self.operand == TRUE:
             assert not notT.isUsable(), "We should not get to here if notT is usable"
             # evaluate to FALSE via falsifiedNegationIntro
             return falsifiedNegationIntro.specialize({A:self.operand}, assumptions=assumptions)
+        raise EvaluationError(self, assumptions)
     
     def substituteInFalse(self, lambdaMap, assumptions=USE_DEFAULTS):
         '''
