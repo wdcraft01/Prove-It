@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Axioms for context proveit.core_expr_types.lambda_maps</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../index.html"><img src="../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Axioms-for-context-proveit.core_expr_types.lambda_maps">Axioms for context <a class="ProveItLink" href="_context_.html">proveit.core_expr_types.lambda_maps</a><a class="anchor-link" href="#Axioms-for-context-proveit.core_expr_types.lambda_maps">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">proveit</span>
+<span class="c1"># Automation is not needed when building axiom expressions:</span>
+<span class="n">proveit</span><span class="o">.</span><span class="n">defaults</span><span class="o">.</span><span class="n">automation</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># This will speed things up.</span>
+<span class="kn">from</span> <span class="nn">proveit</span> <span class="k">import</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">Conditional</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">Q</span>
+<span class="kn">from</span> <span class="nn">proveit.core_expr_types._common_</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">a_1_to_i</span><span class="p">,</span> <span class="n">b_1_to_i</span><span class="p">,</span> <span class="n">c_1_to_i</span><span class="p">,</span> 
+    <span class="n">f__a_1_to_i</span><span class="p">,</span> <span class="n">g__a_1_to_i</span><span class="p">,</span> <span class="n">f__b_1_to_i</span><span class="p">,</span> <span class="n">g__c_1_to_i</span><span class="p">)</span>
+<span class="c1">#from proveit.core_expr_types.tuples._common_ import f_x</span>
+<span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Implies</span><span class="p">,</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">Equals</span>
+<span class="kn">from</span> <span class="nn">proveit.number</span> <span class="k">import</span> <span class="n">NaturalsPos</span>
+<span class="c1"># the context is in the current directory:</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">proveit</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="c1"># adds context root to sys.path if necessary</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">begin</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining axioms for context &#39;proveit.core_expr_types.lambda_maps&#39;
+Subsequent end-of-cell assignments will define axioms
+%end_axioms will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>A <code>Lambda</code> map is as a <code>Lambda</code> map does.  Thus, <code>Lambda</code> maps are defined to be equal if they preform the same transformation under the pertinent conditions.  This is similar to the <code>proveit.logic.equality.substitution</code> axiom except that the substitution is performed within a <code>Lambda</code> map which requires a special rule due to scoping restriction.</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lambda_substitution</span> <span class="o">=</span> \
+    <span class="n">Forall</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">Forall</span><span class="p">((</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">),</span> 
+                     <span class="n">Implies</span><span class="p">(</span><span class="n">Forall</span><span class="p">(</span><span class="n">a_1_to_i</span><span class="p">,</span> 
+                                    <span class="n">Equals</span><span class="p">(</span><span class="n">f__a_1_to_i</span><span class="p">,</span> 
+                                           <span class="n">g__a_1_to_i</span><span class="p">)),</span>
+                             <span class="n">Equals</span><span class="p">(</span><span class="n">Lambda</span><span class="p">(</span><span class="n">b_1_to_i</span><span class="p">,</span> <span class="n">f__b_1_to_i</span><span class="p">),</span>
+                                    <span class="n">Lambda</span><span class="p">(</span><span class="n">c_1_to_i</span><span class="p">,</span> <span class="n">g__c_1_to_i</span><span class="p">))</span> \
+                                      <span class="o">.</span><span class="n">withWrapAfterOperator</span><span class="p">())</span><span class="o">.</span><span class="n">withWrapAfterOperator</span><span class="p">()),</span>
+          <span class="n">domain</span><span class="o">=</span><span class="n">NaturalsPos</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="lambda_substitution">lambda_substitution:</strong> <a class="ProveItLink" href="__pv_it/78b6f8e91e68fcea5a8f3c91c4c508cfcdb89c920/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Axioms may be imported from autogenerated _axioms_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-04-22 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>

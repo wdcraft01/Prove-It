@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Axioms for context proveit.core_expr_types.conditionals</title>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="notebook.css">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+    <a href="../index.html"><img src="../pv_it.png" alt="logo" style="width:50px;float:left;position:absolute"></a> 
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Axioms-for-context-proveit.core_expr_types.conditionals">Axioms for context <a class="ProveItLink" href="_context_.html">proveit.core_expr_types.conditionals</a><a class="anchor-link" href="#Axioms-for-context-proveit.core_expr_types.conditionals">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">proveit</span>
+<span class="c1"># Automation is not needed when building axiom expressions:</span>
+<span class="n">proveit</span><span class="o">.</span><span class="n">defaults</span><span class="o">.</span><span class="n">automation</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># This will speed things up.</span>
+<span class="c1"># the context is in the current directory:</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">proveit</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="c1"># adds context root to sys.path if necessary</span>
+<span class="kn">from</span> <span class="nn">proveit</span> <span class="k">import</span> <span class="n">Conditional</span>
+<span class="kn">from</span> <span class="nn">proveit._common_</span> <span class="k">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">Q</span>
+<span class="kn">from</span> <span class="nn">proveit.logic</span> <span class="k">import</span> <span class="n">Implies</span><span class="p">,</span> <span class="n">Forall</span><span class="p">,</span> <span class="n">Equals</span><span class="p">,</span> <span class="n">TRUE</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">begin</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Defining axioms for context &#39;proveit.core_expr_types.conditionals&#39;
+Subsequent end-of-cell assignments will define axioms
+%end_axioms will finalize the definitions
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">conditional_substitution</span> <span class="o">=</span> \
+    <span class="n">Forall</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">Q</span><span class="p">),</span> <span class="n">Equals</span><span class="p">(</span><span class="n">Conditional</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Q</span><span class="p">),</span>
+                             <span class="n">Conditional</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">Q</span><span class="p">))</span><span class="o">.</span><span class="n">withWrapBeforeOperator</span><span class="p">(),</span>
+          <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">Implies</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">Equals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="conditional_substitution">conditional_substitution:</strong> <a class="ProveItLink" href="__pv_it/e74b55ee6c0f1b9c0f7aeca9ff80c9d245f3826d0/expr.html"><img src="data:image/png;base64,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
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">true_condition_reduction</span> <span class="o">=</span> <span class="n">Forall</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Equals</span><span class="p">(</span><span class="n">Conditional</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">TRUE</span><span class="p">),</span> <span class="n">a</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<strong id="true_condition_reduction">true_condition_reduction:</strong> <a class="ProveItLink" href="__pv_it/da3deb0aec7051eae75899f648e7f016807b28590/expr.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAVBAMAAAAz5vjYAAAAMFBMVEX///+IiIgiIiIQEBB2dnbu
+7u5UVFTMzMzc3NwyMjK6urpmZmaYmJiqqqpEREQAAACk/Np2AAAAAXRSTlMAQObYZgAAAAlwSFlz
+AAAOxAAADsQBlSsOGwAAAgBJREFUOMtjYMAEDUActYCBDMCBVZTxAhDPDUAVPEiUBVwCDAwPQIw7
+yKJXgPg+knkcNgwMnNd/AVmblEBADY+JsgwMu0D0DCQx1glAwgnZ2t8MDIc4UiGci/idyBnAUAZy
+wwMkMe4DaAYyAF2bBmMTMJBnA8hMBpYLSGLMDOgGAkE2kQYymDLwAB3EiSy0kiID5zAwGCkpmSAL
+bYEZyLFFQgDE7jRjKDNOI2hgt2MjkHRjYNjOwPAUzQ4Ghp1AvLiB7ytYRA1nGCJFO5cFw3tg6J1k
+YGhj4EhAVqQLctwfYGzbMHArgEWeERMpwQcYNgGpSwwMfAEsKInWioGBPQkowv2VgcmBeAP3BzCo
+AKl6BgZeAZQ4ARnIED0VGNsPGOIXEG+gHQMrKO0vBuIJB0FGHPSAysyFmhHvwHCegYCBiDBk/cLA
+8wHiZQZfoHNY1dm/QhU9hMZy/AWGl7wNxLqQ9S8D34QbDAzngOxmYJxwb2A3gEq5QQ3kFODRZgGL
+vAMjVAPjJ6CZOJHh0AZgkG8EMvkKGBj4FzDConoR1EDWRPc2cRC7zvhpnf1DqOwaKM20Ac3AMJGK
+RKBBGjALG/iOQgsYpgIsOYXoAlEBloEb6tcg8jf5BoJLFnA633PRByb4AoiFyTSwD5tgHCjdXyDP
+wKdYwwHobI5tZJnI08AAAFXKfVf7EX9zAAAAAElFTkSuQmCC
+" style="display:inline;vertical-align:middle;" /></a><br>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">end</span> axioms
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Axioms may be imported from autogenerated _axioms_.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+<footer>
+  <p>These web pages were generated on 2020-04-22 by <a href="https://github.com/PyProveIt/Prove-It">Prove-It</a> Beta Version 0.3, licensed under the GNU Public License by Sandia Corporation.</p>
+  <p>Presented proofs are not absolutely guaranteed.  For assurance, it is important to check the structure 
+  of the statement being proven, independently verify the derivation steps, track dependencies, and ensure that 
+  employed axioms are valid and properly structured.  Inconsistencies may exist, unknowingly, in this system.
+  </p>
+  <p>
+  This material is based upon work supported by the U.S. Department of Energy, Office of Science, Office of Advanced Scientific Computing Research, under the Quantum Computing Application Teams program. Sandia National Labs is managed and operated by National Technology and Engineering Solutions of Sandia, LLC, a subsidiary of Honeywell International, Inc., for the U.S. Dept. of Energy's NNSA under contract DE-NA0003525. The views expressed above do not necessarily represent the views of the DOE or the U.S. Government.
+  </p>
+  <br>
+  <p>Please send questions/comments to: <a href="mailto:wwitzel@sandia.gov">
+  wwitzel@sandia.gov</a>.</p>
+</footer> 
+</body>
+
+ 
+
+
+</html>
