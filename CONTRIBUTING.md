@@ -23,6 +23,8 @@ following:
 
 1. [Jupyter Notebooks](#jupyter-notebooks)
 
+1. [Cosmetic Changes](#cosmetic-changes)
+
 1. [Creating Issues](#creating-issues)
    
    1. [Markdown](#markdown)
@@ -53,7 +55,23 @@ behavior to wwitzel@sandia.gov.
 
 ## Python Code
 
+Prove-It is based on Python and all Python code should conform as much as
+possible to the style and format expectations laid out in the Python
+Enhancement Proposal (PEP) 8: Style Guide for Python Code, available at
+<https://www.python.org/dev/peps/pep-0008/>.
+
 ## Jupyter Notebooks
+
+Python-based Jupyter Notebooks (extension .ipynb) are used to organize axioms,
+theorems, and theorem-proving. Such notebooks should …
+
+## Cosmetic Changes
+
+Contributions that consist solely of cosmetic changes in style or formatting,
+etc., (for example, updating code format to comply with PEP8) are generally
+discouraged. For some possible insights into the motivation for such a
+policy, consider this related comment at the Ruby on Rails project:
+<https://github.com/rails/rails/pull/13771#issuecomment-32746700>
 
 ## Creating Issues
 
