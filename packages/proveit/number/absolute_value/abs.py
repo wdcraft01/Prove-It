@@ -94,6 +94,9 @@ class Abs(Operation):
         |x| = -x (for operand_type = 'negative'. Assumptions may be
         needed to deduce x >= 0 or x < 0, respectively.
         '''
+        # if operand_type is None:
+            # do something here
+
         from ._theorems_ import absNonNegElim, absNegElim
         # deduceNonNeg(self.operand, assumptions) # NOT YET IMPLEMENTED
         if operand_type == 'non-negative':
@@ -156,7 +159,7 @@ class Abs(Operation):
         #--               non-negative Reals, or                     --#
         #--           (c) the addition or product of operands, all   --#
         #--               of which are known or assumed to be non-   --#
-        #--               negative reals.
+        #--               negative reals. TBA!
         #-- -------------------------------------------------------- --#
         if (Greater(self.operand, zero).proven(assumptions=assumptions) and
             not GreaterEq(self.operand, zero).proven(assumptions=assumptions)):
@@ -177,14 +180,16 @@ class Abs(Operation):
                     if (SubsetEq(kt.expr.operands[1], Naturals).proven(
                             assumptions)
                         or 
-                        Subset(kt.expr.operands[1], NaturalsPos).proven(
+                        SubsetEq(kt.expr.operands[1], NaturalsPos).proven(
                             assumptions)
                         or 
-                        Subset(kt.expr.operands[1], RealsPos).proven(
+                        SubsetEq(kt.expr.operands[1], RealsPos).proven(
                             assumptions)):
                         InSet(self.operand, RealsNonNeg).prove()
                         return self.absElimination(operand_type='non-negative',
                                                    assumptions=assumptions)
+
+
 
 
         #-- -------------------------------------------------------- --#
@@ -194,6 +199,7 @@ class Abs(Operation):
         #--           known to be in a subset of the positive Reals  --#
         #-- -------------------------------------------------------- --#
         negOp = Neg(self.operand)
+        # actually check for operand already being a Neg first!
         negOpSimp = negOp.simplification(assumptions=assumptions)
         negated_op = Neg(self.operand).simplification().rhs
         if negated_op in InSet.knownMemberships.keys():
