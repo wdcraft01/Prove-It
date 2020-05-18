@@ -191,24 +191,29 @@ has been provided, the issue can then be assigned to a user or team member
 ### When Work Begins
 
 Once all the necessary information has been gathered and the assignee has time
-to work on an issue, it can be dragged into the "In Development" column on the
-[Kanban board](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/boards).
-Next make sure your local `master` branch is up-to-date with
+to work on an issue, it can be dragged into the **In Development** column on
+the [Kanban board](https://github.com/PyProveIt/Prove-It/projects/1).
+
+Before creating a feature branch, make sure your local `master` branch is
+up-to-date with
 ```bash
 git checkout master
 git pull --ff-only
 ```
+or an equivalent process using GitHub Desktop or other similar program.
 
 > **Note:**  You should never be making commits on your `master` branch, as all
-> changes will be making it into `master` via [merge requests](#merge-requests).
+> changes will be making it into `master` via [pull requests](#pull-requests).
 > The `--ff-only` flag ensures you only update your local `master` branch if it
 > can be fast-forwarded.
 
-Once `master` is updated, you then create a feature branch off of it with `git
-checkout -b <branchName>`.  The recommended branch naming convention is to use
-the issue number, following by a hyphen, followed by the issue title, all
-lowercase, omitting special characters, and replacing spaces with hyphens.  For
-instance, if issue number 123 has "Implement Awesome New Feature" as the title,
+Once your local `master` is updated, you then create a feature branch off of
+it with `git checkout -b <branchName>` (or an equivalent process using
+GitHub desktop or other similar program). The recommended branch naming
+convention is to use the issue number, followed by a hyphen, followed by the
+issue title, all lowercase, omitting special characters, and replacing spaces
+with hyphens.  For instance, if you are creating a feature branch to work
+on issue number 123, which has "Implement Awesome New Feature" as the title,
 the corresponding branch name would be `123-implement-awesome-new-feature`.
 
 [↑ Contents](#contents)
