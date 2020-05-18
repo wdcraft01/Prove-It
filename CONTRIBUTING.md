@@ -19,6 +19,8 @@ following:
 
 1. [Code of Conduct](#code-of-conduct)
 
+1. [Ask a Question](#ask-a-question)
+
 1. [Python Code](#python-code)
 
 1. [Jupyter Notebooks](#jupyter-notebooks)
@@ -27,7 +29,7 @@ following:
 
 1. [General Workflow](#general-workflow)
 
-1. [Creating Issues](#creating-issues)
+1. [Opening an Issue](#opening-an-issue)
    
    1. [Markdown](#markdown)
    1. [Issue Template](#issue-template)
@@ -55,6 +57,10 @@ expectations for a productive and respectful project community. Participants
 and contributions are expected to uphold this code. Please report unacceptable
 behavior to wwitzel@sandia.gov.
 
+## Asking a Question
+
+Just want to ask a question? Don't open an issue. Instead, consider …
+
 ## Python Code
 
 Prove-It is based on Python and all Python code should conform as much as
@@ -77,8 +83,10 @@ policy, consider this related comment at the Ruby on Rails project:
 
 ## General Workflow
 
-For reporting bugs, suggesting modifications, etc., you can create an issue
-on the project's GitHub site or directly email Wayne Witzel at
+If you just want to ask a question, don't open an issue. Instead consider …
+
+For reporting bugs, suggesting modifications, <i>etc.</i>, you can open
+an issue on the project's GitHub site or directly email Wayne Witzel at
 wwitzel@sandia.gov.
 
 For contributions in the form of python code and/or python-based Jupyter
@@ -90,11 +98,11 @@ or final pull/merge requests.
 
 See elaborations of each of these items discussed further below. 
 
-## Creating Issues
+## Opening An Issue
 
 <div style="margin:0px 0.5in;">
 
-[Create an issue in GitLab](https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue)
+[Open an issue in GitHub](https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue)
 for any work that needs to be done. From the
 [Prove-It GitHub site](https://github.com/PyProveIt/Prove-It), select the
 Issues tab:
@@ -111,8 +119,9 @@ and a careful, detailed comment describing the issue:
 
 <img src="images/contributing_new_issue_submit_screen.png" width="80%">
 
-the  Newly-created issues will automatically go
-in the **Open** column on the [Kanban board](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/boards).
+Newly-created issues will automatically be added to the **To Do** column on
+the project's []
+[Kanban board](https://github.com/PyProveIt/Prove-It/projects/1)).
 
 [↑ Contents](#contents)
 
@@ -132,12 +141,13 @@ and any interpreted text.
 
 ### Issue Options: Assignees, Labels, Projects
 
-As shown in the figure above, when creating a new issue, a number of options
+As shown in the figure above, when opening a new issue, a number of options
 appear along the right-hand side of the submission window. You can assign the
 issue to one or more people (including yourself). Then select one or more
 appropriate labels to classify the issue (<i>e.g.</i>, "bug", "enhancement",
 <i>etc</i>.). Then under "Projects," select "development", which will
-automatically add the issue to the "To Do" list on the project's Kanban board
+automatically add the issue to the "To Do" list on the project's
+[Kanban board](https://github.com/PyProveIt/Prove-It/projects/1))
 (accessible later by selecting the Projects tab and development option) on
 the project's GitHub page.
 
@@ -146,13 +156,13 @@ the project's GitHub page.
 ### Related Issues
 
 It can be very useful to indicate related issues when establishing an issue
-or commenting on an already established issue. Markdown code facilitates this
-by interpreting the \# symbol followed by an issue number as a link to issue.
-The issue comment editing window facilitates this process by opening a pop-up
-window of possible issues once you type the pound symbol #. For example, in
-establishing an issue or writing a later comment on an issue, you might
-realize that the issue is related to issue \#123 established earlier, and so
-it's useful to add a notation such as "Related Issue: \#123", which will
+or commenting on an already-established issue. GitHub's markdown code
+facilitates this by interpreting the \# symbol followed by an issue number as
+a link to issue. The issue comment editing window facilitates this process
+by opening a pop-up window of possible issues once you type the pound symbol #.
+For example, in establishing an issue or writing a later comment on an issue,
+you might realize that the issue is related to issue \#123 established earlier,
+and so it's useful to add a notation such as "Related Issue: \#123", which will
 eventually produce a clickable link to that related issue (which can be seen
 in the preview mode by clicking on the preview tab).
 
@@ -166,12 +176,15 @@ in the preview mode by clicking on the preview tab).
 
 ### Planning Work
 
-As issues are created by both users and the development team, the **Open**
-column on the [Kanban board](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/boards)
-will begin to fill up.  When determining which issues will be tackled in the
-not-too-distant future, make sure the issues have enough detail in them for
-work to begin, then assign them to a team member and drag them into the
-"Ready to Work" column.
+As issues are created by both users and the development team, the issues are
+added to the **To Do** column on the
+[Kanban board](https://github.com/PyProveIt/Prove-It/projects/1).
+This is the time and place to further elaborate on an issue, provide more
+comments, and solicit others' comments, to ensure an issue has been described
+in sufficient detail to allow productive work to begin. When sufficient detail
+has been provided, the issue can then be assigned to a user or team member
+(if it hasn't already) and then the issue can be dragged into the
+**Ready to Work** column.
 
 [↑ Contents](#contents)
 
