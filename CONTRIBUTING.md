@@ -7,12 +7,12 @@ This is a general guide for contributing to Prove-It via the project's
 GitHub repository at <https://github.com/PyProveIt/Prove-It> using
 issues, branches, pull requests, Kanban board, etc. This document mostly
 consists of guidelines instead of hard and fast rules. After reviewing the
-guidelines, use your best judgment, feel free to propose changes to this
+guidelines, use your best judgment. Feel free to propose changes to this
 document via a repo issue (see the ''Creating Issues'' section below), and
 feel free to make inquiries about the project and possible contributions by
 contacting Wayne Witzel at wwitzel@sandia.gov.
 
-The general workflow for everyone interacting with \<Project Name\> is the
+The general workflow for everyone interacting with \<Prove-It\> is the
 following:
 
 ## Contents
@@ -22,6 +22,10 @@ following:
 1. [Python Code](#python-code)
 
 1. [Jupyter Notebooks](#jupyter-notebooks)
+
+1. [Cosmetic Changes](#cosmetic-changes)
+
+1. [General Workflow](#general-workflow)
 
 1. [Creating Issues](#creating-issues)
    
@@ -53,57 +57,112 @@ behavior to wwitzel@sandia.gov.
 
 ## Python Code
 
+Prove-It is based on Python and all Python code should conform as much as
+possible to the style and format expectations laid out in the Python
+Enhancement Proposal (PEP) 8: Style Guide for Python Code, available at
+<https://www.python.org/dev/peps/pep-0008/>.
+
 ## Jupyter Notebooks
+
+Python-based Jupyter Notebooks (files with extension `.ipynb`) are used to organize axioms,
+theorems, and theorem-proving. Such notebooks should …
+
+## Cosmetic Changes
+
+Contributions that consist solely of cosmetic changes in style or formatting,
+etc., (for example, updating code format to comply with PEP8) are generally
+discouraged. For some possible insights into the motivation for such a
+policy, consider this related comment at the Ruby on Rails project:
+<https://github.com/rails/rails/pull/13771#issuecomment-32746700>
+
+## General Workflow
+
+For reporting bugs, suggesting modifications, etc., you can create an issue
+on the project's GitHub site or directly email Wayne Witzel at
+wwitzel@sandia.gov.
+
+For contributions in the form of python code and/or python-based Jupyter
+notebooks, most of the time your general workflow will consist of
+(1) creating an issue on the GitHub site; (2) establishing a corresponding
+feature branch for your work; (3) managing the related Kanban board information
+as you work; (4) testing your work; and (5) submitting "work in progress" (WIP)
+or final pull/merge requests.
+
+See elaborations of each of these items discussed further below. 
 
 ## Creating Issues
 
-[Create issues in GitLab](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/issues/new)
-for any work that needs to be done.  Newly-created issues will automatically go
+<div style="margin:0px 0.5in;">
+
+[Create an issue in GitLab](https://help.github.com/en/github/managing-your-work-on-github/creating-an-issue)
+for any work that needs to be done. From the
+[Prove-It GitHub site](https://github.com/PyProveIt/Prove-It), select the
+Issues tab:
+
+<img src="images/contributing_issues_tab.png" width="80%">
+
+and click on the green <b>New issue</b> button:
+
+<img src="images/contributing_new_issue_button.png" width="15%">
+
+In the resulting submission window, supply a brief but informative title (and
+realize that you will use the title in any eventual feature branch name),
+and a careful, detailed comment describing the issue:
+
+<img src="images/contributing_new_issue_submit_screen.png" width="80%">
+
+the  Newly-created issues will automatically go
 in the **Open** column on the [Kanban board](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/boards).
 
 [↑ Contents](#contents)
 
 ### Markdown
 
+Issue comments can use plain text or make use of GitHub-flavored markdown.
 [Markdown](https://en.wikipedia.org/wiki/Markdown) is a lightweight markup
-language with plain text formatting syntax.  GitLab uses a form of it for
-rendering issue and merge request descriptions and comments, wiki pages, and
-any files in your repositories with a `.md` extension (such as this one).  For
-more details on what's possible with GitLab-flavored Markdown, [see GitLab's
-documentation on it](https://docs.gitlab.com/ee/user/markdown.html).
+language with plain text formatting syntax and GitHub uses a form of it for
+rendering issue and merge request descriptions and comments, and
+any files in your repositories with an `.md` extension (such as this one).
+For more details on what's possible with GitHub-flavored Markdown, see the
+[GitHub Markdown Guide](https://guides.github.com/features/mastering-markdown/).
+Be sure to use the "preview" tab in the editing window to preview your comment
+and any interpreted text.
 
 [↑ Contents](#contents)
 
-### Issue Templates
+### Issue Options: Assignees, Labels, Projects
 
-When creating a new issue, a ![Screenshot_from_2019-02-15_09-58-58](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/wikis/uploads/883811844a1a3f477067eb9bffb202bd/Screenshot_from_2019-02-15_09-58-58.png)
-drop-down menu near the title.  Select a template (~"Bug Report",
-~"Discussion", ~"Documentation", ~"Feature Request", ~"Task", or ~"Question")
-corresponding to the type of issue that you will be filing.  The description
-field will be pre-populated with some text&mdash;follow the instructions in the
-template to create an issue that gives us sufficient information such that we
-can begin tackling it as soon as is practicable.
+As shown in the figure above, when creating a new issue, a number of options
+appear along the right-hand side of the submission window. You can assign the
+issue to one or more people (including yourself). Then select one or more
+appropriate labels to classify the issue (<i>e.g.</i>, "bug", "enhancement",
+<i>etc</i>.). Then under "Projects," select "development", which will
+automatically add the issue to the "To Do" list on the project's Kanban board
+(accessible later by selecting the Projects tab and development option) on
+the project's GitHub page.
 
 [↑ Contents](#contents)
 
 ### Related Issues
 
-Once an issue has been created, a **Related issues** box will appear below the
-issue Description.  You can use this feature to indicate which issues are
-connected to each other.
+It can be very useful to indicate related issues when establishing an issue
+or commenting on an already established issue. Markdown code facilitates this
+by interpreting the \# symbol followed by an issue number as a link to issue.
+The issue comment editing window facilitates this process by opening a pop-up
+window of possible issues once you type the pound symbol #. For example, in
+establishing an issue or writing a later comment on an issue, you might
+realize that the issue is related to issue \#123 established earlier, and so
+it's useful to add a notation such as "Related Issue: \#123", which will
+eventually produce a clickable link to that related issue (which can be seen
+in the preview mode by clicking on the preview tab).
 
 [↑ Contents](#contents)
 
-### Labels
-
-The [\<Project Name\> > Labels](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/labels)
-page shows you all the labels we use, along with their descriptions.  Labels
-corresponding to the issue templates will be applied automatically when an
-issue is created.
-
-[↑ Contents](#contents)
+</div>
 
 ## Working Issues
+
+<div style="margin:0px 0.25in;">
 
 ### Planning Work
 
@@ -112,14 +171,14 @@ column on the [Kanban board](https://cee-gitlab.sandia.gov/managing-your-softwar
 will begin to fill up.  When determining which issues will be tackled in the
 not-too-distant future, make sure the issues have enough detail in them for
 work to begin, then assign them to a team member and drag them into the
-~"Ready to Work" column.
+"Ready to Work" column.
 
 [↑ Contents](#contents)
 
 ### When Work Begins
 
 Once all the necessary information has been gathered and the assignee has time
-to work on an issue, it can be dragged into the ~"In Development" column on the
+to work on an issue, it can be dragged into the "In Development" column on the
 [Kanban board](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/boards).
 Next make sure your local `master` branch is up-to-date with
 ```bash
@@ -201,18 +260,19 @@ comments some explanation as to why the issue won't be addressed.
 
 [↑ Contents](#contents)
 
-
+</div>
 
 ## Merge Requests
 
 The only way changes get into `master` is through merge requests.  When you've
-completed work on an issue, push your branch to the remote with `git push -u
-<remoteName> <branchName>`, and then create a merge request, selecting a
-template corresponding to the issue you've worked on.  On the [Kanban
-board](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/boards),
-drag your issue into ~"Under Review".
+completed work on an issue, push your branch to the remote with
+`git push -u <remoteName> <branchName>`, and then create a merge request,
+selecting a template corresponding to the issue you've worked on.
+On the [Kanban board](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/boards), drag your issue into "Under Review".
 
 [↑ Contents](#contents)
+
+<div style="margin:0px 0.25in;">
 
 ### Reviewers
 
@@ -253,3 +313,5 @@ When the review is finished and changes are ready to be merged into `master`:
 > tests pass for each commit.
 
 [↑ Contents](#contents)
+
+</div>

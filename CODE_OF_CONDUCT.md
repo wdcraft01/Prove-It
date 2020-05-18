@@ -1,4 +1,4 @@
-# Contributor Covenant Code of Conduct [under construction]
+# Contributor Covenant Code of Conduct [<sup>1</sup>](#attribution)
 
 ## Our Pledge
 
@@ -112,7 +112,7 @@ individual, or aggression toward or disparagement of classes of individuals.
 **Consequence**: A permanent ban from any sort of public interaction within
 the community.
 
-## Attribution
+## <sup>1</sup>Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage],
 version 2.0, available at
