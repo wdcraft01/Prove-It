@@ -44,7 +44,7 @@ following:
       1. [Doxygen](#doxygen)
    1. [When Work is Complete](#when-work-is-complete)
    1. [Closing Old Issues](#closing-old-issues)
-1. [Merge Requests](#merge-requests)
+1. [Pull Requests](#pull-requests)
    1. [Reviewers](#reviewers)
    1. [Work-in-Progress](#work-in-progress)
    1. [Merging](#merging)
@@ -54,8 +54,10 @@ following:
 The Prove-It project and its participants are governed by the project's
 [Code of Conduct](CODE_OF_CONDUCT.md), which helps make explicit the
 expectations for a productive and respectful project community. Participants
-and contributions are expected to uphold this code. Please report unacceptable
-behavior to wwitzel@sandia.gov.
+and contributions are expected to uphold this code and to uphold the more
+general
+[GitHub Community Guidelines](https://help.github.com/en/github/site-policy/github-community-guidelines).
+Please report unacceptable behavior to wwitzel@sandia.gov.
 
 ## Asking a Question
 
@@ -91,10 +93,11 @@ wwitzel@sandia.gov.
 
 For contributions in the form of python code and/or python-based Jupyter
 notebooks, most of the time your general workflow will consist of
-(1) creating an issue on the GitHub site; (2) establishing a corresponding
-feature branch for your work; (3) managing the related Kanban board information
-as you work; (4) testing your work; and (5) submitting "work in progress" (WIP)
-or final pull/merge requests.
+(1) opening an issue on
+[Prove-It's GitHub site](https://github.com/PyProveIt/Prove-It);
+(2) establishing a corresponding feature branch for your work; (3) managing
+the related Kanban board information as you work; (4) testing your work;
+and (5) submitting "work in progress" (WIP) or final pull/merge requests.
 
 See elaborations of each of these items discussed further below. 
 
@@ -220,29 +223,30 @@ the corresponding branch name would be `123-implement-awesome-new-feature`.
 
 ### As Work Continues
 
-Do whatever work is necessary to address the issue you're tackling.  Break your
-work into logical, compilable commits.  Feel free to commit small chunks of
-work early and often in your local repository and then use `git rebase -i` to
-reorganize your commits before sharing.
+Do whatever work is necessary to address the issue you're tackling. Break your
+work into small, logical, compilable commits.  Commit small chunks of
+work early and often in your local repository and then eventually use
+`git rebase -i` (or your application's equivalent) to reorganize your commits
+before sharing.
 
 [↑ Contents](#contents)
+
+<div style="margin:0px 0.25in;">
 
 #### Commit Messages
 
-Make sure your commit messages reference the appropriate issue numbers using
-the `#<issueNumber>` syntax.  The first line of the commit message should be a
-descriptive title, limited to 50 characters.  This is then followed by a blank
+The first line of the commit message should be a
+descriptive title, limited to 50 characters. This is then followed by a blank
 line, and then the rest of the commit message is a description of the changes,
-particularly why they were made, limited to 72 characters wide.
+particularly why they were made, limited to 72 characters wide. It is better
+to err on the side of longer rather than shorter commit messages.
+Make sure your commit messages reference the appropriate issue numbers using
+the `#<issueNumber>` syntax. For example, your work in branch
+`123-implement-awesome-new-feature` will be related to Issue \#123, and
+perhaps an older issue \#98, so include a reference such as
+"Related Issues: \#98, \#123" in your commit message.
 
-#### Doxygen
-
-\<Project Name\> uses [Doxygen](http://www.doxygen.nl) to generate
-documentation from annotated source code.  Please see [this wiki page](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/wikis/Doxygen)
-for our Doxygen guidelines.
-
-
-[↑ Contents](#contents)
+</div>
 
 ### When Work is Complete
 
@@ -264,15 +268,25 @@ git rebase master
 though there are others that are equally valid.
 
 Once that's done you'll want to configure, build, and test again to make sure
-you didn't pull anything in that doesn't work with your changes.  If all is
-well, go ahead and [create a merge request](#merge-requests) (see below).
+you didn't pull anything in that doesn't work with your changes. From within
+your local repository, you will want to verify that the following all
+complete without error:
+```bash
+python build.py --clean
+python build.py --justessential
+python build.py --justdemos
+python build.py --justproofs
+```
+
+If all is well, go ahead and [create a pull request](#pull-requests)
+(see below), which is the project's GitHub version of a merge request.
 
 [↑ Contents](#contents)
 
 ### Closing Old Issues
 
 If at any point you encounter an issue that will not be worked in the
-foreseeable future, it is worthwhile to close the issue such that we can
+foreseeable future, it is worthwhile to close the issue so that we can
 maintain a reasonable backlog of upcoming work.  Do be sure to include in the
 comments some explanation as to why the issue won't be addressed.
 
@@ -280,17 +294,45 @@ comments some explanation as to why the issue won't be addressed.
 
 </div>
 
-## Merge Requests
+## Pull Requests
 
-The only way changes get into `master` is through merge requests.  When you've
+<div style="margin:0px 0.25in;">
+
+The only way changes get into `master` is through pull requests.  When you've
 completed work on an issue, push your branch to the remote with
-`git push -u <remoteName> <branchName>`, and then create a merge request,
-selecting a template corresponding to the issue you've worked on.
-On the [Kanban board](https://cee-gitlab.sandia.gov/managing-your-software-project-with-gitlab/improving-quality-and-productivity/boards), drag your issue into "Under Review".
+`git push -u <remoteName> <branchName>` (or analogous process for your
+application), and then create a pull request on the project's GitHub site
+under the [pull requests tab](https://github.com/PyProveIt/Prove-It/pulls):
+
+<img src="images/contributing_pull_request_tab.png" width="60%">
+
+by clicking the "New pull request" button:
+
+<img src="images/contributing_new_pull_request_button.png" width="10%"
+padding=20px>
+
+which should then take you to a pull request screen like this:
+
+<img src="images/contributing_create_pull_request_screen.png" width="60%">
+
+where you will select base: master on the left and your own branch to
+compare on the right. You can then review file and code differences on this
+page and eventually click on the "Create pull request" button. That will
+take you to a page like this:
+
+<img src="images/contributing_open_pull_request_screen.png" width="60%">
+
+
+where you can leave a detailed comment explaining the pull request and
+summarizing the work you've completed, make appropriate updates to the options
+shown along the right-hand side, and click on the "Create pull request"
+button.
+
+On the [Kanban board](https://github.com/PyProveIt/Prove-It/projects/1),
+drag your issue into "Under Review".
 
 [↑ Contents](#contents)
 
-<div style="margin:0px 0.25in;">
 
 ### Reviewers
 
