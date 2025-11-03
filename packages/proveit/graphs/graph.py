@@ -242,8 +242,7 @@ class Size(Function):
             {G:_G}, auto_simplify=False))
 
 
-
-class Connected(Function):
+class Connected(Function): # IsConnected() is_connected() as literal op
     '''
     Connected(G) is a propositional function (or predicate)
     representing the claim that graph G is connected (i.e., that
@@ -277,7 +276,7 @@ class Connected(Function):
         return connected_def.instantiate({G:_G_sub}, auto_simplify=False)
 
 
-class HasEulerianTrail(Function):
+class HasEulerianTrail(Function): # IsEulerian
     '''
     HasEulerTrail(G) is a propositional function (or predicate)
     claiming that graph G has an Eulerian trail (i.e., G has a
