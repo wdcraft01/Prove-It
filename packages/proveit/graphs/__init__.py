@@ -1,8 +1,9 @@
 from .graph import (Connected, FiniteGraphsLiteral, Graph,
           GraphsLiteral, HasEulerianCircuit, HasEulerianTrail,
           Order, Size)
+from .cycle_space import CycleSpace
 from .edges import Edges
-from .inclusion import NotSubgraph, Subgraph
+from .inclusion import NotSubgraph, ProperSubgraph, Subgraph, Subgraphs
 from .membership import (
       GraphMembership, GraphNonmembership, InGraph, NotInGraph)
 # from .paths import Path, Paths
