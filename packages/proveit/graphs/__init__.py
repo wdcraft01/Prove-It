@@ -1,5 +1,7 @@
-from .graph import (Connected, FiniteGraphsLiteral, Graph,
-          GraphsLiteral, HasEulerianCircuit, HasEulerianTrail,
+from .graph import (Connected, EdgeWeight, EdgeWeightFxns,
+          FiniteGraphsLiteral,
+          Graph, GraphsLiteral, GraphWeight, 
+          HasEulerianCircuit, HasEulerianTrail,
           Order, Size)
 from .cycle_space import CycleSpace
 from .edges import Edges
@@ -9,7 +11,7 @@ from .membership import (
 # from .paths import Path, Paths
 from .paths_of import PathsOf
 from .union import GraphUnion
-from .vertices import AdjacentVertices, Degree, Vertices
+from .vertices import AdjacentVertices, Degree, OddVertices, Vertices
 from .walks import (BeginningVertex, Circuits, ClosedTrails,
           ClosedWalk, ClosedWalks, Cycles,
           EdgeSequence, EdgeSet, EndingVertex, EndVertices,

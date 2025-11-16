@@ -52,6 +52,36 @@ class Degree(Function):
                 self, Degree._operator_, (v, G), styles=styles)
 
 
+class OddVertices(Function):
+    '''
+    OddVertices(G) represents the set of odd-degree vertices in
+    graph G.
+    '''
+
+    # the literal operator of the OddVertices operation
+    _operator_ = Literal(string_format='OddVertices',
+                         latex_format=r'\mathrm{OddVertices}',
+                         theory=__file__)
+
+    def __init__(self, G, *, styles=None):
+        '''
+        Given a graph G (which mmight be very general, or might
+        be specified as G(V, E)), represent the set of odd-degree
+        vertices in the graph G.
+        '''
+        self.graph = G
+        Function.__init__(
+                self, OddVertices._operator_, G, styles=styles)
+
+    def membership_object(self, element):
+        from .vertices_membership import OddVerticesMembership
+        return OddVerticesMembership(element, self)
+
+    # def nonmembership_object(self, element):
+    #     from .vertices_membership import OddVerticesNonmembership
+    #     return OddVerticesNonmembership(element, self)
+
+
 class AdjacentVertices(Function):
     '''
     For vertices u, v in graph G, AdjacentVertices(u, v, G) denotes
