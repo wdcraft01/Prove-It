@@ -75,7 +75,6 @@ class VerticesMembership(SetMembership):
             {v:element, V:_V_sub, E:_E_sub}, auto_simplify=False)
 
 
-
 class VerticesNonmembership(SetNonmembership):
     '''
     Defines methods that apply to non-membership in the set

@@ -49,7 +49,8 @@ class Path(Graph):
     P = (V,E) with vertex set V and (possibly empty) edge set E such
     that:
 
-        V = {x0, x1, ..., xk}, E = {x0x1, x1x2, ..., x_{k-1}x_{k}},
+        V = {x0, x1, ..., xk},
+        E = {{x0,x1}, {x1,x2}, ..., {x_{k-1},x_{k}}},
 
     where the x_{i} are all distinct. The vertices x0 and xk are said
     to be linked by the path P and are called its endvertices, or
