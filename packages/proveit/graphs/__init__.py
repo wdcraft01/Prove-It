@@ -1,10 +1,11 @@
 from .graph import (Connected, EdgeWeight, EdgeWeightFxns,
           FiniteGraphsLiteral,
-          Graph, GraphsLiteral, GraphWeight, 
+          Graph, GraphsLiteral, GraphWeight,
           HasEulerianCircuit, HasEulerianTrail,
           Order, Size)
 from .cycle_space import CycleSpace
 from .edges import Edges
+from .grid_graph import GridGraphsLiteral
 from .inclusion import NotSubgraph, ProperSubgraph, Subgraph, Subgraphs
 from .membership import (
       GraphMembership, GraphNonmembership, InGraph, NotInGraph)
