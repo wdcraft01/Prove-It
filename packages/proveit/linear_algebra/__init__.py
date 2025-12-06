@@ -10,7 +10,7 @@ from .vector_sets import (
 from .inner_products import (
         InnerProd, InnerProdSpaces, HilbertSpaces, Hspace,
         Norm, OrthoNormBases, OrthoProj, Adj, deduce_as_inner_prod_space)
-from .distance import ManhattanDistance, MinkowskiDistance
+from .distance import EuclideanDistance, ManhattanDistance, MinkowskiDistance
 from .linear_maps import (LinMap, LinMapAdd, Identity,
                           Commutator, AntiCommutator)
 from .matrices import (MatrixSpace, MatrixMult, MatrixExp,

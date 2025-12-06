@@ -1,4 +1,4 @@
-from proveit import Function, Literal
+from proveit import Function, Literal, equality_prover
 
 
 class MinkowskiDistance(Function):
@@ -39,6 +39,28 @@ class MinkowskiDistance(Function):
                 + self.operands[1].latex() + r', '
                 + self.operands[2].latex() + r')')
 
+    """
+    @equality_prover('defined', 'define')
+    def definition():
+        '''
+        Deduce and return the equality
+        [MinkowskiDistance(x, y)] = [(Sum (|x_i - y_i|^{p}))^{1/p}]
+        for x = (x1,...,x_n), y = (y1,...,yn).
+        
+        '''
+        # from . import union_def
+        from . import minkowski_distance_def
+        element = self.element
+        operands = self.domain.operands
+        _p_sub = self.operands[0]
+        _n_sub = ???
+        _x_sub = self.operands[1]
+        _y_sub = self.operands[2]
+        return minkowski_distance_def.instantiate(
+                {p:_p_sub, n:_n_sub, x:_x_sub, y:_y_sub},
+                auto_simplify=False)
+    """
+
 
 class ManhattanDistance(Function):
     '''
@@ -61,4 +83,30 @@ class ManhattanDistance(Function):
         '''
         Function.__init__(
                 self, ManhattanDistance._operator_, (pt1, pt2),
+                styles=styles)
+
+
+class EuclideanDistance(Function):
+    '''
+    EuclideanDistance(p, q) represents the standard Euclidean distance
+    (also known as the L2 distance) between points p and q.
+    For 2-D points (x1, y1) and (x2, y2), we have:
+
+        EuclideanDistance((x1,y1),(x2,y2))
+        = Sqrt( |x2-x1|^{2} + |y2-y1|^{2} )
+    '''
+
+    # the literal operator of the EuclideanDistance function
+    _operator_ = Literal(
+            string_format='dist',
+            latex_format=r'\textrm{dist}\!',
+            theory=__file__)
+
+    def __init__(self, pt1, pt2, *, styles=None):
+        '''
+        Create an expression representing the Euclidean or L2 distance
+        between two points pt1 and pt2.
+        '''
+        Function.__init__(
+                self, EuclideanDistance._operator_, (pt1, pt2),
                 styles=styles)
