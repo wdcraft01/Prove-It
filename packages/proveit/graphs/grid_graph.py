@@ -41,12 +41,81 @@ class SquareGridGraph(Function):
                 self, SquareGridGraph._operator_, (m, n), styles=styles)
 
 
-class GridPoints(Function):
+class GridPoints(Function): # or a literal?
     '''
     GridPoints(m, n) represents the set of 2D lattice points
     {(x, y)}_{x in 1..n, y in 1..m} (notice that m is the _vertical_
     bound, setting the limit for the _y_ values)
     '''
+
+    # the literal operator of the GridPoints operation
+    _operator_ = Literal(string_format='GridPoints',
+                         latex_format=r'\textrm{GridPoints}',
+                         theory=__file__)
+
+    def __init__(self, m, n, *, styles=None):
+        '''
+        Represent GridPoints(m, n), the set of 2D lattice points in
+        the plane given by {(x, y)}_{x in 1..n, y in 1..m}.
+        '''
+        self.m = m
+        self.n = n
+        Function.__init__(
+                self, GridPoints._operator_, (m, n), styles=styles)
+
+    def membership_object(self, element):
+        from .grid_graph_membership import GridPointsMembership
+        return GridPointsMembership(element, self)
+
+    @property
+    def is_proper_class(self):
+        '''
+        The set of vertices of an m x n square grid graph is a set.
+        This indicates that InSet() should be used instead of
+        InClass() when GridPoints(m, n) is a domain.
+        '''
+        return False
+
+
+class SquareGridSubgraphs(Function): # or a literal?
+    '''
+    SquareGridSubgraphs(m, n) represents the set of subgraphs of
+    an m x n square grid graph (see the SquareGridGraph(m,n) class
+    defined above). An element of SquareGridSubgraphs(m,n) will
+    be a graph whose vertices are some subset of the GridPoints(m,n),
+    and whose edges are a subset of the edges induced by those
+    vertices from the enclosing SquareGridGraph(m,n). Thus all
+    edges still have length 1, but not all possible length-1 edges
+    are included.
+    '''
+
+    # the literal operator of the SquareGridSubgraphs operation
+    _operator_ = Literal(string_format='SqGridSubgraphs',
+                         latex_format=r'\textrm{SqGridSubgraphs}',
+                         theory=__file__)
+
+    def __init__(self, m, n, *, styles=None):
+        '''
+        Represent the set of all subgraphs of an m x n sq. grid graph.
+        '''
+        self.vertex_superset = GridPoints(m, n)
+        # self.edge_superset   = SetOfAll({v1, v2}) # under construction
+        Function.__init__(
+                self, SquareGridSubgraphs._operator_, (m, n), styles=styles)
+
+    def membership_object(self, element):
+        from .grid_graph_membership import SquareGridSubgraphsMembership
+        return SquareGridSubgraphsMembership(element, self)
+
+    @property
+    def is_proper_class(self):
+        '''
+        The class of subgraphs of an m x n square grid graph is a set.
+        This indicates that InSet() should be used instead of
+        InClass() when SquareGridSubgraphs(m, n) is a domain.
+        '''
+        return False
+
 
 class GridGraphsLiteral(Literal):
     '''
