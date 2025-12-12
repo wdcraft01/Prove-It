@@ -3,6 +3,81 @@ from proveit.logic import ClassMembership, SetMembership, SetNonmembership
 from proveit.graphs import Graph
 
 
+class SquareGridSubgraphsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    subgraphs of a square grid graph SquareGridGraph(m, n)
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        """
+        From self = [G in SquareGridSubgraphs(m,n)], deduce and
+        return that: [G is subgraph of SquareGridGraph(m,n)]
+        """
+        return
+        # from . import vertices_membership_def
+        # element = self.element
+        # _V_sub  = self.domain.graph.vertex_set
+        # _E_sub  = self.domain.graph.edge_set
+        # return vertices_membership_def.instantiate(
+        #         {v:element, V:_V_sub, E:_E_sub },auto_simplify=False)
+
+    def as_defined(self):
+        '''
+        From self = [G in SquareGridSubgraphs(m,n)], return:
+        [G in SquareGridSubgraphs(m,n)]
+        = [G is subgraph of SquareGridGraph(m,n)]
+        (i.e., an equality expression, not a Judgment).
+        '''
+        return
+        # if isinstance(self.domain.operand, Graph):
+        #     from proveit.logic import InSet
+        #     element = self.element
+        #     _V =  self.domain.graph.vertex_set
+        #     return InSet(element, _V)
+        # else:
+        #     raise NotImplementedError(
+        #         "VerticesMembership.as_defined() was called on "
+        #         f"self = {self.expr} with domain = {self.expr.domain}, "
+        #         "but the method is implemented only for domains of the "
+        #         "form Vertices(G) where G is an explicit Graph object "
+        #         "of the form G = Graph(V,E) with a named vertex set V.")
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [G in SquareGridSubgraphs(m,n)], derive and
+        return that: [G is subgraph of SquareGridGraph(m,n)],
+        knowing or assuming self.
+        '''
+        return
+        # from . import vertices_membership_unfolding
+        # element = self.element
+        # _V_sub  = self.domain.graph.vertex_set
+        # _E_sub  = self.domain.graph.edge_set
+        # return vertices_membership_unfolding.instantiate(
+        #     {v:element, V:_V_sub, E:_E_sub}, auto_simplify=False)
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        Called on self = [G in H], where H = SquareGridSubgraphs(m,n),
+        and knowing or assuming that [Vertices(G) subset Vertices(H)]
+        and [Edges(V) subset Edges(H)], derive and return self.
+        '''
+        return
+        # from . import vertices_membership_folding
+        # element = self.element
+        # _V_sub  = self.domain.graph.vertex_set
+        # _E_sub  = self.domain.graph.edge_set
+        # return vertices_membership_folding.instantiate(
+        #     {v:element, V:_V_sub, E:_E_sub}, auto_simplify=False)
+
+
 class GridGraphsMembership(ClassMembership):
     '''
     Defines methods that apply to membership in the class of all
