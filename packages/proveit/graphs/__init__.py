@@ -1,11 +1,12 @@
 from .graph import (Connected, EdgeWeight, EdgeWeightFxns,
-          FiniteGraphsLiteral,
-          Graph, GraphsLiteral, GraphWeight,
-          HasEulerianCircuit, HasEulerianTrail,
-          Order, Size)
+          FiniteGraphsLiteral, Graph, GraphsLiteral, GraphWeight,
+          HasEulerianCircuit, HasEulerianTrail, Order, Size)
 from .cycle_space import CycleSpace
 from .edges import Edges
-from .grid_graph import GridGraphsLiteral
+from .grid_graph import (
+      GridGraphsLiteral, SquareGridEdges, SquareGridPoints, SquareGridGraph)
+from .grid_graph_membership import (
+      SquareGridPointsMembership)
 from .inclusion import NotSubgraph, ProperSubgraph, Subgraph, Subgraphs
 from .membership import (
       GraphMembership, GraphNonmembership, InGraph, NotInGraph)

@@ -20,7 +20,7 @@ class SquareGridGraph(Function):
         GridPoints(m, n) = {(x, y)}_{x in 1..n, y in 1..m}
         SquareGridGraph(m, n)
           = Graph(GridPoints(m, n),
-            {(v1, v2 | d(v1, v2)=1}_{v1, v2 in GridPoints(m, n))
+            {(v1, v2) | d(v1, v2)=1}_{v1, v2 in GridPoints(m, n))
 
     '''
 
@@ -35,37 +35,37 @@ class SquareGridGraph(Function):
         vertex set V = {(x, y)}_{x in 1..n, y in 1..m} and edge set
         {{v1, v2} | d(v1, v2)=1}_{v1, v2 in V}.
         '''
-        self.vertex_set = GridPoints(m, n)
+        self.vertex_set = SquareGridPoints(m, n)
         # self.edge_set   = SetOfAll({v1, v2}) # under construction
         Function.__init__(
                 self, SquareGridGraph._operator_, (m, n), styles=styles)
 
 
-class GridPoints(Function): # or a literal?
+class SquareGridPoints(Function):
     '''
     GridPoints(m, n) represents the set of 2D lattice points
     {(x, y)}_{x in 1..n, y in 1..m} (notice that m is the _vertical_
     bound, setting the limit for the _y_ values)
     '''
 
-    # the literal operator of the GridPoints operation
-    _operator_ = Literal(string_format='GridPoints',
-                         latex_format=r'\textrm{GridPoints}',
+    # the literal operator of the SquareGridPoints operation
+    _operator_ = Literal(string_format='SqGridPoints',
+                         latex_format=r'\textrm{SqGridPoints}',
                          theory=__file__)
 
     def __init__(self, m, n, *, styles=None):
         '''
-        Represent GridPoints(m, n), the set of 2D lattice points in
-        the plane given by {(x, y)}_{x in 1..n, y in 1..m}.
+        Represent SquareGridPoints(m, n), the set of 2D lattice points
+        in the plane given by {(x, y)}_{x in 1..n, y in 1..m}.
         '''
         self.m = m
         self.n = n
         Function.__init__(
-                self, GridPoints._operator_, (m, n), styles=styles)
+                self, SquareGridPoints._operator_, (m, n), styles=styles)
 
     def membership_object(self, element):
-        from .grid_graph_membership import GridPointsMembership
-        return GridPointsMembership(element, self)
+        from .grid_graph_membership import SquareGridPointsMembership
+        return SquareGridPointsMembership(element, self)
 
     @property
     def is_proper_class(self):
@@ -73,6 +73,50 @@ class GridPoints(Function): # or a literal?
         The set of vertices of an m x n square grid graph is a set.
         This indicates that InSet() should be used instead of
         InClass() when GridPoints(m, n) is a domain.
+        '''
+        return False
+
+
+class SquareGridEdges(Function):
+    '''
+    SquareGridEdges(m, n) represents the set of edges of an m x n
+    square grid graph (itself represented by SquareGridGraph(m, n)).
+    2D lattice points. This edge set consists of all the vertical
+    and horizontal edges between adjacent lattice points in the set
+    of square grid points:
+
+        {{v1, v2} | d(v1, v2)=1}_{v1, v2 in SquareGridPoints(m, n)}.
+
+    Notice that m is the _vertical_ bound, setting the limit for
+    the _y_ values, and n is the _horizontal_ bound, setting the limit
+    for the _x_ values.
+    '''
+
+    # the literal operator of the SquareGridEdges operation
+    _operator_ = Literal(string_format='SqGridEdges',
+                         latex_format=r'\textrm{SqGridEdges}',
+                         theory=__file__)
+
+    def __init__(self, m, n, *, styles=None):
+        '''
+        Represent SquareGridEdges(m, n), the set of edges in the
+        m x n square grid graph SquareGridGraph(m, n).
+        '''
+        self.m = m
+        self.n = n
+        Function.__init__(
+                self, SquareGridEdges._operator_, (m, n), styles=styles)
+
+    def membership_object(self, element):
+        from .grid_graph_membership import SquareGridEdgesMembership
+        return SquareGridEdgesMembership(element, self)
+
+    @property
+    def is_proper_class(self):
+        '''
+        The set of edges of an m x n square grid graph is a set.
+        This indicates that InSet() should be used instead of
+        InClass() when SquareGridEdges(m, n) is the domain.
         '''
         return False
 
