@@ -21,7 +21,8 @@ class SetOfAllMembership(SetMembership):
         '''
         Unfold the comprehension set membership as a side-effect.
         '''
-        yield self.unfold # STILL TO BE ADDRESSED
+        if len(self.domain.all_instance_vars()) <= 1:
+            yield self.unfold # STILL TO BE ADDRESSED
 
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
@@ -328,6 +329,7 @@ class SetOfAllMembership(SetMembership):
                     x:element, y:self.domain.all_instance_vars()},
                     # preserved_exprs = {self.domain.condition},
                     auto_simplify = should_auto_simplify)
+                print(f"self.domain.all_instance_vars() = {self.domain.all_instance_vars()}")
                 print("'fold' instantiation gives: ")
                 display(temp_inst)
                 display(temp_inst.expr.antecedent)
