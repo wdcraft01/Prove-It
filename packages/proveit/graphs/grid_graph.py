@@ -19,8 +19,7 @@ class SquareGridGraph(Function):
 
         GridPoints(m, n) = {(x, y)}_{x in 1..n, y in 1..m}
         SquareGridGraph(m, n)
-          = Graph(GridPoints(m, n),
-            {(v1, v2) | d(v1, v2)=1}_{v1, v2 in GridPoints(m, n))
+          = Graph(SquareGridPoints(m, n), SquareGridEdges(m, n))
 
     '''
 
@@ -33,7 +32,7 @@ class SquareGridGraph(Function):
         '''
         Represent a square grid graph, SquareGridGraph(m,n) with
         vertex set V = {(x, y)}_{x in 1..n, y in 1..m} and edge set
-        {{v1, v2} | d(v1, v2)=1}_{v1, v2 in V}.
+        {{v1, v2} | d(v1, v2)=1}_{v1, v2 in V} (for m,n in NaturalPos).
         '''
         self.vertex_set = SquareGridPoints(m, n)
         # self.edge_set   = SetOfAll({v1, v2}) # under construction
