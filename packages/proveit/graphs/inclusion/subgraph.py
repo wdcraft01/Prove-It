@@ -1,4 +1,5 @@
-from proveit import Function, Literal, Operation, prover, safe_dummy_var
+from proveit import (G, H, Function, Literal, Operation, prover,
+                     relation_prover, safe_dummy_var)
 # from proveit.relation import TransitiveRelation
 from .graph_inclusion_relation import GraphInclusionRelation
 # from proveit.logic.sets.inclusion.inclusion_relation import InclusionRelation
@@ -296,16 +297,20 @@ class Subgraph(GraphInclusionRelation):
     #             format(self, other))
     #     return new_rel.with_mimicked_style(self)
 
-    # @relation_prover
-    # def deduce_in_bool(self, **defaults_config):
-    #     '''
-    #     Deduce and return that this SubsetEq statement is
-    #     in the Boolean set.
-    #     '''
-    #     from . import subset_eq_is_bool
-    #     is_bool_stmt = subset_eq_is_bool.instantiate(
-    #             {A: self.normal_lhs, B: self.normal_rhs})
-    #     return is_bool_stmt.inner_expr().element.with_matching_style(self)
+    @relation_prover
+    def deduce_in_bool(self, **defaults_config):
+        '''
+        Deduce and return that this [H Subgraph G] statement is
+        in the Boolean set.
+        '''
+        from . import is_subgraph_is_bool
+        _G_sub = self.supergraph
+        _H_sub = self.subgraph
+        is_bool_stmt = is_subgraph_is_bool.instantiate(
+                {G: _G_sub, H: _H_sub})
+        return (
+            is_bool_stmt.inner_expr().element.with_matching_style(self)
+            )
 
 class ProperSubgraph(GraphInclusionRelation):
     '''

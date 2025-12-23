@@ -14,6 +14,7 @@ class SubgraphsMembership(SetMembership):
 
     (with the additional provision that any vertex appearing as an
     endpoint in E(H) must then also appear in V(H)).
+    Most simply, H in Subgraphs(G) = H Subgraph G.
     '''
 
     def __init__(self, element, domain):
