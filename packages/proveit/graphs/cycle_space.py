@@ -9,10 +9,11 @@ class CycleSpace(Function):
     space over the 2-element finite field {0, 1}, where vector addition
     is defined by the symmetric difference between the edge sets of
     the subgraphs.
-    It's important to acknowledge at least one alternative (but
-    essentially equivalent) way of defining the cycle
-    space of G (see, e.g., Diestel's 2025 Graph Theory, pg 24): as a
-    subspace of the edge space of graph G.
+    The cycle space of G can also be conceptualized as a subgroup of
+    the edge space of G, but this is complicated by the need to
+    identify a collection of edges of G with the associated "induced"
+    spanning subgraph of G (see, e.g., Diestel's 2025 Graph Theory,
+    pg 24).
     '''
 
     # the literal operator of the CycleSpaces operation
@@ -22,7 +23,7 @@ class CycleSpace(Function):
 
     def __init__(self, G, *, styles=None):
         '''
-        Given a graph G= G(V,E), represent the cycle space of G.
+        Represent C(G), the cycle space of the graph G.
         '''
         self.graph = G
         Function.__init__(
