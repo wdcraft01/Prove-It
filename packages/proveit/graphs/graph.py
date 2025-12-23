@@ -1,6 +1,7 @@
 from proveit import equality_prover, Function, Literal, prover
 from proveit import e, w, E, G, V
 from proveit.logic import ClassMembership
+# from proveit.graphs import GraphsMembership
 
 
 class GraphsLiteral(Literal):
@@ -24,6 +25,7 @@ class GraphsLiteral(Literal):
                          styles=styles)
 
     def membership_object(self, element):
+        from .graph_membership import GraphsMembership
         return GraphsMembership(element, self)
 
     @property
@@ -69,70 +71,6 @@ class FiniteGraphsLiteral(Literal):
         return True
 
 
-class GraphsMembership(ClassMembership):
-
-    def __init__(self, element, domain):
-        from . import Graphs
-        ClassMembership.__init__(self, element, domain)
-        if domain != Graphs:
-            raise TypeError("domain expected to be Graphs, not %s"
-                            %domain.__class__)
-
-    def side_effects(self, judgment):
-        '''
-        Yield side-effects when proving or assuming 'G in Graphs',
-        the main side-effect being that ||G|| in Natural.
-        This needs updated, since Graphs includes infinite graphs.
-        '''
-        yield self.derive_size_in_natural
-
-    # def conclude(): see if and when needed
-
-    @prover
-    def derive_size_in_natural(self, **defaults_config):
-        '''
-        From (G in Graphs), derive ||G|| in Natural, i.e. derive the
-        fact that the size of G (the number of edges in G) is a
-        Natural number. Called as a side-effect.
-        '''
-        from . import graph_size_in_natural
-        _G = self.element
-        return graph_size_in_natural.instantiate(
-                {G:_G}, auto_simplify=False)
-
-class FiniteGraphsMembership(ClassMembership):
-
-    def __init__(self, element, domain):
-        from . import FiniteGraphs
-        ClassMembership.__init__(self, element, domain)
-        if domain != FiniteGraphs:
-            raise TypeError(
-                f"Domain expected to be FiniteGraphs, not {domain.__class__}")
-
-    def side_effects(self, judgment):
-        '''
-        Yield side-effects when proving or assuming 'G in FiniteGraphs',
-        the main side-effect being that ||G|| in Natural.
-        Should extend this to also have |G| in Natural.
-        Should extend this to also have G in Graphs.
-        '''
-        yield self.derive_size_in_natural
-
-    # def conclude(): see if and when needed
-
-    @prover
-    def derive_size_in_natural(self, **defaults_config):
-        '''
-        From (G in FiniteGraphs), derive ||G|| in Natural, i.e.
-        derive the fact that the size of G (the number of edges in G)
-        is a Natural number. Called as a side-effect.
-        '''
-        from . import graph_size_in_natural
-        _G = self.element
-        return graph_size_in_natural.instantiate(
-                {G:_G}, auto_simplify=False)
-
-
 class Graph(Function):
     '''
     Graph(V, E) represents a graph with vertex set V and edge set E.
@@ -153,8 +91,8 @@ class Graph(Function):
         '''
         Create a graph G(V,E) with vertex set V and edge set E.
         '''
-        self.vertex_set = V
-        self.edge_set   = E
+        self.vertices = V
+        self.edges   = E
         Function.__init__(
                 self, Graph._operator_, (V, E), styles=styles)
 
