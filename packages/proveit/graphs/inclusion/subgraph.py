@@ -222,8 +222,8 @@ class Subgraph(GraphInclusionRelation):
         # No worry about conflicts with assumptions because the 
         # variable will be bound by a quantifier:
         return fold_subgraph_def.instantiate(
-            {V: G.vertex_set, V_prime: H.vertex_set ,
-             E: G.edge_set, E_prime: H.edge_set })
+            {V: G.vertices, V_prime: H.vertices ,
+             E: G.edges, E_prime: H.edges })
     
     # @prover
     # def unfold(self, elem_instance_var=None, **defaults_config):

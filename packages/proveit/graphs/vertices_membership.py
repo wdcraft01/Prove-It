@@ -21,8 +21,8 @@ class VerticesMembership(SetMembership):
 
         from . import vertices_membership_def
         element = self.element
-        _V_sub  = self.domain.graph.vertex_set
-        _E_sub  = self.domain.graph.edge_set
+        _V_sub  = self.domain.graph.vertices
+        _E_sub  = self.domain.graph.edges
         return vertices_membership_def.instantiate(
                 {v:element, V:_V_sub, E:_E_sub },auto_simplify=False)
 
@@ -36,7 +36,7 @@ class VerticesMembership(SetMembership):
         if isinstance(self.domain.operand, Graph):
             from proveit.logic import InSet
             element = self.element
-            _V =  self.domain.graph.vertex_set
+            _V =  self.domain.graph.vertices
             return InSet(element, _V)
         else:
             raise NotImplementedError(
@@ -54,8 +54,8 @@ class VerticesMembership(SetMembership):
         '''
         from . import vertices_membership_unfolding
         element = self.element
-        _V_sub  = self.domain.graph.vertex_set
-        _E_sub  = self.domain.graph.edge_set
+        _V_sub  = self.domain.graph.vertices
+        _E_sub  = self.domain.graph.edges
         return vertices_membership_unfolding.instantiate(
             {v:element, V:_V_sub, E:_E_sub}, auto_simplify=False)
 
@@ -69,8 +69,8 @@ class VerticesMembership(SetMembership):
         '''
         from . import vertices_membership_folding
         element = self.element
-        _V_sub  = self.domain.graph.vertex_set
-        _E_sub  = self.domain.graph.edge_set
+        _V_sub  = self.domain.graph.vertices
+        _E_sub  = self.domain.graph.edges
         return vertices_membership_folding.instantiate(
             {v:element, V:_V_sub, E:_E_sub}, auto_simplify=False)
 
@@ -100,8 +100,8 @@ class VerticesNonmembership(SetNonmembership):
 
         from . import vertices_nonmembership_def
         element = self.element
-        _V_sub  = self.domain.graph.vertex_set
-        _E_sub  = self.domain.graph.edge_set
+        _V_sub  = self.domain.graph.vertices
+        _E_sub  = self.domain.graph.edges
         return vertices_nonmembership_def.instantiate(
                 {v:element, V:_V_sub, E:_E_sub },auto_simplify=False)
 
@@ -113,7 +113,7 @@ class VerticesNonmembership(SetNonmembership):
         if isinstance(self.domain.operand, Graph):
             from proveit.logic import NotInSet
             element = self.element
-            _V =  self.domain.graph.vertex_set
+            _V =  self.domain.graph.vertices
             return NotInSet(element, _V)
         else:
             raise NotImplementedError(
@@ -133,8 +133,8 @@ class VerticesNonmembership(SetNonmembership):
         '''
         from . import vertices_nonmembership_unfolding
         element = self.element
-        _V_sub  = self.domain.graph.vertex_set
-        _E_sub  = self.domain.graph.edge_set
+        _V_sub  = self.domain.graph.vertices
+        _E_sub  = self.domain.graph.edges
         return vertices_nonmembership_unfolding.instantiate(
             {v:element, V:_V_sub, E:_E_sub}, auto_simplify=False)
 
@@ -148,8 +148,8 @@ class VerticesNonmembership(SetNonmembership):
         '''
         from . import vertices_nonmembership_folding
         element = self.element
-        _V_sub  = self.domain.graph.vertex_set
-        _E_sub  = self.domain.graph.edge_set
+        _V_sub  = self.domain.graph.vertices
+        _E_sub  = self.domain.graph.edges
         return vertices_nonmembership_folding.instantiate(
             {v:element, V:_V_sub, E:_E_sub}, auto_simplify=False)
 
