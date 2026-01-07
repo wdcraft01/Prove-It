@@ -7,7 +7,7 @@ class SquareGridGraph(Function):
     '''
     SquareGridGraph(m, n) represents a particular kind of lattice
     graph called a square-grid graph, with vertices corresponding to
-    points in the place with integer coordinates (i.e. lattice points),
+    points (x, y) with integer coordinates (i.e. lattice points),
     with y coordinates in the range 1, 2,...,m (m is sometimes called
     its height) and x coordinates in the range 1, 2,..., n (n is
     sometimes called its width), with any two vertices being connected
@@ -17,10 +17,15 @@ class SquareGridGraph(Function):
     Internally, SquareGridGraph(m,n) is defined as a Graph in the
     following way:
 
-        GridPoints(m, n) = {(x, y)}_{x in 1..n, y in 1..m}
         SquareGridGraph(m, n)
           = Graph(SquareGridPoints(m, n), SquareGridEdges(m, n))
 
+    with SquareGridPoints and SquareGridEdges classes defined
+    further below.
+
+    This class is intended as a defining/enclosing super-graph of
+    any graph representation of a Kitaev-style surface code. Thus
+    GraphOf(K(m, n)) subseteq SquareGridGraph(m,n).
     '''
 
     # the literal operator of the SquareGridGraph operation
@@ -42,7 +47,7 @@ class SquareGridGraph(Function):
 
 class SquareGridPoints(Function):
     '''
-    GridPoints(m, n) represents the set of 2D lattice points
+    SquareGridPoints(m, n) represents the set of 2D lattice points
     {(x, y)}_{x in 1..n, y in 1..m} (notice that m is the _vertical_
     bound, setting the limit for the _y_ values)
     '''
@@ -120,46 +125,6 @@ class SquareGridEdges(Function):
         return False
 
 
-class SquareGridSubgraphs(Function): # or a literal?
-    '''
-    SquareGridSubgraphs(m, n) represents the set of subgraphs of
-    an m x n square grid graph (see the SquareGridGraph(m,n) class
-    defined above). An element of SquareGridSubgraphs(m,n) will
-    be a graph whose vertices are some subset of the GridPoints(m,n),
-    and whose edges are a subset of the edges induced by those
-    vertices from the enclosing SquareGridGraph(m,n). Thus all
-    edges still have length 1, but not all possible length-1 edges
-    are included.
-    '''
-
-    # the literal operator of the SquareGridSubgraphs operation
-    _operator_ = Literal(string_format='SqGridSubgraphs',
-                         latex_format=r'\textrm{SqGridSubgraphs}',
-                         theory=__file__)
-
-    def __init__(self, m, n, *, styles=None):
-        '''
-        Represent the set of all subgraphs of an m x n sq. grid graph.
-        '''
-        self.vertex_superset = GridPoints(m, n)
-        # self.edge_superset   = SetOfAll({v1, v2}) # under construction
-        Function.__init__(
-                self, SquareGridSubgraphs._operator_, (m, n), styles=styles)
-
-    def membership_object(self, element):
-        from .grid_graph_membership import SquareGridSubgraphsMembership
-        return SquareGridSubgraphsMembership(element, self)
-
-    @property
-    def is_proper_class(self):
-        '''
-        The class of subgraphs of an m x n square grid graph is a set.
-        This indicates that InSet() should be used instead of
-        InClass() when SquareGridSubgraphs(m, n) is a domain.
-        '''
-        return False
-
-
 class GridGraphsLiteral(Literal):
     '''
     GridGraphs represents a generalized version of a class of graphs
@@ -179,6 +144,9 @@ class GridGraphsLiteral(Literal):
     to surface code configurations during the virtual rotation
     steps of a logical Hadamard.
     GridGraphs is a proper sub-class of the class of Graphs.
+
+    UNDER DEVELOPMENT and probably not needed, but keeping here
+    for a while longer while alternatives being developed.
     '''
 
     # the literal string for representing the class of GridGraphs
