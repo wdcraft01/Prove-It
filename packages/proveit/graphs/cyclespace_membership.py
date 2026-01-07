@@ -62,8 +62,7 @@ class CycleSpaceMembership(SetMembership):
     @prover
     def unfold(self, **defaults_config):
         '''
-        From self = [H in CycleSpace(G)],
-        derive and return:
+        From self = [H in CycleSpace(G)], derive and return:
 
             [H subgraph G AND Vertices(H)=Vertices(G)
                 AND forall v in Vertices(H) (deg(v) is even)],
