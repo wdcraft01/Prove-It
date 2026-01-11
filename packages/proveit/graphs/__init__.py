@@ -1,14 +1,19 @@
-from .graph import (Connected, FiniteGraphsLiteral, Graph,
-          GraphsLiteral, HasEulerianCircuit, HasEulerianTrail,
-          Order, Size)
+from .graph import (Connected, EdgeWeight, EdgeWeightFxns,
+          FiniteGraphsLiteral, Graph, GraphsLiteral, GraphWeight,
+          HasEulerianCircuit, HasEulerianTrail, Order, Size)
+from .cycle_space import CycleSpace
 from .edges import Edges
-from .inclusion import NotSubgraph, Subgraph
+from .grid_graph import (
+      GridGraphsLiteral, SquareGridEdges, SquareGridPoints, SquareGridGraph)
+from .grid_graph_membership import (
+      SquareGridPointsMembership)
+from .inclusion import NotSubgraph, ProperSubgraph, Subgraph, Subgraphs
 from .membership import (
       GraphMembership, GraphNonmembership, InGraph, NotInGraph)
 # from .paths import Path, Paths
 from .paths_of import PathsOf
 from .union import GraphUnion
-from .vertices import AdjacentVertices, Degree, Vertices
+from .vertices import AdjacentVertices, Degree, OddVertices, Vertices
 from .walks import (BeginningVertex, Circuits, ClosedTrails,
           ClosedWalk, ClosedWalks, Cycles,
           EdgeSequence, EdgeSet, EndingVertex, EndVertices,

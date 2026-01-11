@@ -1,4 +1,4 @@
-from .subgraph import Subgraph
+from .subgraph import ProperSubgraph, Subgraph, Subgraphs
 from .not_subgraph import NotSubgraph
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.

@@ -1,6 +1,7 @@
 from proveit import equality_prover, Function, Literal, prover
-from proveit import E, G, V
+from proveit import e, w, E, G, V
 from proveit.logic import ClassMembership
+# from proveit.graphs import GraphsMembership
 
 
 class GraphsLiteral(Literal):
@@ -24,6 +25,7 @@ class GraphsLiteral(Literal):
                          styles=styles)
 
     def membership_object(self, element):
+        from .graph_membership import GraphsMembership
         return GraphsMembership(element, self)
 
     @property
@@ -69,70 +71,6 @@ class FiniteGraphsLiteral(Literal):
         return True
 
 
-class GraphsMembership(ClassMembership):
-
-    def __init__(self, element, domain):
-        from . import Graphs
-        ClassMembership.__init__(self, element, domain)
-        if domain != Graphs:
-            raise TypeError("domain expected to be Graphs, not %s"
-                            %domain.__class__)
-
-    def side_effects(self, judgment):
-        '''
-        Yield side-effects when proving or assuming 'G in Graphs',
-        the main side-effect being that ||G|| in Natural.
-        This needs updated, since Graphs includes infinite graphs.
-        '''
-        yield self.derive_size_in_natural
-
-    # def conclude(): see if and when needed
-
-    @prover
-    def derive_size_in_natural(self, **defaults_config):
-        '''
-        From (G in Graphs), derive ||G|| in Natural, i.e. derive the
-        fact that the size of G (the number of edges in G) is a
-        Natural number. Called as a side-effect.
-        '''
-        from . import graph_size_in_natural
-        _G = self.element
-        return graph_size_in_natural.instantiate(
-                {G:_G}, auto_simplify=False)
-
-class FiniteGraphsMembership(ClassMembership):
-
-    def __init__(self, element, domain):
-        from . import FiniteGraphs
-        ClassMembership.__init__(self, element, domain)
-        if domain != FiniteGraphs:
-            raise TypeError(
-                f"Domain expected to be FiniteGraphs, not {domain.__class__}")
-
-    def side_effects(self, judgment):
-        '''
-        Yield side-effects when proving or assuming 'G in FiniteGraphs',
-        the main side-effect being that ||G|| in Natural.
-        Should extend this to also have |G| in Natural.
-        Should extend this to also have G in Graphs.
-        '''
-        yield self.derive_size_in_natural
-
-    # def conclude(): see if and when needed
-
-    @prover
-    def derive_size_in_natural(self, **defaults_config):
-        '''
-        From (G in FiniteGraphs), derive ||G|| in Natural, i.e.
-        derive the fact that the size of G (the number of edges in G)
-        is a Natural number. Called as a side-effect.
-        '''
-        from . import graph_size_in_natural
-        _G = self.element
-        return graph_size_in_natural.instantiate(
-                {G:_G}, auto_simplify=False)
-
-
 class Graph(Function):
     '''
     Graph(V, E) represents a graph with vertex set V and edge set E.
@@ -153,8 +91,8 @@ class Graph(Function):
         '''
         Create a graph G(V,E) with vertex set V and edge set E.
         '''
-        self.vertex_set = V
-        self.edge_set   = E
+        self.vertices = V
+        self.edges   = E
         Function.__init__(
                 self, Graph._operator_, (V, E), styles=styles)
 
@@ -242,8 +180,129 @@ class Size(Function):
             {G:_G}, auto_simplify=False))
 
 
+class EdgeWeight(Function):
+    '''
+    EdgeWeight(e, G) represents the weight of edge e in graph G.
+    Prove-It complains if we reuse operators, so we use the operator
+    w_{e} for the EdgeWeight operation and w_{g} for the GraphWeight
+    operation (see further below).
+    '''
 
-class Connected(Function):
+    # literal operator of the EdgeWeight operation.
+    _operator_ = Literal(string_format='w_e',
+                         latex_format=r'w_{e}',
+                         theory=__file__)
+
+    def __init__(self, e, G, *, styles=None):
+        '''
+        Represent EdgeWeight(e, G), the weight of edge e in graph G.
+        '''
+        self.edge = e
+        self.graph = G
+        Function.__init__(
+                self, EdgeWeight._operator_, (e, G), styles=styles)
+
+    @prover
+    def derive_in_real(self, **defaults_config):
+        from . import edge_weight_in_real
+        _e_sub = self.operands[0]
+        _G_sub = self.operands[1]
+        return (edge_weight_in_real.instantiate(
+            {e:_e_sub, G:_G_sub}, auto_simplify=False))
+
+class GraphWeight(Function):
+    '''
+    GraphWeight(G, w) represents the weight of graph G using edge-
+    weighting function w, defined as the sum of the graph's edge
+    weights using the edge-weighting function w:
+
+        GraphWeight(G, w) = Sum (w(e)) for e in Edges(G).
+
+    Prove-It complains if we reuse operators, so we use the operator
+    w_{g} for the GraphWeight operation and w_{e} for the EdgeWeight
+    operation.
+    '''
+
+    # literal operator of the GraphWeight operation.
+    _operator_ = Literal(string_format='wgt',
+                         latex_format=r'wgt',
+                         theory=__file__)
+
+    def __init__(self, G, w, *, styles=None):
+        '''
+        Represent GraphWeight(G), the weight of graph G.
+        '''
+        self.graph = G
+        self.weight_fxn = w
+        Function.__init__(
+                self, GraphWeight._operator_, (G, w), styles=styles)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = GraphWeight(G, w), deduce and return the equality:
+        GraphWeight(G, w) = Sum[w(e)] for e in Edges(G).
+        '''
+        from . import graph_weight_def
+        _G_sub = self.operands[0]
+        _w_sub = self.operands[1]
+        return graph_weight_def.instantiate(
+                {G:_G_sub, w:_w_sub}, auto_simplify=False)
+
+    @prover
+    def derive_in_real(self, **defaults_config):
+        from . import graph_weight_in_real
+        _G_sub = self.operands[0]
+        _w_sub = self.operands[1]
+        return (graph_weight_in_real.instantiate(
+            {G:_G_sub, w:_w_sub}, auto_simplify=False))
+
+
+class EdgeWeightFxns(Function):
+    '''
+    EdgeWeightFxns(G) represents the set of all possible
+    edge-weighting functions on the graph G. An edge-weighting
+    function is a mapping
+
+        w: Edges(G) -> Values
+
+    from the edges of G to some set of numeric values.
+    This is less general than an edge-labeling function, and called
+    an edge-weighting function to keep open the possibility of
+    having analogous vertex-weighting or vertex-labeling functions.
+    '''
+
+    # the literal string operator for representing the set of weight
+    # functions of a graph.
+    _operator_ = Literal(string_format='EdgeWeightFxns',
+                         latex_format=r'\textrm{EdgeWeightFxns}',
+                         theory=__file__)
+
+    def __init__(self, G, *, styles=None):
+        '''
+        Represent EdgeWeightFxns(G), the set of possible edge-weighting
+        functions on graph G.
+        '''
+        self.graph = G
+        Function.__init__(
+                self, EdgeWeightFxns._operator_, G, styles=styles)
+
+    def membership_object(self, element):
+        from .weight_fxn_membership import EdgeWeightFxnsMembership
+        return EdgeWeightFxnsMembership(element, self)
+
+    @property
+    def is_proper_class(self):
+        '''
+        The collection of possible weight functions on graph G is
+        a set (instead of needing a proper class designation).
+        This indicates that InSet() should be used instead of
+        InClass() when this is a domain.
+        '''
+        return False
+
+
+class Connected(Function): # IsConnected() is_connected() as literal op
     '''
     Connected(G) is a propositional function (or predicate)
     representing the claim that graph G is connected (i.e., that
@@ -277,7 +336,7 @@ class Connected(Function):
         return connected_def.instantiate({G:_G_sub}, auto_simplify=False)
 
 
-class HasEulerianTrail(Function):
+class HasEulerianTrail(Function): # IsEulerian
     '''
     HasEulerTrail(G) is a propositional function (or predicate)
     claiming that graph G has an Eulerian trail (i.e., G has a

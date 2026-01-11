@@ -1,4 +1,4 @@
-from .fields import Fields
+from .fields import Fields, FiniteField
 from .field_add import FieldAdd
 from .field_mult import FieldMult
 from .field_sum import FieldSum
