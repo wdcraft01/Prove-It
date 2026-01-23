@@ -1,5 +1,6 @@
 from proveit import (Lambda, Conditional, OperationOverInstances, Judgment,
-                     composite_expression, prover, relation_prover)
+                     composite_expression, equality_prover, prover,
+                     relation_prover)
 from proveit import defaults, Literal, Function, ExprTuple
 from proveit import n, x, y, z, A, B, P, Q, R, S, Px
 
@@ -536,3 +537,48 @@ class Exists(OperationOverInstances):
         # universally quantified equalities.
         return OperationOverInstances.substitute(
             self, universality)
+
+    @prover
+    def deduce_set_cardinality(self, **defaults_config):
+        '''
+        Knowing or assuming self in the form of a given (relatively
+        simple) existential claim, deduce and return an equality
+        between self and a claim about the associated domain having
+        cardinality greater than or equal to 1. This deals with two
+        cases:
+
+        (1) For self = Exists(x, InSet(x, S)), deduce and return:
+            |- self = |S| >= 1
+        (2) For self = Exists(x, Q(x), domain=S), deduce and return:
+            |- self = | SetOfAll(x, x, condition=Q(x), domain=S) | >= 1
+
+        '''
+        if not hasattr(self, 'condition'):
+            # Case (1)
+            if len(self.instance_params) == 1:
+                from proveit.logic.sets import element_eq_non_zero_card
+                _x_sub = self.instance_param
+                _S_sub = self.instance_expr.domain
+                return element_eq_non_zero_card.instantiate(
+                    {x: _x_sub, S:_S_sub})
+            else:
+                raise NotImplementedError(
+                        "Exists().deduce_set_cardinality() method not "
+                        "implemented for cases involving multiple "
+                        "instance params.")
+        else:
+            # Case (2)
+            if len(self.instance_params) == 1:
+                from proveit.logic.sets import (
+                        element_with_property_eq_non_zero_card)
+                _x_sub = self.instance_param
+                _Q_sub = Lambda(_x_sub, self.instance_expr)
+                _S_sub = self.domain
+                return element_with_property_eq_non_zero_card.instantiate(
+                        {x:_x_sub, Q:_Q_sub, S:_S_sub})
+            else:
+                raise NotImplementedError(
+                        "Exists().deduce_set_cardinality() method not "
+                        "implemented for cases involving multiple "
+                        "instance params.")
+
