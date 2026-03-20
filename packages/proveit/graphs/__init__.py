@@ -13,6 +13,7 @@ from .membership import (
 # from .paths import Path, Paths
 from .paths import IsPath
 from .paths_of import PathsOf
+from .quotients import QuotientGraph
 from .union import GraphUnion
 from .vertices import AdjacentVertices, Degree, OddVertices, Vertices
 from .walks import (BeginningVertex, Circuits, ClosedTrails,
