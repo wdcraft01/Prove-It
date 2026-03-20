@@ -11,6 +11,7 @@ from .inclusion import NotSubgraph, ProperSubgraph, Subgraph, Subgraphs
 from .membership import (
       GraphMembership, GraphNonmembership, InGraph, NotInGraph)
 # from .paths import Path, Paths
+from .paths import IsPath
 from .paths_of import PathsOf
 from .union import GraphUnion
 from .vertices import AdjacentVertices, Degree, OddVertices, Vertices
