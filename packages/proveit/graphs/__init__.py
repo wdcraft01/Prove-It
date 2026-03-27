@@ -15,11 +15,13 @@ from .paths import IsPath
 from .paths_of import PathsOf
 from .quotients import QuotientGraph
 from .union import GraphUnion
-from .vertices import AdjacentVertices, Degree, OddVertices, Vertices
-from .walks import (BeginningVertex, Circuits, ClosedTrails,
-          ClosedWalk, ClosedWalks, Cycles,
-          EdgeSequence, EdgeSet, EndingVertex, EndVertices,
-          EulerianCircuits, EulerianTrails, Paths, Trails,
+from .vertices import (
+      AdjacentVertices, AllDistinct, Degree, OddVertices, StepCount,
+      VertexSequence, Vertices)
+from .walks import (BeginVertex, BeginningVertex, Circuits,
+          ClosedTrails, ClosedWalk, ClosedWalks, Cycles,
+          EdgeSequence, EdgeSet, EndVertex, EndingVertex, EndVertices,
+          EulerianCircuits, EulerianTrails, IsWalk, Paths, Trails,
           WalkLength, Walks)
 
 

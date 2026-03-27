@@ -1,4 +1,5 @@
-from proveit import equality_prover, Function, Literal
+from proveit import (
+        equality_prover, Function, Literal, NamedExprs, Operation)
 from proveit.logic import ClassMembership
 from proveit.graphs import Graph,  Size
 
@@ -47,6 +48,81 @@ class Walks(Function):
 #     def nonmembership_object(self, element):
 #         from .walks_membership import WalksNonmembership
 #         return WalksNonmembership(element, self)
+
+
+class IsWalk(Operation):
+    '''
+    IsWalk(W, G) denotes that W is a walk in graph G.
+    IsPath(W, G, a, b) denotes that W is a walk in graph G with
+    walk endpoints a and b.
+    Technically, a walk W is not a graph but a VertexSequence
+
+        VertexSeq(v0, v1, ..., vn)
+
+    in which each pair of consecutive vertices corresponds to an edge
+    in graph G.
+    To deal with the graph of such a walk, you will need WalkGraph(P, G)
+    which represents a walk subgraph of graph G.
+    '''
+
+    # the literal operator of the IsPath operation
+    _operator_ = Literal(string_format='IsWalk',
+                         latex_format=r'\text{IsWalk}',
+                         theory=__file__)
+
+    def __init__(self, walk, graph, start=None, end=None, *, styles=None):
+        '''
+        Represent the claim IsWalk(W, G) that W is a walk in graph G,
+        or the more specific claim IsWalk(W, G, a, b) that W is a walk
+        in G with walk endpoints a and b.
+        '''
+
+        # (1) Build the list of (keyword, expression) pairs
+        items = [
+            ("walk", walk),
+            ("graph", graph)
+        ]
+        
+        # (2) Only add optional endpoints if they are actually provided
+        if start is not None:
+            items.append(("start", start))
+        if end is not None:
+            items.append(("end", end))
+        
+        # (3) Initialize NamedExprs with the list of tuples
+        operands = NamedExprs(*items)
+        
+        # (4) Call Operation's init
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = ('IsWalk(' + self.walk.string() + ', ' +
+                      self.graph.string())
+        if (hasattr(self, 'start') and self.start is not None):
+            string_str += ', ' + self.start.string()
+        if (hasattr(self, 'end') and self.end is not None):
+            string_str += ', ' + self.end.string()
+        string_str += ')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = (r'\text{IsWalk}(' + self.walk.latex() + r', ' +
+                     self.graph.latex())
+        if (hasattr(self, 'start') and self.start is not None):
+            latex_str += r', ' + self.start.latex()
+        if (hasattr(self, 'end') and self.end is not None):
+            latex_str += r', ' + self.end.latex()
+        latex_str += r')'
+        return latex_str
+
+    @classmethod
+    def extract_init_arg_value(cls, arg_name, operator, operands):
+        # The base Operation.__init__ already maps keys to attributes 
+        # via getattr/setattr, but for reconstruction (remaking exprs), 
+        # we check the NamedExprs specifically.
+        if isinstance(operands, NamedExprs):
+            return operands.get(arg_name, None)
+        return None
 
 
 class ClosedWalks(Function):
@@ -481,6 +557,82 @@ class EndingVertex(Function):
         self.walk = W
         Function.__init__(
                 self, EndingVertex._operator_, W, styles=styles)
+
+
+class BeginVertex(Function):
+    '''
+    BeginVertex(S) represents the beginning vertex of a sequence S of
+    vertices in the form of a VertexSequence. Given a VertexSequence
+    such as S = VertexSeq(a, b, c, d), then BeginVertex(S) would
+    represent (but not literally return or evaluate to) the vertex 'a'. 
+
+    '''
+
+    # the literal operator of the BeginningVertex(W) operation
+    _operator_ = Literal(string_format='BeginVertex',
+                         latex_format=r'\textrm{BeginVertex}',
+                         theory=__file__)
+
+    def __init__(self, vertex_seq, *, styles=None):
+        '''
+        Represent BeginVertex(vertex_seq), the beginning vertex of
+        the VertexSequence vertex_seq.
+        '''
+        self.seq = vertex_seq
+        Function.__init__(
+                self, BeginVertex._operator_, vertex_seq, styles=styles)
+
+    def formatted(self, format_type, **kwargs):
+        # (1) Get the std formatting from the operand VertexSequence
+        content = self.seq.formatted(format_type, **kwargs)
+        # (2) Add our desired prefix
+        if format_type == 'latex':
+            return r'\text{BeginVertex}(' + content + r')'
+        return 'BeginVertex(' + content + ')'
+
+    def string(self, **kwargs):
+        return self.formatted('string', **kwargs)
+
+    def latex(self, **kwargs):
+        return self.formatted('latex', **kwargs)
+
+
+class EndVertex(Function):
+    '''
+    EndVertex(S) represents the ending vertex of a sequence S of
+    vertices in the form of a VertexSequence. Given a VertexSequence
+    such as S = VertexSeq(a, b, c, d), then EndVertex(S) would
+    represent (but not literally return or evaluate to) the vertex 'd'. 
+
+    '''
+
+    # the literal operator of the BeginningVertex(W) operation
+    _operator_ = Literal(string_format='EndVertex',
+                         latex_format=r'\textrm{EndVertex}',
+                         theory=__file__)
+
+    def __init__(self, vertex_seq, *, styles=None):
+        '''
+        Represent EndVertex(vertex_seq), the ending vertex of
+        the VertexSequence vertex_seq.
+        '''
+        self.seq = vertex_seq
+        Function.__init__(
+                self, EndVertex._operator_, vertex_seq, styles=styles)
+
+    def formatted(self, format_type, **kwargs):
+        # (1) Get the std formatting from the operand VertexSequence
+        content = self.seq.formatted(format_type, **kwargs)
+        # (2) Add our desired prefix
+        if format_type == 'latex':
+            return r'\text{EndVertex}(' + content + r')'
+        return 'EndVertex(' + content + ')'
+
+    def string(self, **kwargs):
+        return self.formatted('string', **kwargs)
+
+    def latex(self, **kwargs):
+        return self.formatted('latex', **kwargs)
 
 
 class EulerianTrails(Function):

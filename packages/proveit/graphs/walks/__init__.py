@@ -1,7 +1,7 @@
-from .walks import (BeginningVertex, Circuits, ClosedTrails,
-        ClosedWalk, ClosedWalks, Cycles,
-        EdgeSequence, EdgeSet, EndingVertex, EndVertices,
-        EulerianCircuits, EulerianTrails, Paths, Trails,
+from .walks import (BeginVertex, BeginningVertex, Circuits,
+        ClosedTrails, ClosedWalk, ClosedWalks, Cycles, EdgeSequence,
+        EdgeSet, EndVertex, EndingVertex, EndVertices,
+        EulerianCircuits, EulerianTrails, IsWalk, Paths, Trails,
         WalkLength, Walks)
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
