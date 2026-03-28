@@ -256,6 +256,78 @@ class Paths(Function):
 #         return PathsNonmembership(element, self)
 
 
+class IsPath(Operation):
+    '''
+    IsPath(P, G) denotes that VertexSequence P is a path in graph G.
+    IsPath(P, G, a, b) denotes that P is a path in graph G with
+    path endpoints a and b.
+    Technically, a path P is not a graph but a sequence
+        (v0, v1, ..., vn)
+    of non-repeating adjacent vertices in the containing graph G.
+    To deal with the graph of such a path, you will need PathGraph(P, G)
+    with PathGraph(P, G) being a subgraph of graph G.
+    '''
+
+    # the literal operator of the IsPath operation
+    _operator_ = Literal(string_format='IsPath',
+                         latex_format=r'\text{IsPath}',
+                         theory=__file__)
+
+    def __init__(self, path, graph, start=None, end=None, *, styles=None):
+        '''
+        Represent the claim IsPath(P, G) that P is a path in graph G,
+        or the more specific claim IsPath(P, G, a, b) that P is a path
+        in G with path endpoints a and b.
+        '''
+
+        # (1) Build the list of (keyword, expression) pairs
+        items = [
+            ("path", path),
+            ("graph", graph)
+        ]
+        
+        # (2) Only add optional endpoints if they are actually provided
+        if start is not None:
+            items.append(("start", start))
+        if end is not None:
+            items.append(("end", end))
+        
+        # (3) Initialize NamedExprs with the list of tuples
+        operands = NamedExprs(*items)
+        
+        # (4) Call Operation's init
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = ('IsPath(' + self.path.string() + ', ' +
+                      self.graph.string())
+        if (hasattr(self, 'start') and self.start is not None):
+            string_str += ', ' + self.start.string()
+        if (hasattr(self, 'end') and self.end is not None):
+            string_str += ', ' + self.end.string()
+        string_str += ')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = (r'\text{IsPath}(' + self.path.latex() + r', ' +
+                     self.graph.latex())
+        if (hasattr(self, 'start') and self.start is not None):
+            latex_str += r', ' + self.start.latex()
+        if (hasattr(self, 'end') and self.end is not None):
+            latex_str += r', ' + self.end.latex()
+        latex_str += r')'
+        return latex_str
+
+    @classmethod
+    def extract_init_arg_value(cls, arg_name, operator, operands):
+        # The base Operation.__init__ already maps keys to attributes 
+        # via getattr/setattr, but for reconstruction (remaking exprs), 
+        # we check the NamedExprs specifically.
+        if isinstance(operands, NamedExprs):
+            return operands.get(arg_name, None)
+        return None
+
+
 class Circuits(Function):
     '''
     Circuits(k, G) represents the set of circuits of length k >= 3 in

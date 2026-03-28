@@ -10,8 +10,7 @@ from .grid_graph_membership import (
 from .inclusion import NotSubgraph, ProperSubgraph, Subgraph, Subgraphs
 from .membership import (
       GraphMembership, GraphNonmembership, InGraph, NotInGraph)
-# from .paths import Path, Paths
-from .paths import IsPath
+# from .paths import IsPath, Path, Paths
 from .paths_of import PathsOf
 from .quotients import QuotientGraph
 from .union import GraphUnion
@@ -21,7 +20,7 @@ from .vertices import (
 from .walks import (BeginVertex, BeginningVertex, Circuits,
           ClosedTrails, ClosedWalk, ClosedWalks, Cycles,
           EdgeSequence, EdgeSet, EndVertex, EndingVertex, EndVertices,
-          EulerianCircuits, EulerianTrails, IsWalk, Paths, Trails,
+          EulerianCircuits, EulerianTrails, IsPath, IsWalk, Paths, Trails,
           WalkLength, Walks)
 
 
