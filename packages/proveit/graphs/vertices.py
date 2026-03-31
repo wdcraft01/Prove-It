@@ -329,31 +329,79 @@ class VertexSequence(Operation):
         return (step_count_def_inst.inner_expr().
                 rhs.operands[0].substitute(expr_tuple_len_judgment))
 
-    def length(self):
+    def get_length(self, **kwargs):
         '''
-        Returns the number of (implied) edges as a Python int.
-        Length is 0 for a single vertex (a trivial walk).
-        NO claim is being made here that the implied/inferred edges
-        are actual valid edges in some graph.
+        For a VertexSequence of n vertices, calculates and returns
+        the implied walk length (n-1). Along the way, the computation
+        derives a Judgment for the order (number of vertices) in the
+        VertexSequence, but the walk length returned is not a Judgment.
+        For a proven Judgment, see the step_count() method above.
         '''
-        return max(0, len(self) - 1)
+        from proveit.numbers import subtract, one
+        n = self.order(**kwargs).rhs
+        return subtract(n, one)
 
-    def is_trivial(self):
+    def is_trivial(self, **kwargs):
         '''
-        A order-1 sequence represents a "trivial" walk.
+        Returns a Python boolean: True if the sequence has exactly
+        one vertex (and thus an implied path length of 0), and False
+        otherwise.
         '''
-        return self.order() == 1
+        from proveit.numbers import zero
+        length_expr = self.get_length(**kwargs).simplified(**kwargs)
+        return length_expr == zero
 
-    def edges(self):
+    def edges(self, **kwargs):
         '''
-        Returns a list of tuples of vertices representing the
+        Returns an ExprTuple of tuples of vertices representing the
         implied/inferred edges. NO claim is being made here that
         the implied/inferred edges actually exist in some graph.
-        Possibly should be a list of 2-element lists or Sets instead
-        of tuples.
         '''
+        from proveit import ExprTuple, ExprRange
         from proveit.logic import Set
-        return [Set(self[i], self[i+1]) for i in range(self.length())]
+        from proveit.numbers import one, Add, subtract
+
+        entries = self.entries # an ExprTuple
+        edge_components = []
+
+        for i in range(len(entries)):
+            # current might be a vertex or an ExprRange
+            current = entries[i]
+
+            # (1) Handle "internal" edges if current element is
+            #     an ExprRange
+            if isinstance(current, ExprRange):
+                # Create new range of Sets: {v_k, v_{k+1}},
+                # covering the v1, v2, ..., vn transitions
+                _k = current.parameter
+                _k_plus_one = Add(_k, one)
+                v_k = current.body
+                v_k_plus_one = v_k.basic_replaced({_k: _k_plus_one})
+                _start = current.start_index
+                _end  = subtract(current.end_index, one)
+                internal_step = Set(v_k, v_k_plus_one)
+                edge_range = ExprRange(_k, internal_step, _start, _end)
+                edge_components.append(edge_range)
+
+            # (2) Then handle "between" edges (transitions to the
+            #     next element, like a vertex to an ExprRange, or 
+            #     from an ExprRange to a vertex, etc).
+            if i < len(entries) - 1:
+                # i.e. we are not on the last entry
+                next_entry = entries[i+1]
+
+                # Determine the "right-most" vertex of current entry
+                left_v = (current.last()
+                          if isinstance(current, ExprRange)
+                          else current)
+                # Determine the "left-most" vertex of the next entry
+                right_v = (next_entry.first()
+                           if isinstance(next_entry, ExprRange)
+                           else next_entry)
+                # Create the "bridge" edge
+                edge_components.append(Set(left_v, right_v))
+
+        return ExprTuple(*edge_components)
 
 
 class StepCount(Operation):
