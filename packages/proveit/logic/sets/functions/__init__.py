@@ -1,9 +1,10 @@
+from .is_function import IsFunction
 from .functions import Functions
 from .restriction import Restriction 
 from .images import Image, InvImage
-from .injections import Injections
-from .surjections import Surjections
-from .bijections import Bijections
+from .injections import IsInjection, Injections
+from .surjections import IsSurjection, Surjections
+from .bijections import IsBijection, Bijections
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
 #  Make additions above, or add to sys.modules[__name__].__dict__ below.
