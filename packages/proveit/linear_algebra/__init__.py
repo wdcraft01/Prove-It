@@ -15,6 +15,7 @@ from .linear_maps import (IsLinMap, LinMaps, LinMapAdd, Identity,
 from .matrices import (MatrixSpace, MatrixMult, MatrixExp,
                        Unitary, SpecialUnitary, Diagonal)
 from .tensors import TensorExp, TensorProd
+from .distance import EuclideanDistance, ManhattanDistance, MinkowskiDistance
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
 #  Make additions above, or add to sys.modules[__name__].__dict__ below.

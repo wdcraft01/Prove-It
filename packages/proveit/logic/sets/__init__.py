@@ -18,7 +18,8 @@ from .disjointness import Disjoint, Distinct
 from .cardinality import Card
 from .functions import (IsFunction, Functions, IsInjection, Injections,
                         IsSurjection, Surjections, IsBijection, Bijections,
-                        Image, InvImage)
+                        Image, InvImage, Restriction)
+from .partitions import Partitions
 
 def is_infinite_set(expr):
     if hasattr(expr, 'is_infinite_set'):
