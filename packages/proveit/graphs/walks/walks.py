@@ -1,6 +1,6 @@
 from proveit import (
         equality_prover, Function, Literal, NamedExprs, Operation)
-from proveit.logic import ClassMembership
+from proveit.classes import ClassMembership
 from proveit.graphs import Graph,  Size
 
 class Walks(Function):

@@ -1,41 +1,42 @@
 from proveit import (Literal, defaults, USE_DEFAULTS, ProofFailure,
                      UnusableProof, single_or_composite_expression,
                      prover, equality_prover, relation_prover)
-from proveit.relation import Relation
-from proveit.logic.classes import InClass, ClassMembership
+from proveit.relations import Relation
+from proveit.classes import ClassMembership
+# from proveit.logic.classes import InClass
 
 # UNDER CONSTRUCTION, ADAPTING FROM InSet beginning 4/16/2025
 
-class InGraph(InClass):
-    '''
-    Graph membership (applicable to vertices and edges) is a
-    special case of class membership, so we'll derive from InClass
-    for possible code re-use. The operators are distinct (though
-    the formatting is the same).
-    '''
+# class InGraph(InClass):
+#     '''
+#     Graph membership (applicable to vertices and edges) is a
+#     special case of class membership, so we'll derive from InClass
+#     for possible code re-use. The operators are distinct (though
+#     the formatting is the same).
+#     '''
 
-    # operator of the InGraph operation
-    _operator_ = Literal(string_format='in',
-                         latex_format=r'\in',
-                         theory=__file__)
+#     # operator of the InGraph operation
+#     _operator_ = Literal(string_format='in',
+#                          latex_format=r'\in',
+#                          theory=__file__)
 
-    # map (element, domain) pairs to corresponding InGraph expressions
-    ingraph_expressions = dict()
+#     # map (element, domain) pairs to corresponding InGraph expressions
+#     ingraph_expressions = dict()
 
-    def __init__(self, element, domain, *, styles=None):
-        element = single_or_composite_expression(element)
-        domain = single_or_composite_expression(domain)
-        InGraph.ingraph_expressions[(element, domain)] = self
-        InClass.__init__(self, element, domain, operator=InGraph._operator_,
-                         styles=styles)
+#     def __init__(self, element, domain, *, styles=None):
+#         element = single_or_composite_expression(element)
+#         domain = single_or_composite_expression(domain)
+#         InGraph.ingraph_expressions[(element, domain)] = self
+#         InClass.__init__(self, element, domain, operator=InGraph._operator_,
+#                          styles=styles)
 
-    def negated(self):
-        '''
-        Return the negated membership expression (not a judgment):
-        element not in (graph) domain.
-        '''
-        from .not_in_graph import NotInGraph
-        return NotInGraph(self.element, self.domain)
+#     def negated(self):
+#         '''
+#         Return the negated membership expression (not a judgment):
+#         element not in (graph) domain.
+#         '''
+#         from .not_in_graph import NotInGraph
+#         return NotInGraph(self.element, self.domain)
 
     # A placeholder from the InSet class; delaying for now
     # come back to this after subgraphs are defined
@@ -166,15 +167,15 @@ class InGraph(InClass):
     #             return known_membership
     #     return None # No match found.
 
-class GraphMembership(ClassMembership):
-    def __init__(self, element, domain):
-        '''
-        Base class for any 'membership object' returned by a domain's
-        'membership_object' method.
-        '''
-        # The expression represented by this Membership.
-        if (element, domain) in InGraph.ingraph_expressions:
-            expr = InGraph.ingraph_expressions[(element, domain)]
-        else:
-            expr = InGraph(element, domain)
-        ClassMembership.__init__(self, element, domain, expr=expr)
+# class GraphMembership(ClassMembership):
+#     def __init__(self, element, domain):
+#         '''
+#         Base class for any 'membership object' returned by a domain's
+#         'membership_object' method.
+#         '''
+#         # The expression represented by this Membership.
+#         if (element, domain) in InGraph.ingraph_expressions:
+#             expr = InGraph.ingraph_expressions[(element, domain)]
+#         else:
+#             expr = InGraph(element, domain)
+#         ClassMembership.__init__(self, element, domain, expr=expr)

@@ -8,12 +8,13 @@ from .grid_graph import (
 from .grid_graph_membership import (
       SquareGridPointsMembership)
 from .inclusion import NotSubgraph, ProperSubgraph, Subgraph, Subgraphs
-from .membership import (
-      GraphMembership, GraphNonmembership, InGraph, NotInGraph)
+from .is_graph import IsGraph
+# from .membership import (
+#       GraphMembership, GraphNonmembership, InGraph, NotInGraph)
 # from .paths import IsPath, Path, Paths
 from .paths_of import PathsOf
 from .quotients import QuotientGraph
-from .union import GraphUnion
+# from .union import GraphUnion
 from .vertices import (
       AdjacentVertices, AllDistinct, Degree, OddVertices, StepCount,
       VertexSequence, Vertices)

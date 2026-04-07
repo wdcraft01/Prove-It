@@ -1,62 +1,63 @@
 from proveit import (Literal, defaults, USE_DEFAULTS, equality_prover, 
                      ProofFailure, prover, relation_prover)
 from proveit import x, G
-from proveit.relation import Relation
-from proveit.logic.classes import NotInClass, ClassNonmembership
+from proveit.relations import Relation
+# from proveit.classes import ClassNonmembership
+# from proveit.logic.classes import NotInClass
 
 # UNDER CONSTRUCTION, ADAPTING FROM InSet beginning 4/16/2025
 
 
-class NotInGraph(NotInClass):
-    '''
-    Graph non-membership is a special case of class nonmembership,
-    so we derive from NotInClass for code re-use.  The operators are
-    distinct (though the formatting is the same).
-    '''
-    # operator of the NotInSet operation
-    _operator_ = Literal(string_format='not-in', latex_format=r'\notin',
-                         theory=__file__)
+# class NotInGraph(NotInClass):
+#     '''
+#     Graph non-membership is a special case of class nonmembership,
+#     so we derive from NotInClass for code re-use.  The operators are
+#     distinct (though the formatting is the same).
+#     '''
+#     # operator of the NotInSet operation
+#     _operator_ = Literal(string_format='not-in', latex_format=r'\notin',
+#                          theory=__file__)
 
-    # map (element, domain) pairs to corresponding NotInGraph exprs
-    notingraph_expressions = dict()
+#     # map (element, domain) pairs to corresponding NotInGraph exprs
+#     notingraph_expressions = dict()
 
-    def __init__(self, element, domain, *, styles=None):
-        NotInGraph.notingraph_expressions[(element, domain)] = self
-        NotInClass.__init__(
-                self, element, domain, operator=NotInGraph._operator_,
-                styles=styles)
+#     def __init__(self, element, domain, *, styles=None):
+#         NotInGraph.notingraph_expressions[(element, domain)] = self
+#         NotInClass.__init__(
+#                 self, element, domain, operator=NotInGraph._operator_,
+#                 styles=styles)
 
-    @relation_prover
-    def deduce_in_bool(self, **defaults_config):
-        '''
-        Deduce and return that this 'not in' statement is in the set
-        of BOOLEANS. For example, NotInGraph(x, G(V,E)).deduce_in_bool()
-        returns:
-                   |- NotInGraph(x, G(V,E)) in Bool.
+#     @relation_prover
+#     def deduce_in_bool(self, **defaults_config):
+#         '''
+#         Deduce and return that this 'not in' statement is in the set
+#         of BOOLEANS. For example, NotInGraph(x, G(V,E)).deduce_in_bool()
+#         returns:
+#                    |- NotInGraph(x, G(V,E)) in Bool.
 
-        '''
-        from . import not_in_graph_is_bool
-        return not_in_graph_is_bool.instantiate(
-                {x: self.element, G: self.domain})
+#         '''
+#         from . import not_in_graph_is_bool
+#         return not_in_graph_is_bool.instantiate(
+#                 {x: self.element, G: self.domain})
 
-    @prover
-    def unfold(self, **defaults_config):
-        r'''
-        From NotInGraph(x, G), derive and return Not(InGraph(x, G)).
-        For example,
+#     @prover
+#     def unfold(self, **defaults_config):
+#         r'''
+#         From NotInGraph(x, G), derive and return Not(InGraph(x, G)).
+#         For example,
 
-            NotInGraph(a, G(V, E)).unfold_not_in(
-                assumptions=[NotInGraph(a, G(V, E))])
-        returns
+#             NotInGraph(a, G(V, E)).unfold_not_in(
+#                 assumptions=[NotInGraph(a, G(V, E))])
+#         returns
 
-            NotInGraph(a, G(V, E)) |- Not (a in G(V, E)).
+#             NotInGraph(a, G(V, E)) |- Not (a in G(V, E)).
 
-        We include the auto_simplify=False to keep the membership
-        result inside the Not() from being reduced to False.
-        '''
-        from . import unfold_not_in_graph
-        return unfold_not_in_graph.instantiate(
-            {x: self.element, G: self.domain}, auto_simplify=False)
+#         We include the auto_simplify=False to keep the membership
+#         result inside the Not() from being reduced to False.
+#         '''
+#         from . import unfold_not_in_graph
+#         return unfold_not_in_graph.instantiate(
+#             {x: self.element, G: self.domain}, auto_simplify=False)
 
     # A placeholder from the NotInSet class; delaying for now
     # come back to this after subgraphs are defined
@@ -98,24 +99,24 @@ class NotInGraph(NotInClass):
     #                 as_strong_nonmembership)
     #     return NotInClass.conclude(self)
 
-    @prover
-    def conclude_as_folded(self, **defaults_config):
-        '''
-        Attempt to conclude x not in G via Not(x in G).
-        '''
-        from . import fold_not_in_graph
-        return fold_not_in_graph.instantiate(
-            {x: self.element, G: self.domain})
+    # @prover
+    # def conclude_as_folded(self, **defaults_config):
+    #     '''
+    #     Attempt to conclude x not in G via Not(x in G).
+    #     '''
+    #     from . import fold_not_in_graph
+    #     return fold_not_in_graph.instantiate(
+    #         {x: self.element, G: self.domain})
 
-    @prover
-    def conclude_negation(self, **defaults_config):
-        '''
-        Attempt to conclude the negation of nonmembership via
-        proving membership.
-        '''
-        from . import double_negated_membership
-        return double_negated_membership.instantiate(
-                {x:self.element, G:self.domain})
+    # @prover
+    # def conclude_negation(self, **defaults_config):
+    #     '''
+    #     Attempt to conclude the negation of nonmembership via
+    #     proving membership.
+    #     '''
+    #     from . import double_negated_membership
+    #     return double_negated_membership.instantiate(
+    #             {x:self.element, G:self.domain})
 
     # A placeholder from the NotInSet class; delaying for now
     # come back to this after subgraphs are defined
@@ -186,15 +187,15 @@ class NotInGraph(NotInClass):
     #             return known_nonmembership
     #     return None # No match found.
 
-class GraphNonmembership(ClassNonmembership):
-    def __init__(self, element, domain):
-        '''
-        Base class for any 'non-membership object' returned by a
-        domain's 'non-membership_object' method.
-        '''
-        # The expression represented by this Non-Membership.
-        if (element, domain) in NotInGraph.notingraph_expressions:
-            expr = NotInGraph.notingraph_expressions[(element, domain)]
-        else:
-            expr = NotInGraph(element, domain)
-        ClassNonmembership.__init__(self, element, domain, expr=expr)
+# class GraphNonmembership(ClassNonmembership):
+#     def __init__(self, element, domain):
+#         '''
+#         Base class for any 'non-membership object' returned by a
+#         domain's 'non-membership_object' method.
+#         '''
+#         # The expression represented by this Non-Membership.
+#         if (element, domain) in NotInGraph.notingraph_expressions:
+#             expr = NotInGraph.notingraph_expressions[(element, domain)]
+#         else:
+#             expr = NotInGraph(element, domain)
+#         ClassNonmembership.__init__(self, element, domain, expr=expr)

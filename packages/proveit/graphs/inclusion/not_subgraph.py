@@ -1,5 +1,5 @@
 from proveit import Literal
-from proveit.relation import Relation
+from proveit.relations import Relation
 
 class NotSubgraph(Relation):
     '''
