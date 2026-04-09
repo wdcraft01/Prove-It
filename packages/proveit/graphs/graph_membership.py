@@ -1,6 +1,6 @@
 from proveit import equality_prover, Function, Literal, prover
 from proveit import e, w, E, G, V
-from proveit.logic import ClassMembership
+from proveit.classes import ClassMembership
 # from proveit.graphs import 
 
 class GraphsMembership(ClassMembership):
@@ -16,7 +16,7 @@ class GraphsMembership(ClassMembership):
     the possibility of a specified tuple Graph(V, E) to be in Graphs.
     '''
 
-    def __init__(self, element, domain):
+    def __init__(self, element, domain, *, styles=None):
         from . import Graphs
         ClassMembership.__init__(self, element, domain)
         if domain != Graphs:
@@ -185,7 +185,7 @@ class GraphsMembership(ClassMembership):
 
 class FiniteGraphsMembership(ClassMembership):
 
-    def __init__(self, element, domain):
+    def __init__(self, element, domain, *, styles=None):
         from . import FiniteGraphs
         ClassMembership.__init__(self, element, domain)
         if domain != FiniteGraphs:
