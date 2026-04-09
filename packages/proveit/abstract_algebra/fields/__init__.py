@@ -4,6 +4,7 @@ from .field_add import FieldAdd
 from .field_mult import FieldMult
 from .field_sum import FieldSum
 from .field_prod import FieldProd
+from .finite_field import FiniteField
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
 #  Make additions above, or add to sys.modules[__name__].__dict__ below.
