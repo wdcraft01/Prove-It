@@ -1,7 +1,6 @@
-from proveit import (
-        equality_prover, Function, Literal, NamedExprs, Operation)
-from proveit.classes import ClassMembership
-from proveit.graphs import Graph,  Size
+from proveit import ( equality_prover, ExprTuple, Function, Literal,
+                      NamedExprs, Operation )
+from proveit.graphs import Size
 
 class Walks(Function):
     '''
@@ -48,6 +47,78 @@ class Walks(Function):
 #     def nonmembership_object(self, element):
 #         from .walks_membership import WalksNonmembership
 #         return WalksNonmembership(element, self)
+
+
+class WalksOf(Operation):
+    '''
+    WalksOf(G, [ends=(a, b)]) represents the set of walks in graph G.
+    Optional 'ends' constraint can restrict membership to a-b walks,
+    that is, walks with endvertices {a, b}.
+    Generally, a walk W in a simple undirected graph G is a sequence
+        (u = v1, v2, ..., v = vn)
+    of vertices of G such that consecutive vertices in the sequence
+    are adjacent in G --- in other words, every pair {v_{i}, v_{i+1}}
+    of vertices (for i in {1, 2, ..., n-1}) corresponds to an edge in G.
+    u and v are called the endvertices or endpoints of the walk, and
+    a walk from u to v is often referred to as a u-v walk.
+    The vertices v2, v3, ..., v_{n-1} are called internal vertices.
+    The number of edges in the walk W, denoted by ||W||, is the
+    length of the walk (in this example, ||W|| = n-1).
+    The number of vertices in the walk W, including multiplicities
+    of repeated vertices, is denoted |W|, analogous to the notation
+    for the order of a graph, |G|.
+
+    NOTE: WalksOf(G) is intended to eventually replace the original
+          Walks(k, G) class.
+    '''
+
+    # the literal operator of the WalksOf operation
+    _operator_ = Literal(string_format='WalksOf',
+                         latex_format=r'\textrm{WalksOf}',
+                         theory=__file__)
+
+    def __init__(self, graph, *, ends: tuple | None = None,
+                 styles=None):
+        '''
+        Initialize a representation of the WalksOf(G) (the set of all
+        walks in graph G) or a representation of WalksOf(G, a->b) (the
+        set of all a-b walks in graph G).
+        '''
+
+        items = [("graph", graph)]
+        if ends is not None:
+            items.append(("ends", ends))
+
+        operands = NamedExprs(*items)
+
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = 'WalksOf('
+        string_str += self.graph.string(**kwargs)
+        if hasattr(self, 'ends'):
+            begin = self.ends[0]
+            end   = self.ends[1]
+            string_str += (
+                    f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+        string_str += r')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = r'\textrm{WalksOf}('
+        # If operands is a list (from the axiom path)
+        latex_str += self.graph.latex(**kwargs)
+        if hasattr(self, 'ends'):
+            begin = self.ends[0]
+            end   = self.ends[1]
+            latex_str += (
+                f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}")
+        latex_str += r')'
+        return latex_str
+
+    def membership_object(self, element):
+        from .walks_membership import WalksOfMembership
+        return WalksOfMembership(element, self)
 
 
 class IsWalk(Operation):
@@ -191,6 +262,73 @@ class Trails(Function):
     #     return TrailsNonmembership(element, self)
 
 
+class TrailsOf(Operation):
+    '''
+    TrailsOf(G, [length=k], [begin=u], [end=v]) represents the set of
+    trails in graph G. Optional constraints can restrict membership
+    to walks of a specific length k, and/or to walks with specific
+    begin/end vertices u and v.
+
+    A trail T in graph G is a special case of a walk: a walk in which
+    no edge is repeated (see the WalksOf class defined above for
+    more details).
+
+    NOTE: TrailsOf() is intended to eventually replace the original
+          Trails() class.
+    '''
+
+    # the literal operator of the WalksOf operation
+    _operator_ = Literal(string_format='TrailsOf',
+                         latex_format=r'\textrm{TrailsOf}',
+                         theory=__file__)
+
+    def __init__(self, graph, length=None, begin=None, end=None,
+                 *, styles=None):
+
+        items = [("graph", graph)]
+        if length is not None:
+            items.append(("length", length))
+        if begin is not None:
+            items.append(("begin", begin))
+        if end is not None:
+            items.append(("end", end))
+
+        operands = NamedExprs(*items)
+
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = 'TrailsOf(' + self.graph.string(**kwargs)
+        if hasattr(self, 'length'):
+            string_str += ', ' + self.length.string(**kwargs)
+        begin = getattr(self, 'begin', None)
+        end = getattr(self, 'end', None)
+        if begin and end:
+            string_str += (
+                    f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+        elif begin:
+            string_str += f", {self.begin.string(**kwargs)} ->"
+        elif end:
+            string_str += f", -> {self.end.string(**kwargs)}"
+        string_str += r')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = r'\textrm{TrailsOf}(' + self.graph.latex(**kwargs)
+        if hasattr(self, 'length'):
+            latex_str += r', ' + self.length.latex(**kwargs)
+        begin = getattr(self, 'begin', None)
+        end = getattr(self, 'end', None)
+        if begin and end:
+            latex_str += f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}"
+        elif begin:
+            latex_str += f", {self.begin.latex(**kwargs)} \\to"
+        elif end:
+            latex_str += f", \\to {self.end.latex(**kwargs)}"
+        latex_str += r')'
+        return latex_str
+
+
 class ClosedTrails(Function):
     '''
     ClosedTrails(k, G) represents the set of closed trails of length
@@ -254,6 +392,72 @@ class Paths(Function):
 #     def nonmembership_object(self, element):
 #         from .walks_membership import PathsNonmembership
 #         return PathsNonmembership(element, self)
+
+
+class PathsOf(Operation):
+    '''
+    PathsOf(G, [length=k], [begin=u], [end=v]) represents the set of
+    paths in graph G. Optional constraints can restrict membership
+    to paths of a specific length k, and/or to paths with specific
+    begin/end vertices u and v.
+    A path P in graph G is a special case of a walk: a walk in which
+    no vertex is repeated (see the WalksOf class defined above for
+    more details).
+
+    NOTE: PathsOf(G) is intended to eventually replace the original
+          Paths(G) class.
+    '''
+
+    # the literal operator of the WalksOf operation
+    _operator_ = Literal(string_format='PathsOf',
+                         latex_format=r'\textrm{PathsOf}',
+                         theory=__file__)
+
+    def __init__(self, graph, length=None, begin=None, end=None,
+                 *, styles=None):
+
+        items = [("graph", graph)]
+        if length is not None:
+            items.append(("length", length))
+        if begin is not None:
+            items.append(("begin", begin))
+        if end is not None:
+            items.append(("end", end))
+
+        operands = NamedExprs(*items)
+
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = 'PathsOf(' + self.graph.string(**kwargs)
+        if hasattr(self, 'length'):
+            string_str += ', ' + self.length.string(**kwargs)
+        begin = getattr(self, 'begin', None)
+        end = getattr(self, 'end', None)
+        if begin and end:
+            string_str += (
+                    f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+        elif begin:
+            string_str += f", {self.begin.string(**kwargs)} ->"
+        elif end:
+            string_str += f", -> {self.end.string(**kwargs)}"
+        string_str += r')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = r'\textrm{PathsOf}(' + self.graph.latex(**kwargs)
+        if hasattr(self, 'length'):
+            latex_str += r', ' + self.length.latex(**kwargs)
+        begin = getattr(self, 'begin', None)
+        end = getattr(self, 'end', None)
+        if begin and end:
+            latex_str += f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}"
+        elif begin:
+            latex_str += f", {self.begin.latex(**kwargs)} \\to"
+        elif end:
+            latex_str += f", \\to {self.end.latex(**kwargs)}"
+        latex_str += r')'
+        return latex_str
 
 
 class IsPath(Operation):

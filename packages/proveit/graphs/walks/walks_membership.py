@@ -1,12 +1,239 @@
-from proveit import (i, k, C, G, P, S, T, W, equality_prover, Function,
-        prover, relation_prover)
-from proveit.logic import (Equals, Forall, InSet, SetMembership,
+from proveit import (a, b, i, k, u, v, C, G, P, S, T, W,
+        equality_prover, Function, NamedExprs, prover, relation_prover)
+from proveit.logic import (And, Equals, Forall, InSet, SetMembership,
             SetNonmembership)
 from proveit.logic.sets import Functions, Injections, Restriction, SetOfAll
 from proveit.numbers import zero, one, Add, Interval, subtract
 from proveit.graphs import (AdjacentVertices, BeginningVertex,
             Circuits, ClosedWalks, Edges, EdgeSequence, EndingVertex,
             Graph, Paths, Size, Vertices, Walks)
+
+
+class WalksOfMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set
+    of (possibly a-b) walks in the simple finite graph G, denoted
+    WalksOf(G) or possibly WalksOf(G, a -> b).
+    See related membership classes further below for Trails and Paths.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [W in WalksOf(G)], deduce and return the equality:
+        
+            [W in Walks(G)]
+            = W in the Union of all n-tuples of (v1, ..., vn) such that:
+              (1) v1,...,vn in Vertices(G), and
+              (2) Every pair v_{i}, v_{i+1} of vertices are adjacent in
+                  graph G (for i in {1, 2, ..., n-1}).
+
+        From self = [W in WalksOf(G, ends=(a,b))], deduce and return
+        the equality above with the additional constraints that:
+
+              (3) v1 = a
+              (4) vn = b
+        '''
+
+        _W_sub = self.element
+        _G_sub = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import walks_of_graph_with_ends_membership_def
+            return walks_of_graph_with_ends_membership_def.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        from . import walks_of_graph_membership_def
+        return walks_of_graph_membership_def.instantiate(
+                    {G:_G_sub, W:_W_sub}, auto_simplify=False)
+
+    @equality_prover('existential_defined', 'existential_define')
+    def existential_definition(self, **defaults_config):
+        '''
+        From self = [W in WalksOf(G)], deduce and return the equality:
+        
+            [W in Walks(G)]
+            = There exists NaturalPos n and v1,...,vn in Vertices(G)
+              such that::
+              (1) W = (v1,...,vn), and
+              (2) Every pair v_{i}, v_{i+1} of vertices are adjacent in
+                  graph G (for i in {1, 2, ..., n-1}).
+
+        From self = [W in WalksOf(G, ends=(a,b))], deduce and return
+        the equality above with the additional "such that" constraints:
+
+              (3) v1 = a
+              (4) vn = b
+        '''
+
+        _W_sub = self.element
+        _G_sub = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import walks_of_graph_membership_with_ends_exists_def
+            return walks_of_graph_membership_with_ends_exists_def.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        from . import walks_of_graph_membership_exists_def
+        return walks_of_graph_membership_exists_def.instantiate(
+                    {G:_G_sub, W:_W_sub}, auto_simplify=False)
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [W in WalksOf(G)], and knowing or assuming self,
+        derive and return the claim that:
+
+            W in the Union of all n-tuples of (v1, ..., vn) such that:
+            (1) v1,...,vn in Vertices(G), and
+            (2) Every pair v_{i}, v_{i+1} of vertices are adjacent in
+                  graph G (for i in {1, 2, ..., n-1}).
+        
+        From self = [W in WalksOf(G, ends=(a,b))], and knowing or
+        assuming self, deduce and return the claim above along with
+        the additional conclusions that:
+
+              (3) v1 = a
+              (4) vn = b
+        '''
+
+        _W_sub = self.element
+        _G_sub = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import walks_of_graph_with_ends_membership_unfolding
+            return walks_of_graph_with_ends_membership_unfolding.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        from . import walks_of_graph_membership_unfolding
+        return walks_of_graph_membership_unfolding.instantiate(
+                    {G:_G_sub, W:_W_sub}, auto_simplify=False)
+
+    @prover
+    def existential_unfold(self, **defaults_config):
+        '''
+        From self = [W in WalksOf(G)], and knowing or assuming self,
+        derive and return the claim that:
+
+            There exists NaturalPos n and v1,...,vn in Vertices(G)
+            such that:
+            (1) W = (v1,...,vn), and
+            (2) Every pair v_{i}, v_{i+1} of vertices are adjacent in
+                graph G (for i in {1, 2, ..., n-1}).
+        
+        From self = [W in WalksOf(G, ends=(a,b))], and knowing or
+        assuming self, deduce and return the claim above along with
+        the additional conclusions that:
+
+            (3) v1 = a
+            (4) vn = b
+
+        '''
+
+        _W_sub = self.element
+        _G_sub = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import walks_of_graph_membership_with_ends_exists_unfolding
+            return (walks_of_graph_membership_with_ends_exists_unfolding.
+                    instantiate(
+                            {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
+                            auto_simplify=False))
+
+        from . import walks_of_graph_membership_exists_unfolding
+        return walks_of_graph_membership_exists_unfolding.instantiate(
+                    {G:_G_sub, W:_W_sub}, auto_simplify=False)
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        Called on self = [W in WalksOf(G)], and
+        knowing or assuming that W is in the Union of all n-tuples
+        (v1, ..., vn) such that:
+
+            (1) v1,...,vn in Vertices(G), and
+            (2) Every pair v_{i}, v_{i+1} of vertices are adjacent in
+                  graph G (for i in {1, 2, ..., n-1}),
+
+        derive and return self.
+
+        Called on self = [W in WalksOf(G, ends=(a,b))], and
+        knowing or assuming the information specified above for
+        WalksOf(G) plus knowing or assuming the additional info that:
+
+            (3) v1 = a
+            (4) vn = b
+
+        derive and return self.
+        '''
+
+        _W_sub = self.element
+        _G_sub = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import walks_of_graph_with_ends_membership_folding
+            return walks_of_graph_with_ends_membership_folding.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        from . import walks_of_graph_membership_folding
+        return walks_of_graph_membership_folding.instantiate(
+                    {G:_G_sub, W:_W_sub}, auto_simplify=False)
+
+    @prover
+    def existential_conclude(self, **defaults_config):
+        '''
+        Called on self = [W in WalksOf(G)], and knowing or assuming
+        that:
+
+            There exists NaturalPos n and v1,...,vn in Vertices(G)
+            such that:
+            (1) W = (v1,...,vn), and
+            (2) Every pair v_{i}, v_{i+1} of vertices are adjacent in
+                graph G (for i in {1, 2, ..., n-1}).
+        
+        derive and return self.
+
+        Called on self = [W in WalksOf(G, ends=(a,b))], and
+        knowing or assuming the information specified above for
+        WalksOf(G) plus knowing or assuming the additional info that:
+
+            (3) v1 = a
+            (4) vn = b
+
+        derive and return self.
+        '''
+
+        _W_sub = self.element
+        _G_sub = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import walks_of_graph_membership_with_ends_exists_folding
+            return walks_of_graph_membership_with_ends_exists_folding.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        from . import walks_of_graph_membership_exists_folding
+        return walks_of_graph_membership_exists_folding.instantiate(
+                    {G:_G_sub, W:_W_sub}, auto_simplify=False)
 
 
 class WalksMembership(SetMembership):

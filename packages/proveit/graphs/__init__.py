@@ -16,13 +16,13 @@ from .paths_of import PathsOf
 from .quotients import QuotientGraph
 # from .union import GraphUnion
 from .vertices import (
-      AdjacentVertices, AllDistinct, Degree, OddVertices, StepCount,
-      VertexSequence, Vertices)
+      AdjacentVertices, AllDistinct, Degree, OddVertices,
+      SequenceOrder, StepCount, Vertex, VertexSequence, Vertices)
 from .walks import (BeginVertex, BeginningVertex, Circuits,
           ClosedTrails, ClosedWalk, ClosedWalks, Cycles,
           EdgeSequence, EdgeSet, EndVertex, EndingVertex, EndVertices,
-          EulerianCircuits, EulerianTrails, IsPath, IsWalk, Paths, Trails,
-          WalkLength, Walks)
+          EulerianCircuits, EulerianTrails, IsPath, IsWalk,
+          Paths, PathsOf, Trails, TrailsOf, WalkLength, Walks, WalksOf)
 
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.

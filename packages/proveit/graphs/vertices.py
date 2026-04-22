@@ -404,6 +404,31 @@ class VertexSequence(Operation):
         return ExprTuple(*edge_components)
 
 
+class SequenceOrder(Operation):
+    '''
+    SequenceOrder(S) represents the number of vertices (including
+    repetitions) in the VertexSequence S.
+    '''
+
+    _operator_ = Literal(string_format='SeqOrder',
+                         latex_format=r'\textrm{SeqOrder}',
+                         theory=__file__)
+
+    def __init__(self, vertex_seq, *, styles=None):
+        '''
+        Initialize a SequenceOrder(vertex_seq) object, a representation
+        of the number of vertices in the VertexSequence vertex_seq.
+        '''
+        self.seq = vertex_seq
+        super().__init__(self._operator_, vertex_seq, styles=styles)
+
+    def string(self, **kwargs):
+        return '|' + self.seq.formatted('string', **kwargs) + '|'
+
+    def latex(self, **kwargs):
+        return r'\left|' + self.seq.formatted('latex', **kwargs) + r'\right|'
+
+
 class StepCount(Operation):
     '''
     StepCount(vertex_seq) represents the number of steps or transitions
@@ -454,4 +479,34 @@ class AllDistinct(Operation):
 
     def latex(self, **kwargs):
         return r'\text{AllDistinct}(' + self.seq.latex(**kwargs) + r')'
+
+
+class Vertex(Operation):
+    '''
+    Vertex(S, i) represents the ith vertex (using 1-based indexing)
+    within the VertexSequence S.
+    '''
+
+    _operator_ = Literal(string_format='Vertex',
+                         latex_format=r'\textrm{Vertex}',
+                         theory=__file__)
+
+    def __init__(self, vertex_seq, index, *, styles=None):
+        self.seq = vertex_seq
+        self.index = index
+        super().__init__(self._operator_, (vertex_seq, index), styles=styles)
+
+    def string(self, **kwargs):
+        return (f"Vertex({self.seq.string(**kwargs)}, " +
+               f"{self.index.string(**kwargs)})")
+
+    # def latex(self, **kwargs):
+    #     return (r"\text{Vertex}(" + self.seq.latex(**kwargs) + ", " +
+    #            self.index.latex(**kwargs) + r")")
+
+    # This version provides subscripting, which might sometimes
+    # be awkward.
+    def latex(self, **kwargs):
+        return (r"" + self.seq.latex(**kwargs) + r"_{" + 
+                self.index.latex(**kwargs) + r"}" )
 
