@@ -1,6 +1,6 @@
 from proveit import Function, Literal
 from proveit import e, w, E, G, V
-from proveit.logic import ClassMembership
+from proveit.classes import ClassMembership
 
 
 class SquareGridGraph(Function):

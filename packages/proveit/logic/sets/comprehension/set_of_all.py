@@ -16,9 +16,9 @@ class SetOfAll(OperationOverInstances):
                  conditions=None, styles=None, _lambda_map=None):
         '''
         Create an expression representing the set of all
-        instance_element for instance parameter(s) such that the
-        conditions are satisfied:
-        {instance_element | conditions}_{instance_param_or_params \in S}
+        instance_element for instance parameter(s) such that the conditions
+        are satisfied:
+        {instance_element | conditions}_{instance_param_or_params ∈ S}
         '''
         OperationOverInstances.__init__(
             self, SetOfAll._operator_, instance_param_or_params,
@@ -45,14 +45,19 @@ class SetOfAll(OperationOverInstances):
         return SetOfAllNonmembership(element, self)
 
     def _formatted(self, format_type, fence=False, **kwargs):
-        from proveit import ExprRange
         out_str = ''
-        explicit_conditions = ExprTuple(*self.explicit_conditions())
-        inner_fence = (explicit_conditions.num_entries() > 0)
+        num_param_mem_cond_entries, formatted_membership_op, formatted_class = (
+            self.param_membership_formatting_info(format_type))
         instance_element = self.instance_element
+        param_membership_conditions = ExprTuple(
+            *self.conditions[:num_param_mem_cond_entries])
+        explicit_conditions = ExprTuple(
+            *self.conditions[num_param_mem_cond_entries:])
+        inner_fence = (explicit_conditions.num_entries() > 0)
+        has_multi_domain = (formatted_class is None)
         if hasattr(self, 'condition'):
             with defaults.temporary() as temp_defaults:
-                # Add the condition as an assumption when formatting 
+                # Add the condition as an assumption when formatting
                 # the instance expression.
                 temp_defaults.assumptions = defaults.assumptions + (
                         self.condition,)
@@ -61,9 +66,6 @@ class SetOfAll(OperationOverInstances):
         else:
             formatted_instance_element = instance_element.formatted(
                     format_type, fence=inner_fence)
-        explicit_domains = self.explicit_domains()
-        has_multi_domain = not self.has_one_domain()
-        domain_conditions = ExprTuple(*self.domain_conditions())
         if format_type == 'latex':
             out_str += r"\left\{"
         else:
@@ -84,14 +86,14 @@ class SetOfAll(OperationOverInstances):
         out_str += '_{'
         instance_param_or_params = self.instance_param_or_params
         if has_multi_domain:
-            out_str += domain_conditions.formatted(
+            out_str += param_membership_conditions.formatted(
                     format_type, operator_or_operators=',', fence=False)
         else:
             # all in the same domain
             out_str += instance_param_or_params.formatted(
                 format_type, operator_or_operators=',', fence=False)
-            out_str += r' \in ' if format_type == 'latex' else ' in '
-            out_str += explicit_domains[0].formatted(format_type)
+            out_str += ' %s '%formatted_membership_op
+            out_str += formatted_class
         out_str += '}'
         return out_str
 
@@ -108,7 +110,7 @@ class SetOfAll(OperationOverInstances):
     #     '''
     #     with defaults.temporary() as temp_defaults:
     #         temp_defaults.preserved_exprs.add(self.condition)
-        
+
     #         return OperationOverInstances.shallow_simplification(self)
 
     @relation_prover
@@ -122,11 +124,11 @@ class SetOfAll(OperationOverInstances):
             _y = superset.instance_param_or_params
             _f = Lambda(_y, superset.instance_element)
             _g = Lambda(_x, self.instance_element)
-            if (_f == _g and 
+            if (_f == _g and
                     self.explicit_domains() == superset.explicit_domains()):
-                _Q = Lambda(superset.instance_param_or_params, 
+                _Q = Lambda(superset.instance_param_or_params,
                             superset.non_domain_condition())
-                _R = Lambda(self.instance_param_or_params, 
+                _R = Lambda(self.instance_param_or_params,
                             self.non_domain_condition())
                 _S = self.explicit_domains()
                 _n = _x.num_elements()
@@ -240,7 +242,7 @@ class SetOfAll(OperationOverInstances):
             _y_sub = self.all_instance_vars()[0]
             return unfold_basic_comprehension.instantiate(
                     {S:self.domain, _Q_op:_Q_op_sub, x:element, y:_y_sub})
-        else: 
+        else:
             # cases where we have:
             # (1) multiple instance_vars,
             # (2) and/or instance_element is not just an instance_var

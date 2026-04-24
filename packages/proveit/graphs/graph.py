@@ -1,6 +1,6 @@
 from proveit import equality_prover, Function, Literal, prover
 from proveit import e, w, E, G, V
-from proveit.logic import ClassMembership
+from proveit.classes import ClassMembership
 # from proveit.graphs import GraphsMembership
 
 

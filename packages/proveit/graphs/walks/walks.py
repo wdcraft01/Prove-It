@@ -1,6 +1,6 @@
-from proveit import equality_prover, Function, Literal
-from proveit.logic import ClassMembership
-from proveit.graphs import Graph,  Size
+from proveit import ( equality_prover, ExprTuple, Function, Literal,
+                      NamedExprs, Operation )
+from proveit.graphs import Size
 
 class Walks(Function):
     '''
@@ -47,6 +47,153 @@ class Walks(Function):
 #     def nonmembership_object(self, element):
 #         from .walks_membership import WalksNonmembership
 #         return WalksNonmembership(element, self)
+
+
+class WalksOf(Operation):
+    '''
+    WalksOf(G, [ends=(a, b)]) represents the set of walks in graph G.
+    Optional 'ends' constraint can restrict membership to a-b walks,
+    that is, walks with endvertices {a, b}.
+    Generally, a walk W in a simple undirected graph G is a sequence
+        (u = v1, v2, ..., v = vn)
+    of vertices of G such that consecutive vertices in the sequence
+    are adjacent in G --- in other words, every pair {v_{i}, v_{i+1}}
+    of vertices (for i in {1, 2, ..., n-1}) corresponds to an edge in G.
+    u and v are called the endvertices or endpoints of the walk, and
+    a walk from u to v is often referred to as a u-v walk.
+    The vertices v2, v3, ..., v_{n-1} are called internal vertices.
+    The number of edges in the walk W, denoted by ||W||, is the
+    length of the walk (in this example, ||W|| = n-1).
+    The number of vertices in the walk W, including multiplicities
+    of repeated vertices, is denoted |W|, analogous to the notation
+    for the order of a graph, |G|.
+
+    NOTE: WalksOf(G) is intended to eventually replace the original
+          Walks(k, G) class.
+    '''
+
+    # the literal operator of the WalksOf operation
+    _operator_ = Literal(string_format='WalksOf',
+                         latex_format=r'\textrm{WalksOf}',
+                         theory=__file__)
+
+    def __init__(self, graph, *, ends: tuple | None = None,
+                 styles=None):
+        '''
+        Initialize a representation of the WalksOf(G) (the set of all
+        walks in graph G) or a representation of WalksOf(G, a->b) (the
+        set of all a-b walks in graph G).
+        '''
+
+        items = [("graph", graph)]
+        if ends is not None:
+            items.append(("ends", ends))
+
+        operands = NamedExprs(*items)
+
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = 'WalksOf('
+        string_str += self.graph.string(**kwargs)
+        if hasattr(self, 'ends'):
+            begin = self.ends[0]
+            end   = self.ends[1]
+            string_str += (
+                    f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+        string_str += r')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = r'\textrm{WalksOf}('
+        # If operands is a list (from the axiom path)
+        latex_str += self.graph.latex(**kwargs)
+        if hasattr(self, 'ends'):
+            begin = self.ends[0]
+            end   = self.ends[1]
+            latex_str += (
+                f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}")
+        latex_str += r')'
+        return latex_str
+
+    def membership_object(self, element):
+        from .walks_membership import WalksOfMembership
+        return WalksOfMembership(element, self)
+
+
+class IsWalk(Operation):
+    '''
+    IsWalk(W, G) denotes that W is a walk in graph G.
+    IsPath(W, G, a, b) denotes that W is a walk in graph G with
+    walk endpoints a and b.
+    Technically, a walk W is not a graph but a VertexSequence
+
+        VertexSeq(v0, v1, ..., vn)
+
+    in which each pair of consecutive vertices corresponds to an edge
+    in graph G.
+    To deal with the graph of such a walk, you will need WalkGraph(P, G)
+    which represents a walk subgraph of graph G.
+    '''
+
+    # the literal operator of the IsPath operation
+    _operator_ = Literal(string_format='IsWalk',
+                         latex_format=r'\text{IsWalk}',
+                         theory=__file__)
+
+    def __init__(self, walk, graph, start=None, end=None, *, styles=None):
+        '''
+        Represent the claim IsWalk(W, G) that W is a walk in graph G,
+        or the more specific claim IsWalk(W, G, a, b) that W is a walk
+        in G with walk endpoints a and b.
+        '''
+
+        # (1) Build the list of (keyword, expression) pairs
+        items = [
+            ("walk", walk),
+            ("graph", graph)
+        ]
+        
+        # (2) Only add optional endpoints if they are actually provided
+        if start is not None:
+            items.append(("start", start))
+        if end is not None:
+            items.append(("end", end))
+        
+        # (3) Initialize NamedExprs with the list of tuples
+        operands = NamedExprs(*items)
+        
+        # (4) Call Operation's init
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = ('IsWalk(' + self.walk.string() + ', ' +
+                      self.graph.string())
+        if (hasattr(self, 'start') and self.start is not None):
+            string_str += ', ' + self.start.string()
+        if (hasattr(self, 'end') and self.end is not None):
+            string_str += ', ' + self.end.string()
+        string_str += ')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = (r'\text{IsWalk}(' + self.walk.latex() + r', ' +
+                     self.graph.latex())
+        if (hasattr(self, 'start') and self.start is not None):
+            latex_str += r', ' + self.start.latex()
+        if (hasattr(self, 'end') and self.end is not None):
+            latex_str += r', ' + self.end.latex()
+        latex_str += r')'
+        return latex_str
+
+    @classmethod
+    def extract_init_arg_value(cls, arg_name, operator, operands):
+        # The base Operation.__init__ already maps keys to attributes 
+        # via getattr/setattr, but for reconstruction (remaking exprs), 
+        # we check the NamedExprs specifically.
+        if isinstance(operands, NamedExprs):
+            return operands.get(arg_name, None)
+        return None
 
 
 class ClosedWalks(Function):
@@ -115,6 +262,73 @@ class Trails(Function):
     #     return TrailsNonmembership(element, self)
 
 
+class TrailsOf(Operation):
+    '''
+    TrailsOf(G, [length=k], [begin=u], [end=v]) represents the set of
+    trails in graph G. Optional constraints can restrict membership
+    to walks of a specific length k, and/or to walks with specific
+    begin/end vertices u and v.
+
+    A trail T in graph G is a special case of a walk: a walk in which
+    no edge is repeated (see the WalksOf class defined above for
+    more details).
+
+    NOTE: TrailsOf() is intended to eventually replace the original
+          Trails() class.
+    '''
+
+    # the literal operator of the WalksOf operation
+    _operator_ = Literal(string_format='TrailsOf',
+                         latex_format=r'\textrm{TrailsOf}',
+                         theory=__file__)
+
+    def __init__(self, graph, length=None, begin=None, end=None,
+                 *, styles=None):
+
+        items = [("graph", graph)]
+        if length is not None:
+            items.append(("length", length))
+        if begin is not None:
+            items.append(("begin", begin))
+        if end is not None:
+            items.append(("end", end))
+
+        operands = NamedExprs(*items)
+
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = 'TrailsOf(' + self.graph.string(**kwargs)
+        if hasattr(self, 'length'):
+            string_str += ', ' + self.length.string(**kwargs)
+        begin = getattr(self, 'begin', None)
+        end = getattr(self, 'end', None)
+        if begin and end:
+            string_str += (
+                    f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+        elif begin:
+            string_str += f", {self.begin.string(**kwargs)} ->"
+        elif end:
+            string_str += f", -> {self.end.string(**kwargs)}"
+        string_str += r')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = r'\textrm{TrailsOf}(' + self.graph.latex(**kwargs)
+        if hasattr(self, 'length'):
+            latex_str += r', ' + self.length.latex(**kwargs)
+        begin = getattr(self, 'begin', None)
+        end = getattr(self, 'end', None)
+        if begin and end:
+            latex_str += f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}"
+        elif begin:
+            latex_str += f", {self.begin.latex(**kwargs)} \\to"
+        elif end:
+            latex_str += f", \\to {self.end.latex(**kwargs)}"
+        latex_str += r')'
+        return latex_str
+
+
 class ClosedTrails(Function):
     '''
     ClosedTrails(k, G) represents the set of closed trails of length
@@ -178,6 +392,140 @@ class Paths(Function):
 #     def nonmembership_object(self, element):
 #         from .walks_membership import PathsNonmembership
 #         return PathsNonmembership(element, self)
+
+
+class PathsOf(Operation):
+    '''
+    PathsOf(G, [ends=(a, b)]) represents the set of paths in graph G.
+    Optional 'ends' constraint can restrict membership to a-b paths,
+    that is, paths with endvertices {a, b}.
+    Generally, a path W in a simple undirected graph G is a walk in
+    which no vertex (and thus no edge) is repeated. See the WalksOf()
+    class above for a description of a walk in a graph G.
+
+    NOTE: PathsOf(G) is intended to eventually replace the original
+          Paths(k, G) class.
+    '''
+
+    # the literal operator of the PathsOf operation
+    _operator_ = Literal(string_format='PathsOf',
+                         latex_format=r'\textrm{PathsOf}',
+                         theory=__file__)
+
+    def __init__(self, graph, *, ends: tuple | None = None,
+                 styles=None):
+        '''
+        Initialize a representation of PathsOf(G) (the set of all
+        paths in graph G) or a representation of PathsOf(G, a->b) (the
+        set of all a-b paths in graph G).
+        '''
+
+        items = [("graph", graph)]
+        if ends is not None:
+            items.append(("ends", ends))
+
+        operands = NamedExprs(*items)
+
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = 'PathsOf('
+        string_str += self.graph.string(**kwargs)
+        if hasattr(self, 'ends'):
+            begin = self.ends[0]
+            end   = self.ends[1]
+            string_str += (
+                    f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+        string_str += r')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = r'\textrm{PathsOf}('
+        # If operands is a list (from the axiom path)
+        latex_str += self.graph.latex(**kwargs)
+        if hasattr(self, 'ends'):
+            begin = self.ends[0]
+            end   = self.ends[1]
+            latex_str += (
+                f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}")
+        latex_str += r')'
+        return latex_str
+
+    def membership_object(self, element):
+        from .walks_membership import PathsOfMembership
+        return PathsOfMembership(element, self)
+
+
+class IsPath(Operation):
+    '''
+    IsPath(P, G) denotes that VertexSequence P is a path in graph G.
+    IsPath(P, G, a, b) denotes that P is a path in graph G with
+    path endpoints a and b.
+    Technically, a path P is not a graph but a sequence
+        (v0, v1, ..., vn)
+    of non-repeating adjacent vertices in the containing graph G.
+    To deal with the graph of such a path, you will need PathGraph(P, G)
+    with PathGraph(P, G) being a subgraph of graph G.
+    '''
+
+    # the literal operator of the IsPath operation
+    _operator_ = Literal(string_format='IsPath',
+                         latex_format=r'\text{IsPath}',
+                         theory=__file__)
+
+    def __init__(self, path, graph, start=None, end=None, *, styles=None):
+        '''
+        Represent the claim IsPath(P, G) that P is a path in graph G,
+        or the more specific claim IsPath(P, G, a, b) that P is a path
+        in G with path endpoints a and b.
+        '''
+
+        # (1) Build the list of (keyword, expression) pairs
+        items = [
+            ("path", path),
+            ("graph", graph)
+        ]
+        
+        # (2) Only add optional endpoints if they are actually provided
+        if start is not None:
+            items.append(("start", start))
+        if end is not None:
+            items.append(("end", end))
+        
+        # (3) Initialize NamedExprs with the list of tuples
+        operands = NamedExprs(*items)
+        
+        # (4) Call Operation's init
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = ('IsPath(' + self.path.string() + ', ' +
+                      self.graph.string())
+        if (hasattr(self, 'start') and self.start is not None):
+            string_str += ', ' + self.start.string()
+        if (hasattr(self, 'end') and self.end is not None):
+            string_str += ', ' + self.end.string()
+        string_str += ')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = (r'\text{IsPath}(' + self.path.latex() + r', ' +
+                     self.graph.latex())
+        if (hasattr(self, 'start') and self.start is not None):
+            latex_str += r', ' + self.start.latex()
+        if (hasattr(self, 'end') and self.end is not None):
+            latex_str += r', ' + self.end.latex()
+        latex_str += r')'
+        return latex_str
+
+    @classmethod
+    def extract_init_arg_value(cls, arg_name, operator, operands):
+        # The base Operation.__init__ already maps keys to attributes 
+        # via getattr/setattr, but for reconstruction (remaking exprs), 
+        # we check the NamedExprs specifically.
+        if isinstance(operands, NamedExprs):
+            return operands.get(arg_name, None)
+        return None
 
 
 class Circuits(Function):
@@ -481,6 +829,82 @@ class EndingVertex(Function):
         self.walk = W
         Function.__init__(
                 self, EndingVertex._operator_, W, styles=styles)
+
+
+class BeginVertex(Function):
+    '''
+    BeginVertex(S) represents the beginning vertex of a sequence S of
+    vertices in the form of a VertexSequence. Given a VertexSequence
+    such as S = VertexSeq(a, b, c, d), then BeginVertex(S) would
+    represent (but not literally return or evaluate to) the vertex 'a'. 
+
+    '''
+
+    # the literal operator of the BeginningVertex(W) operation
+    _operator_ = Literal(string_format='BeginVertex',
+                         latex_format=r'\textrm{BeginVertex}',
+                         theory=__file__)
+
+    def __init__(self, vertex_seq, *, styles=None):
+        '''
+        Represent BeginVertex(vertex_seq), the beginning vertex of
+        the VertexSequence vertex_seq.
+        '''
+        self.seq = vertex_seq
+        Function.__init__(
+                self, BeginVertex._operator_, vertex_seq, styles=styles)
+
+    def formatted(self, format_type, **kwargs):
+        # (1) Get the std formatting from the operand VertexSequence
+        content = self.seq.formatted(format_type, **kwargs)
+        # (2) Add our desired prefix
+        if format_type == 'latex':
+            return r'\text{BeginVertex}(' + content + r')'
+        return 'BeginVertex(' + content + ')'
+
+    def string(self, **kwargs):
+        return self.formatted('string', **kwargs)
+
+    def latex(self, **kwargs):
+        return self.formatted('latex', **kwargs)
+
+
+class EndVertex(Function):
+    '''
+    EndVertex(S) represents the ending vertex of a sequence S of
+    vertices in the form of a VertexSequence. Given a VertexSequence
+    such as S = VertexSeq(a, b, c, d), then EndVertex(S) would
+    represent (but not literally return or evaluate to) the vertex 'd'. 
+
+    '''
+
+    # the literal operator of the BeginningVertex(W) operation
+    _operator_ = Literal(string_format='EndVertex',
+                         latex_format=r'\textrm{EndVertex}',
+                         theory=__file__)
+
+    def __init__(self, vertex_seq, *, styles=None):
+        '''
+        Represent EndVertex(vertex_seq), the ending vertex of
+        the VertexSequence vertex_seq.
+        '''
+        self.seq = vertex_seq
+        Function.__init__(
+                self, EndVertex._operator_, vertex_seq, styles=styles)
+
+    def formatted(self, format_type, **kwargs):
+        # (1) Get the std formatting from the operand VertexSequence
+        content = self.seq.formatted(format_type, **kwargs)
+        # (2) Add our desired prefix
+        if format_type == 'latex':
+            return r'\text{EndVertex}(' + content + r')'
+        return 'EndVertex(' + content + ')'
+
+    def string(self, **kwargs):
+        return self.formatted('string', **kwargs)
+
+    def latex(self, **kwargs):
+        return self.formatted('latex', **kwargs)
 
 
 class EulerianTrails(Function):

@@ -1,5 +1,5 @@
 from proveit import v, E, G, V, equality_prover, prover
-from proveit.logic import SetMembership, SetNonmembership
+from proveit.logic import Equals, InSet, SetMembership, SetNonmembership
 from proveit.graphs import Graph
 
 
@@ -21,10 +21,15 @@ class VerticesMembership(SetMembership):
 
         from . import vertices_membership_def
         element = self.element
-        _V_sub  = self.domain.graph.vertices
-        _E_sub  = self.domain.graph.edges
-        return vertices_membership_def.instantiate(
-                {v:element, V:_V_sub, E:_E_sub },auto_simplify=False)
+        if (hasattr(self.domain.graph, 'vertices')
+            and hasattr(self.domain.graph, 'edges')):
+            _V_sub  = self.domain.graph.vertices
+            _E_sub  = self.domain.graph.edges
+            return vertices_membership_def.instantiate(
+                    {v:element, V:_V_sub, E:_E_sub },auto_simplify=False)
+
+        return Equals(InSet(element, self.domain),
+                      InSet(element, self.domain)).prove()
 
     def as_defined(self):
         '''
