@@ -396,68 +396,64 @@ class Paths(Function):
 
 class PathsOf(Operation):
     '''
-    PathsOf(G, [length=k], [begin=u], [end=v]) represents the set of
-    paths in graph G. Optional constraints can restrict membership
-    to paths of a specific length k, and/or to paths with specific
-    begin/end vertices u and v.
-    A path P in graph G is a special case of a walk: a walk in which
-    no vertex is repeated (see the WalksOf class defined above for
-    more details).
+    PathsOf(G, [ends=(a, b)]) represents the set of paths in graph G.
+    Optional 'ends' constraint can restrict membership to a-b paths,
+    that is, paths with endvertices {a, b}.
+    Generally, a path W in a simple undirected graph G is a walk in
+    which no vertex (and thus no edge) is repeated. See the WalksOf()
+    class above for a description of a walk in a graph G.
 
     NOTE: PathsOf(G) is intended to eventually replace the original
-          Paths(G) class.
+          Paths(k, G) class.
     '''
 
-    # the literal operator of the WalksOf operation
+    # the literal operator of the PathsOf operation
     _operator_ = Literal(string_format='PathsOf',
                          latex_format=r'\textrm{PathsOf}',
                          theory=__file__)
 
-    def __init__(self, graph, length=None, begin=None, end=None,
-                 *, styles=None):
+    def __init__(self, graph, *, ends: tuple | None = None,
+                 styles=None):
+        '''
+        Initialize a representation of PathsOf(G) (the set of all
+        paths in graph G) or a representation of PathsOf(G, a->b) (the
+        set of all a-b paths in graph G).
+        '''
 
         items = [("graph", graph)]
-        if length is not None:
-            items.append(("length", length))
-        if begin is not None:
-            items.append(("begin", begin))
-        if end is not None:
-            items.append(("end", end))
+        if ends is not None:
+            items.append(("ends", ends))
 
         operands = NamedExprs(*items)
 
         super().__init__(self._operator_, operands=operands, styles=styles)
 
     def string(self, **kwargs):
-        string_str = 'PathsOf(' + self.graph.string(**kwargs)
-        if hasattr(self, 'length'):
-            string_str += ', ' + self.length.string(**kwargs)
-        begin = getattr(self, 'begin', None)
-        end = getattr(self, 'end', None)
-        if begin and end:
+        string_str = 'PathsOf('
+        string_str += self.graph.string(**kwargs)
+        if hasattr(self, 'ends'):
+            begin = self.ends[0]
+            end   = self.ends[1]
             string_str += (
                     f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
-        elif begin:
-            string_str += f", {self.begin.string(**kwargs)} ->"
-        elif end:
-            string_str += f", -> {self.end.string(**kwargs)}"
         string_str += r')'
         return string_str
 
     def latex(self, **kwargs):
-        latex_str = r'\textrm{PathsOf}(' + self.graph.latex(**kwargs)
-        if hasattr(self, 'length'):
-            latex_str += r', ' + self.length.latex(**kwargs)
-        begin = getattr(self, 'begin', None)
-        end = getattr(self, 'end', None)
-        if begin and end:
-            latex_str += f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}"
-        elif begin:
-            latex_str += f", {self.begin.latex(**kwargs)} \\to"
-        elif end:
-            latex_str += f", \\to {self.end.latex(**kwargs)}"
+        latex_str = r'\textrm{PathsOf}('
+        # If operands is a list (from the axiom path)
+        latex_str += self.graph.latex(**kwargs)
+        if hasattr(self, 'ends'):
+            begin = self.ends[0]
+            end   = self.ends[1]
+            latex_str += (
+                f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}")
         latex_str += r')'
         return latex_str
+
+    def membership_object(self, element):
+        from .walks_membership import PathsOfMembership
+        return PathsOfMembership(element, self)
 
 
 class IsPath(Operation):

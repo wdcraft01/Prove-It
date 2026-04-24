@@ -2,7 +2,8 @@ from proveit import (a, b, i, k, u, v, C, G, P, S, T, W,
         equality_prover, Function, NamedExprs, prover, relation_prover)
 from proveit.logic import (And, Equals, Forall, InSet, SetMembership,
             SetNonmembership)
-from proveit.logic.sets import Functions, Injections, Restriction, SetOfAll
+from proveit.logic.sets import (
+        Distinct, Functions, Injections, Restriction, SetOfAll)
 from proveit.numbers import zero, one, Add, Interval, subtract
 from proveit.graphs import (AdjacentVertices, BeginningVertex,
             Circuits, ClosedWalks, Edges, EdgeSequence, EndingVertex,
@@ -683,6 +684,172 @@ class ClosedTrailsMembership(SetMembership):
         return (closed_trails_within_closed_walks.instantiate(
             {G:_G, k:_k}, auto_simplify=False)
             .derive_superset_membership(self.element, auto_simplify=False))
+
+
+class PathsOfMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set
+    of (possibly a-b) paths in the simple finite graph G, denoted
+    PathsOf(G) or possibly PathsOf(G, a -> b).
+    See related membership classes above for the basic
+    WalksOfMembership() class.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [P in PathsOf(G)], deduce and return the equality:
+        
+            [P in PathsOf(G)]
+            = P in {W}_{W in WalksOf(G)} such that:
+              (1) Distinct(W) (i.e. elements or vertices of walk W
+                  are distinct)
+
+        From self = [P in PathsOf(G, ends=(a,b))], deduce and return
+        the equality:
+
+            [P in PathsOf(G, ends=(a,b))]
+            = P in {W}_{W in WalksOf(G, ends=(a,b))} such that:
+               (1) Distinct(W) (i.e. elements or vertices of walk W
+                   are distinct)
+        '''
+
+        _P_sub = self.element
+        _G_sub = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import paths_of_graph_with_ends_membership_def
+            return paths_of_graph_with_ends_membership_def.instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        from . import paths_of_graph_membership_def
+        return paths_of_graph_membership_def.instantiate(
+                    {G:_G_sub, P:_P_sub}, auto_simplify=False)
+
+    def as_defined(self):
+        '''
+        From self = [P in Paths(G)], return the expression (NOT a
+        judgment):
+            P in {W}_{W in WalksOf(G)} such that:
+            (1) Distinct(W) (i.e. elements or vertices of walk W
+                are distinct)
+
+        and from self = [P in Paths(G, ends=(a,b))], return the
+        expression (NOT a judgment):
+
+            P in {W}_{W in WalksOf(G, ends=(a,b))} such that:
+               (1) Distinct(W) (i.e. elements or vertices of walk W
+                   are distinct)
+        '''
+        from proveit.graphs import WalksOf
+        element = self.element
+        _G      = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a = self.domain.ends[0]
+            _b = self.domain.ends[1]
+            return InSet(element,
+                         SetOfAll(W, W,
+                                  conditions = [Distinct(W)],
+                                  domain = WalksOf(_G, ends=(_a, _b))))
+        return InSet(element,
+               SetOfAll(W, W,
+               conditions = [Distinct(W)],
+               domain = WalksOf(_G)))
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [P in PathsOf(G)], and knowing or assuming self,
+        derive and return the claim that:
+
+            P in {W}_{W in WalksOf(G)} such that:
+            (1) Distinct(W) (i.e. elements or vertices of walk W
+                are distinct)
+        
+        From self = [P in PathsOf(G, ends=(a,b))], and knowing or
+        assuming self, deduce and return the claim that:
+
+            P in {W}_{W in WalksOf(G, ends=(a,b))} such that:
+            (1) Distinct(W) (i.e. elements or vertices of walk W
+                are distinct)
+        '''
+
+        _P_sub = self.element
+        _G_sub = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import paths_of_graph_with_ends_membership_unfolding
+            return paths_of_graph_with_ends_membership_unfolding.instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        from . import paths_of_graph_membership_unfolding
+        return paths_of_graph_membership_unfolding.instantiate(
+                    {G:_G_sub, P:_P_sub}, auto_simplify=False)
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        Called on self = [P in PathsOf(G)], and knowing or assuming
+        that:
+
+            P in {W}_{W in WalksOf(G)} such that:
+            (1) Distinct(W) (i.e. elements or vertices of walk W
+                are distinct)
+
+        derive and return self.
+
+        Called on self = [P in PathsOf(G, ends=(a,b))], and knowing or
+        assuming that:
+
+            P in {W}_{W in WalksOf(G, ends=(a, b))} such that:
+            (1) Distinct(W) (i.e. elements or vertices of walk W
+                are distinct)
+
+        derive and return self.
+        '''
+
+        _P_sub = self.element
+        _G_sub = self.domain.graph
+
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import paths_of_graph_with_ends_membership_folding
+            return paths_of_graph_with_ends_membership_folding.instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        from . import paths_of_graph_membership_folding
+        return paths_of_graph_membership_folding.instantiate(
+                    {G:_G_sub, P:_P_sub}, auto_simplify=False)
+
+    @relation_prover
+    def deduce_in_bool(self, **defaults_config):
+
+        _P_sub = self.element
+        _G_sub = self.domain.graph
+        
+        if hasattr(self.domain, 'ends'):
+            _a_sub = self.domain.ends[0]
+            _b_sub = self.domain.ends[1]
+            from . import paths_of_graph_with_ends_membership_is_bool
+            return paths_of_graph_with_ends_membership_is_bool.instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        from . import paths_of_graph_membership_is_bool
+        return paths_of_graph_membership_is_bool.instantiate(
+                    {G:_G_sub, P:_P_sub}, auto_simplify=False)
 
 
 class PathsMembership(SetMembership):
