@@ -1,7 +1,7 @@
 # Boolean arithmetic, equality, and set theory.
 
 from .booleans import Boolean, TRUE, FALSE
-from .booleans import (And, Or, Not, Implies, Iff, 
+from .booleans import (And, Or, Not, Implies, Iff, XOr,
                        compose, conclude_via_implication)
 from .booleans import in_bool, BooleanSet, TrueLiteral, FalseLiteral
 from .booleans import Forall, Exists, NotExists, UniqueExists
@@ -26,10 +26,9 @@ from .sets import (
 from .sets import (Union, UnionAll, Intersect, IntersectAll, Difference,
                    SetOfAll, CartProd, CartExp,
                    PowerSet, Disjoint, Distinct, Card)
-from .sets import (Functions, Injections, Surjections, Bijections,
+from .sets import (IsFunction, Functions, IsInjection, Injections,
+                   IsSurjection, Surjections, IsBijection, Bijections,
                    Image, InvImage)
-from .classes import InClass, NotInClass, ClassMembership, ClassNonmembership
-
 #from mapping.mapping_ops import Domain, CoDomain
 
 import proveit

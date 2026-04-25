@@ -273,11 +273,52 @@ class IntegerNonPosSet(NumberSet):
         from .integer_membership import IntegerNonPosMembership    
         return IntegerNonPosMembership(element)
 
+class IntegerEvenSet(NumberSet):
+    '''
+    Class to represent the even integers {..., -2, 0, 2, 4, ...}
+    and provide related methods. The even integer set appears as
+    'IntegerEven' in string output and as mathbb 'E' in LaTeX output.
+    '''
+    def __init__(self, *, styles=None):
+        NumberSet.__init__(self, 'IntegerEven', r'\mathbb{E}',
+                           theory=__file__, styles=styles,
+                           fence_when_forced=True)
+
+    def membership_object(self, element):
+        from .integer_membership import IntegerEvenMembership    
+        return IntegerEvenMembership(element)
+
+class IntegerOddSet(NumberSet):
+    '''
+    Class to represent the odd integers {..., -3, -1, 1, 3, ...}
+    and provide related methods. The odd integer set appears as
+    'IntegerOdd' in string output and as mathbb 'O' in LaTeX output.
+    '''
+    def __init__(self, *, styles=None):
+        NumberSet.__init__(self, 'IntegerOdd', r'\mathbb{O}',
+                           theory=__file__, styles=styles,
+                           fence_when_forced=True)
+
+    def membership_object(self, element):
+        from .integer_membership import IntegerOddMembership    
+        return IntegerOddMembership(element)
+
+
+class PrimeSet(NumberSet):
+    def __init__(self, *, styles=None):
+        NumberSet.__init__(self, 'PRIMES', r'\mathbb{P}', 
+                           theory=__file__, styles=styles)
+
+    def membership_object(self, element):
+        from .integer_membership import PrimeMembership    
+        return PrimeMembership(element)
+
 
 if proveit.defaults.running_theory_notebook is None:
     # Import some fundamental theorems without quantifiers when not 
     # running an common/axioms/theorems theory notebook.
     from . import (zero_set_within_int, zero_set_within_nonpos_int,
+                   prime_within_int,
                    nat_within_int,
                    nat_pos_within_int,
                    nat_pos_within_nonzero_int,

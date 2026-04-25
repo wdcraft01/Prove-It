@@ -208,8 +208,7 @@ class Expression(metaclass=ExprType):
     def _clear_():
         '''
         Clear all references to Prove-It information under
-        the Expression jurisdiction.  All Expression classes that store Prove-It
-        state information must implement _clear_ to clear that information.
+        the Expression jurisdiction.
         '''
         assert len(Expression.in_progress_to_conclude) == 0, (
                 "Unexpected remnant 'in_progress_to_conclude' items "
@@ -888,7 +887,7 @@ class Expression(metaclass=ExprType):
         free make attempts that may be cyclic.
         '''
         from proveit import Judgment, Assumption, ProofFailure
-        from proveit.relation import Relation
+        from proveit.relations import Relation
         from proveit.logic import Not, TRUE, Equals
         assumptions = defaults.assumptions
         automation = defaults.conclude_automation
@@ -897,23 +896,49 @@ class Expression(metaclass=ExprType):
             # Generate assumption side-effects.
             Assumption.make_assumptions()
 
-        # See if this Expression already has a legitimate proof.
-        found_truth = Judgment.find_judgment(self, assumptions)
-        if found_truth is not None:
-            found_truth.with_matching_styles(
-                self, assumptions)  # give it the appropriate style
-            # found an existing Judgment that does the job!
-            return found_truth
-
         if self in assumptions:
             # prove by assumption if self is in the list of assumptions.
             from proveit._core_.proof import Assumption
             return Assumption.make_assumption(self).proven_truth
 
+        # See if this Expression already has a legitimate proof.
+        found_truth = Judgment.find_judgment(self, assumptions)
+        if found_truth is not None:
+            # found an existing Judgment that does the job!
+            return found_truth.with_matching_styles(
+                self, assumptions)  # give it the appropriate style
+
         if not automation:
             raise ProofFailure(self, assumptions, "No pre-existing proof")
 
+        # See if this Expression already has an indirect legitimate proof
+        # (proven under assumptions that have been proven by current 
+        # assumptions).
+        found_truth = Judgment.find_judgment(self, assumptions,
+                                             allow_indirect_proven_assumptions=True)
+        if found_truth is not None:
+            # Reprove under new assumptions.
+            found_truth = found_truth.reprove(assumptions=assumptions,
+                                              new_style_expr=self)
+            # found an existing Judgment that does the job!
+            return found_truth.with_matching_styles(
+                self, assumptions)  # give it the appropriate style
+
         if not self._readily_provable():
+            # See if this Expression can be proven indirectly (proven under
+            # assumptions that are provable under current assumptions).
+            found_truth = Judgment.find_judgment(self, assumptions,
+                                                 allow_indirect_provable_assumptions=True)
+            if found_truth is not None:
+                for _assumption in found_truth.assumptions:
+                    _assumption.prove(assumptions=assumptions)
+                # Reprove under new assumptions.
+                found_truth = found_truth.reprove(assumptions=assumptions,
+                                                  new_style_expr=self)
+                # found an existing Judgment that does the job!
+                return found_truth.with_matching_styles(
+                    self, assumptions)  # give it the appropriate style
+            
             # Maybe this Expression isn't readily provable by
             # expression-specific means (note that '_readily_provable'
             # is intended, not 'readily_provable'), but something else 
@@ -1083,7 +1108,7 @@ class Expression(metaclass=ExprType):
         Return True if self is a Relation or the logical negation
         of a relation which is essentially also a relation.
         '''
-        from proveit.relation import Relation
+        from proveit.relations import Relation
         from proveit.logic import Not
         return isinstance(self, Relation) or (
                 isinstance(self, Not) and
