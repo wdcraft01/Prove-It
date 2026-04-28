@@ -4,6 +4,8 @@ from setuptools import setup, find_packages
 from nbstripout.install import install_nbstripout
 import sys
 
+print("DEBUG: setup.py is running")
+
 with open("packages/proveit/_version.py") as f:
     code = compile(f.read(), "packages/proveit/_version.py", 'exec')
     exec(code)
@@ -57,6 +59,13 @@ dist = setup(name='Prove-It',
              classifiers=[_f for _f in classifiers.split("\n") if _f],
              )
 
-if "develop" in sys.argv:
-    print("\n_configuring git locally to filter jupyter notebook 'output' so only 'input' changes will be tracked.")
+print(f"DEBUG: sys.argv is {sys.argv}")
+
+# if "develop" in sys.argv:
+#     print("\n_configuring git locally to filter jupyter notebook 'output' so only 'input' changes will be tracked.")
+#     install_nbstripout(['git', 'config'])
+
+# Updated check to catch modern pip 'editable' installs
+if any(arg in sys.argv for arg in ("develop", "dist_info", "egg_info", "editable_wheel")):
+    print("\n_configuring git locally to filter jupyter notebook 'output'...")
     install_nbstripout(['git', 'config'])
