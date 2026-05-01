@@ -7,9 +7,11 @@ class Partitions(Function):
     partitions of S. An element P of Partitions(S) is a collection
     of non-empty subsets S1, S2, ... of S such that the elements
     of P are all pairwise disjoint and the union S1 U S2 U ...
-    is equal to S. P itself is not required to be finite. When S is
-    finite, Partitions(S) is itself finite and thus a set. When S is
-    infinite, Partitions(S) is a proper class instead of a set.
+    is equal to S. Partitions(S) is a subset of Pow(Pow(S)), 
+    where 'Pow' stands for "power set."
+    When S is finite, Partitions(S) is itself finite and thus a set.
+    When S is infinite, Partitions(S) is still a set, as specified
+    by the Axiom of Power Set in Zermelo-Fraenkel set theory.
     '''
 
     # the literal string for the Partitions operation
@@ -20,7 +22,7 @@ class Partitions(Function):
 
     def __init__(self, S, *, styles=None):
         '''
-        Represent Partions(S), the class of partitions of set S.
+        Represent Partions(S), the set of partitions of set S.
         '''
         self.set = S
         Function.__init__(
