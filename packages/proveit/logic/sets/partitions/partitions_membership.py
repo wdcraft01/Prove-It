@@ -21,9 +21,9 @@ class PartitionsMembership(SetMembership):
     def side_effects(self, judgment):
         '''
         Main side effect is to unfold the basic definition of
-        memberhip in the set of partitions. If P is an element of
-        Partitions(S), then P is a set of non-empty subsets of S
-        whose union is S.
+        memberhip in the set of partitions. If P is an element
+        of Partitions(S), then P is a set of non-empty disjoint
+        subsets of S whose union is S.
         '''
         yield self.unfold
 
