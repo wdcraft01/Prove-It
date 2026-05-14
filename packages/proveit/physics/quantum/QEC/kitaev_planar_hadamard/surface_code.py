@@ -45,7 +45,7 @@ class KitaevPlanarSC(Function):
     KitaevPlanarSC(n, k, d) denotes the set of all Kitaev-style
     planar surface codes utilizing n data qubits to encode k logical
     qubits all with a resulting code distance d.
-    As an example, the Kitaev-style planar code with the confuration:
+    As an example, the Kitaev-style planar code with the configuration:
 
                             |_|_|_|_|
                             |_|_|_|_|
