@@ -228,6 +228,35 @@ class InteriorVertices(Function):
         return InteriorVerticesMembership(element, self)
 
 
+class StandardInteriorVertices(Function):
+    '''
+    StandardInteriorVertices(i), output formatted as StdIntVerts(i),
+    represents the set of interior vertices in the standard graph of
+    surface code S after n the ith step of the pseudo-rotations of
+    the logical Hadamard applied to S.
+    '''
+
+    # the literal operator for the StandardInteriorVertices operation
+    _operator_ = Literal(
+            string_format='IntVerts_{std}',
+            latex_format=r'\mathrm{IntVerts}_{\mathrm{std}}\!',
+            theory=__file__)
+
+    def __init__(self, i, *, styles=None):
+        '''
+        Create StandardInteriorVertices(G), representing the set of
+        interior vertices associated with the graph surface code S
+        after the ith step in the pseudo-rotations of the logical
+        Hadamard applied to S.
+        '''
+        Function.__init__(
+                self, StandardInteriorVertices._operator_, i, styles=styles)
+
+    # def membership_object(self, element):
+    #     from .graph_of_membership import InteriorVerticesMembership
+    #     return InteriorVerticesMembership(element, self)
+
+
 class BoundaryVertices(Function):
     '''
     For a given error chain E on surface code S,
