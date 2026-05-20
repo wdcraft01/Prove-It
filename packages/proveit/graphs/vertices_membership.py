@@ -17,17 +17,34 @@ class VerticesMembership(SetMembership):
         '''
         From self = [elem in Vertices(Graph(V,E))], deduce and return:
             [elem in Vertices(Graph(V,E))] = [elem in V]
+        or from self = [elem in Vertices(G)], where we know or can
+        determine that G = Graph(V,E), deduce and return
+            [elem in Vertices(G)] = [elem in V]
         '''
 
         from . import vertices_membership_def
         element = self.element
-        if (hasattr(self.domain.graph, 'vertices')
-            and hasattr(self.domain.graph, 'edges')):
+        graph   = self.domain.graph
+
+        if isinstance(graph, Graph):
             _V_sub  = self.domain.graph.vertices
             _E_sub  = self.domain.graph.edges
             return vertices_membership_def.instantiate(
-                    {v:element, V:_V_sub, E:_E_sub },auto_simplify=False)
+                    {v:element, V:_V_sub, E:_E_sub}, auto_simplify=False)
 
+        # Maybe graph is equal to an instance of Graph?
+        for item in Equals.yield_known_equal_expressions(graph):
+            if isinstance(item, Graph):
+                # Just use the first one if one exists.
+                from . import vertices_membership_def_by_graph_equality
+                _G_sub = item
+                _V_sub  = item.vertices
+                _E_sub  = item.edges
+                return vertices_membership_def_by_graph_equality.instantiate(
+                        {v:element, V:_V_sub, E:_E_sub, G:_G_sub},
+                        auto_simplify=False)
+
+        # Otherwise return |- self = self
         return Equals(InSet(element, self.domain),
                       InSet(element, self.domain)).prove()
 
