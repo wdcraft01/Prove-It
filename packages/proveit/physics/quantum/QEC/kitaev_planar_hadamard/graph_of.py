@@ -238,13 +238,13 @@ class StandardInteriorVertices(Function):
 
     # the literal operator for the StandardInteriorVertices operation
     _operator_ = Literal(
-            string_format='IntVerts_{std}',
-            latex_format=r'\mathrm{IntVerts}_{\mathrm{std}}\!',
+            string_format='StdIntVerts',
+            latex_format=r'\mathrm{StdIntVerts}',
             theory=__file__)
 
     def __init__(self, i, *, styles=None):
         '''
-        Create StandardInteriorVertices(G), representing the set of
+        Create StandardInteriorVertices(i), representing the set of
         interior vertices associated with the graph surface code S
         after the ith step in the pseudo-rotations of the logical
         Hadamard applied to S.
