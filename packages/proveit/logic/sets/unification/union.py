@@ -1,4 +1,5 @@
-from proveit import Literal, Operation, USE_DEFAULTS, relation_prover
+from proveit import (equality_prover, Literal, Operation, USE_DEFAULTS,
+                     relation_prover)
 from proveit import m, n, A, S, x
 
 
@@ -34,4 +35,17 @@ class Union(Operation):
         _S = superset
         return union_inclusion.instantiate(
                     {A:_A, m:_m, S:_S})
+
+    @equality_prover('unary_reduced', 'unary_reduce')
+    def unary_reduction(self, **defaults_config):
+        '''
+        Given self = [Union(A)], derive and return the equality
+        between self and A (i.e., |- Union(A) = A).
+        '''
+        from . import unary_union_reduction
+        if not self.operands.is_single():
+            raise ValueError("Union expression must have a single operand "
+                             "in order to invoke unary_reduction. ")
+        operand = self.operands[0]
+        return unary_union_reduction.instantiate({A: operand})
             
