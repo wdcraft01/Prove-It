@@ -1,5 +1,6 @@
-from proveit import equality_prover, Literal, Operation, USE_DEFAULTS
-from proveit import n, x, A
+from proveit import (equality_prover, ExprRange, Literal, Operation,
+                     USE_DEFAULTS)
+from proveit import i, j, n, x, A
 
 
 class Intersect(Operation):
@@ -37,3 +38,42 @@ class Intersect(Operation):
                     "in order to invoke unary_reduction. ")
         operand = self.operands[0]
         return unary_intersect_reduction.instantiate({A: operand})
+
+    @equality_prover('redundancy_reduced', 'redundancy_reduce')
+    def redundancy_reduction(self, **defaults_config):
+        '''
+        Given self = Intersect(A, A, ..., A), derive and return the
+        equality between self A:
+
+            |- Intersect(A, A, ..., A) = A
+        '''
+
+        # Case (1) Intersect(A, A)
+        if (len(self.operands) == 2):
+            if self.operands[0] == self.operands[1]:
+                from . import redundant_intersection_binary
+                _A_sub = self.operands[0]
+                return redundant_intersection_binary.instantiate({A: _A_sub})
+
+        # Case (2) Intersect(A, ..., A) but not using ExprRange
+        # TBA
+
+        # Case (3) Intersect(A,...,A) using ExprRange as single operand
+        if (self.operands.num_entries() == 1
+            and isinstance(self.operands[0], ExprRange)):
+
+            expr_range = self.operands[0]
+            _A_sub = expr_range.body
+
+            from proveit.numbers import one
+
+            if expr_range.true_start_index == one:
+                from . import redundant_intersection_range
+                return redundant_intersection_range.instantiate(
+                        {n: expr_range.true_end_index, A: _A_sub})
+            else:
+                from . import redundant_intersection_range_general
+                _i_sub = expr_range.true_start_index
+                _j_sub = expr_range.true_end_index
+                return redundant_intersection_range_general.instantiate(
+                        {i:_i_sub, j:_j_sub, A:_A_sub})

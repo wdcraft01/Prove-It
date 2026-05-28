@@ -1,6 +1,6 @@
-from proveit import (equality_prover, Literal, Operation, USE_DEFAULTS,
-                     relation_prover)
-from proveit import m, n, A, S, x
+from proveit import (equality_prover, ExprRange, Literal, Operation,
+                     USE_DEFAULTS, relation_prover)
+from proveit import i, j, m, n, A, S, x
 
 
 class Union(Operation):
@@ -48,4 +48,44 @@ class Union(Operation):
                              "in order to invoke unary_reduction. ")
         operand = self.operands[0]
         return unary_union_reduction.instantiate({A: operand})
+
+    @equality_prover('redundancy_reduced', 'redundancy_reduce')
+    def redundancy_reduction(self, **defaults_config):
+        '''
+        Given self = Union(A, A, ..., A), derive and return the
+        equality between self A:
+
+            |- Union(A, A, ..., A) = A
+        '''
+
+        # Case (1) Union(A, A)
+        if (len(self.operands) == 2):
+            if self.operands[0] == self.operands[1]:
+                from . import redundant_union_binary
+                _A_sub = self.operands[0]
+                return redundant_union_binary.instantiate({A: _A_sub})
+
+        # Case (2) Union(A, ..., A) but not using ExprRange
+        # TBA
+
+        # Case (3) Union(A,...,A) using ExprRange as single operand
+        if (self.operands.num_entries() == 1
+            and isinstance(self.operands[0], ExprRange)):
+
+            expr_range = self.operands[0]
+            _A_sub = expr_range.body
+
+            from proveit.numbers import one
+
+            if expr_range.true_start_index == one:
+                from . import redundant_union_range
+                return redundant_union_range.instantiate(
+                    {n: expr_range.true_end_index, A: _A_sub})
+            else:
+                from . import redundant_union_range_general
+                _i_sub = expr_range.true_start_index
+                _j_sub = expr_range.true_end_index
+                return redundant_union_range_general.instantiate(
+                    {i:_i_sub, j:_j_sub, A:_A_sub})
+
             
