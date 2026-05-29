@@ -1,6 +1,6 @@
 from proveit import (equality_prover, ExprRange, Literal, Operation,
                      USE_DEFAULTS)
-from proveit import i, j, k, n, x, A
+from proveit import i, j, k, m, n, x, A, B
 
 
 class Intersect(Operation):
@@ -113,3 +113,93 @@ class Intersect(Operation):
                 {i:_i_sub, j:_j_sub, k:_k_sub, A:_A_sub})
         
         return proven_intersectall
+
+    @equality_prover('distributed_over_union',
+                     'distribute_over_union')
+    def distribution_over_union(self, target='right', **defaults_config):
+        '''
+        Given self = Intersect(A, Union(B1, B2, ..., Bn)), and
+        target='right' (the default), derive and return the equality
+        between self and its distributed form:
+
+        |- Intersect(A, Union(B1, B2, ..., Bn))
+           = Union(Intersect(A, B1),..., Intersect(A, Bn))
+
+        A could be a single set or some more complex expression
+        representing a set, but will be kept as a unit.
+
+        Similarly, given self = Intersect(Union(A1, A2, ..., Am), B),
+        and target='left', derive and return the equality between self
+        and its distributed form:
+
+        |- Intersect(Union(A1, A2, ..., Am), B)
+           = Union(Intersect(A1, B),..., Intersect(Am, B))
+
+        For a full cross distribution of both sides, use
+        target = 'both'.
+        '''
+        from proveit.logic.sets import Union
+        from proveit.numbers import two
+        if not (self.operands.is_double() and
+               (isinstance(self.operands[0], Union)
+                or isinstance(self.operands[1], Union))):
+            raise ValueError(
+                    "'Intersect.distribution_over_union()' method "
+                    "only valid for Intersect() with 2 operands with at "
+                    "least one of the operands being a Union().")
+
+        # Case: target = 'right' (the default)
+        if target == 'right':
+            if not isinstance(self.operands[1], Union):
+                raise ValueError(
+                        "'Intersect.distribution_over_union()'' method "
+                        "with target = 'right' only valid for Intersect() "
+                        "with second of two operands being a Union().")
+            from . import distribution_over_union_right
+            _n_sub = self.operands[1].operands.num_elements()
+            _A_sub = self.operands[0]
+            _B_sub = self.operands[1].operands
+            return distribution_over_union_right.instantiate(
+                    {n:_n_sub, A:_A_sub, B:_B_sub})
+
+        # Case: target = 'left'
+        if target == 'left':
+            if not isinstance(self.operands[0], Union):
+                raise ValueError(
+                        "'Intersect.distribution_over_union()'' method "
+                        "with target = 'left' only valid for Intersect() "
+                        "with first of two operands being a Union().")
+            from . import distribution_over_union_left
+            from proveit.numbers import num
+            _m_sub = self.operands[0].operands.num_elements()
+            _A_sub = self.operands[0].operands
+            _B_sub = self.operands[1]
+            return distribution_over_union_left.instantiate(
+                    {m:_m_sub, A:_A_sub, B:_B_sub})
+
+        # Case: target = 'both'
+        if target == 'both':
+            if not (isinstance(self.operands[0], Union)
+                    and isinstance(self.operands[1], Union)):
+                raise ValueError(
+                        "'Intersect.distribution_over_union()' method "
+                        "with target = 'both' only valid for Intersect() "
+                        " with two operands, each of which is a Union().")
+
+            # Both operands are Union()
+            if (isinstance(self.operands[0], Union)
+                and isinstance(self.operands[1], Union)):
+                from . import distribution_over_union_left_right
+                _m_sub = self.operands[0].operands.num_elements()
+                _n_sub = self.operands[1].operands.num_elements()
+                _A_sub = self.operands[0].operands
+                _B_sub = self.operands[1].operands
+                print(f"_m_sub = {_m_sub}")
+                print(f"_n_sub = {_n_sub}")
+                print(f"_A_sub = {_A_sub}")
+                print(f"_B_sub = {_B_sub}")
+                return distribution_over_union_left_right.instantiate(
+                        {m:_m_sub, n:_n_sub, A:_A_sub, B:_B_sub})
+
+            # Both operands are IntersectAll()
+            # TBA
