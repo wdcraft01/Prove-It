@@ -88,8 +88,8 @@ class Union(Operation):
                 return redundant_union_range_general.instantiate(
                     {i:_i_sub, j:_j_sub, A:_A_sub})
 
-    @equality_prover('unionall_equated', 'unionall_equate')
-    def unionall_equation(self, instance_param=None, **defaults_config):
+    @equality_prover('consolidated_to_unionall', 'consolidate_to_unionall')
+    def consolidation_to_unionall(self, instance_param=None, **defaults_config):
         '''
         From self = Union(A(i), A(i+1), ..., A(j)) using a single
         ExprRange operand, derive and return the equality of self with
