@@ -4,7 +4,7 @@ from proveit import (
 from proveit import i, j, k, m, n, A, B, C, S, x
 from proveit.abstract_algebra.generic_methods import (
         apply_association_thm, apply_commutation_thm,
-        apply_disassociation_thm)
+        apply_disassociation_thm, group_commutation)
 
 
 class Union(Operation):
@@ -144,19 +144,19 @@ class Union(Operation):
             self, init_idx, final_idx, commutation,
             leftward_commutation, rightward_commutation)
 
-    # @equality_prover('group_commuted', 'group_commute')
-    # def group_commutation(self, init_idx, final_idx, length,
-    #                       disassociate=True, **defaults_config):
-    #     '''
-    #     Given numerical operands, deduce that this expression is equal
-    #     to a form in which the operands at indices
-    #     [init_idx, init_idx+length) have been moved to
-    #     [final_idx. final_idx+length).
-    #     It will do this by performing association first.
-    #     If disassocate is True, it will be disassociated afterwards.
-    #     '''
-    #     return group_commutation(
-    #         self, init_idx, final_idx, length, disassociate=disassociate)
+    @equality_prover('group_commuted', 'group_commute')
+    def group_commutation(self, init_idx, final_idx, length,
+                          disassociate=True, **defaults_config):
+        '''
+        Deduce that this Union expression is equal to a form in which
+        the operands at indices [init_idx, init_idx+length) have been
+        moved to [final_idx, final_idx+length).
+        It will do this by performing association first.
+        If disassociate is True (the default), the specified operands
+        will be disassociated before returning.
+        '''
+        return group_commutation(
+            self, init_idx, final_idx, length, disassociate=disassociate)
 
     # @equality_prover('moved', 'move')
     # def permutation_move(self, init_idx=None, final_idx=None,
