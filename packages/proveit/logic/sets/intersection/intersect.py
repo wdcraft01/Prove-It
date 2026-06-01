@@ -78,8 +78,10 @@ class Intersect(Operation):
                 return redundant_intersection_range_general.instantiate(
                         {i:_i_sub, j:_j_sub, A:_A_sub})
 
-    @equality_prover('intersectall_equated', 'intersectall_equate')
-    def intersectall_equation(self, instance_param=None, **defaults_config):
+    @equality_prover('consolidated_to_intersectall',
+                     'consolidate_to_intersectall')
+    def consolidation_to_intersectall(
+            self, instance_param=None, **defaults_config):
         '''
         From self = Intersect(A(i), A(i+1), ..., A(j)) using a single
         ExprRange operand, derive and return the equality of self with
