@@ -1,6 +1,10 @@
-from proveit import (equality_prover, ExprRange, Literal, Operation,
-                     USE_DEFAULTS, relation_prover)
+from proveit import (
+        equality_prover, ExprRange, Literal, Operation, USE_DEFAULTS,
+        relation_prover, SimplificationDirectives)
 from proveit import i, j, k, m, n, A, B, C, S, x
+from proveit.abstract_algebra.generic_methods import (
+        apply_association_thm, apply_commutation_thm,
+        apply_disassociation_thm)
 
 
 class Union(Operation):
@@ -9,6 +13,9 @@ class Union(Operation):
         string_format='union',
         latex_format=r'\cup',
         theory=__file__)
+
+    _simplification_directives_ = SimplificationDirectives(
+            ungroup=True)
 
     def __init__(self, *operands, styles=None):
         '''
@@ -123,6 +130,96 @@ class Union(Operation):
                 {i:_i_sub, j:_j_sub, k:_k_sub, A:_A_sub})
         
         return proven_unionall
+
+    @equality_prover('commuted', 'commute')
+    def commutation(self, init_idx=None, final_idx=None, **defaults_config):
+        '''
+        Deduce that this Union expression is equal to a form in which
+        the operand at index init_idx has been moved to index final_idx.
+        For example, (a U b U ... U y U z).commutation(1, -2) will
+        produce: |-  (a U b U ... U y U z) = (a U ... U y U b U z).
+        '''
+        from . import commutation, leftward_commutation, rightward_commutation
+        return apply_commutation_thm(
+            self, init_idx, final_idx, commutation,
+            leftward_commutation, rightward_commutation)
+
+    # @equality_prover('group_commuted', 'group_commute')
+    # def group_commutation(self, init_idx, final_idx, length,
+    #                       disassociate=True, **defaults_config):
+    #     '''
+    #     Given numerical operands, deduce that this expression is equal
+    #     to a form in which the operands at indices
+    #     [init_idx, init_idx+length) have been moved to
+    #     [final_idx. final_idx+length).
+    #     It will do this by performing association first.
+    #     If disassocate is True, it will be disassociated afterwards.
+    #     '''
+    #     return group_commutation(
+    #         self, init_idx, final_idx, length, disassociate=disassociate)
+
+    # @equality_prover('moved', 'move')
+    # def permutation_move(self, init_idx=None, final_idx=None,
+    #                      **defaults_config):
+    #     '''
+    #     Given numerical operands, deduce that this expression is equal 
+    #     to a form in which the operand
+    #     at index init_idx has been moved to final_idx.
+    #     For example, (a · b · ... · y · z) = (a · ... · y · b · z)
+    #     via init_idx = 1 and final_idx = -2.
+    #     '''
+    #     return self.commutation(init_idx=init_idx, final_idx=final_idx)
+
+    # @equality_prover('permuted', 'permute')
+    # def permutation(self, new_order=None, cycles=None, **defaults_config):
+    #     '''
+    #     Deduce that this Add expression is equal to an Add in which
+    #     the terms at indices 0, 1, …, n-1 have been reordered as
+    #     specified EITHER by the new_order list OR by the cycles list
+    #     parameter. For example,
+    #         (a·b·c·d).permutation_general(new_order=[0, 2, 3, 1])
+    #     and
+    #         (a·b·c·d).permutation_general(cycles=[(1, 2, 3)])
+    #     would both return ⊢ (a·b·c·d) = (a·c·d·b).
+    #     '''
+    #     return generic_permutation(self, new_order, cycles)
+
+    @equality_prover('associated', 'associate')
+    def association(self, start_idx, length, **defaults_config):
+        '''
+        Deduce that this expression is equal to a form in which
+        operands in the range [start_idx, start_idx+length) are
+        grouped together. For example,
+
+            (A U B U C U D U E U ... U Y U Z).association(2, 3)
+
+        would derive and return:
+
+            |- (A U B U C U D U E U ... U Y U Z)
+               = (A U B U (C U D U E) U ... U Y U Z)
+        '''
+        from . import association
+        return apply_association_thm(self, start_idx, length, association)
+
+    @equality_prover('disassociated', 'disassociate')
+    def disassociation(self, idx, **defaults_config):
+        '''
+        Deduce that this expression is equal to a form in which the
+        operand at index idx is no longer grouped together.
+        For example,
+
+            (A U B U (C U D U E) U ... U Y U Z).disassociation(2)
+
+        would derive and return:
+
+            |- (A U B U (C U D U E) U ... U Y U Z)
+               = (A U B U C U D U E U ... U Y U Z)
+        
+        Multiple indices can be provided for multiple disassociations
+        simultaneously, e.g. expr.disassociation(2, 3, 4)
+        '''
+        from . import disassociation
+        return apply_disassociation_thm(self, idx, disassociation)
 
     @equality_prover('distributed_over_intersection',
                      'distribute_over_intersection')
