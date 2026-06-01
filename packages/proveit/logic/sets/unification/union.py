@@ -4,7 +4,7 @@ from proveit import (
 from proveit import i, j, k, m, n, A, B, C, S, x
 from proveit.abstract_algebra.generic_methods import (
         apply_association_thm, apply_commutation_thm,
-        apply_disassociation_thm, group_commutation)
+        apply_disassociation_thm, generic_permutation, group_commutation)
 
 
 class Union(Operation):
@@ -158,31 +158,37 @@ class Union(Operation):
         return group_commutation(
             self, init_idx, final_idx, length, disassociate=disassociate)
 
-    # @equality_prover('moved', 'move')
-    # def permutation_move(self, init_idx=None, final_idx=None,
-    #                      **defaults_config):
-    #     '''
-    #     Given numerical operands, deduce that this expression is equal 
-    #     to a form in which the operand
-    #     at index init_idx has been moved to final_idx.
-    #     For example, (a · b · ... · y · z) = (a · ... · y · b · z)
-    #     via init_idx = 1 and final_idx = -2.
-    #     '''
-    #     return self.commutation(init_idx=init_idx, final_idx=final_idx)
+    @equality_prover('moved', 'move')
+    def permutation_move(self, init_idx=None, final_idx=None,
+                         **defaults_config):
+        '''
+        Deduce that this Union expression is equal to a form in which
+        the operand at index init_idx has been moved to final_idx.
+        For example, (A U B U ... U Y U Z).permutation_move(1, -2) will
+        produce: |- (A U B U ... U Y U Z) = (A U ... U Y U B U Z),
+        moving operand B from position index 1 to position index -2.
+        For the Union class, this method just immediately calls the
+        Union.commutation() method; we keep the permutation_move()
+        method because it is used by the permutations machinery
+        available in abstract_algebra/generic_methods.py.
+        '''
+        return self.commutation(init_idx=init_idx, final_idx=final_idx)
 
-    # @equality_prover('permuted', 'permute')
-    # def permutation(self, new_order=None, cycles=None, **defaults_config):
-    #     '''
-    #     Deduce that this Add expression is equal to an Add in which
-    #     the terms at indices 0, 1, …, n-1 have been reordered as
-    #     specified EITHER by the new_order list OR by the cycles list
-    #     parameter. For example,
-    #         (a·b·c·d).permutation_general(new_order=[0, 2, 3, 1])
-    #     and
-    #         (a·b·c·d).permutation_general(cycles=[(1, 2, 3)])
-    #     would both return ⊢ (a·b·c·d) = (a·c·d·b).
-    #     '''
-    #     return generic_permutation(self, new_order, cycles)
+    @equality_prover('permuted', 'permute')
+    def permutation(self, new_order=None, cycles=None, **defaults_config):
+        '''
+        Deduce that this Union expression is equal to a Union in which
+        the operands at indices 0, 1, …, n-1 have been reordered as
+        specified EITHER by the new_order list OR by the cycles list
+        parameter. For example,
+
+            (A U B U C U D).permutation(new_order=[0, 2, 3, 1])
+
+        and (A U B U C U D).permutation(cycles=[(1, 2, 3)])
+
+        would both return ⊢ (A U B U C U D) = (A U C U D U B).
+        '''
+        return generic_permutation(self, new_order, cycles)
 
     @equality_prover('associated', 'associate')
     def association(self, start_idx, length, **defaults_config):
