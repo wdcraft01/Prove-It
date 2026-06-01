@@ -1,6 +1,9 @@
 from proveit import (equality_prover, ExprRange, Literal, Operation,
-                     USE_DEFAULTS)
+                     SimplificationDirectives, USE_DEFAULTS)
 from proveit import i, j, k, m, n, x, A, B
+from proveit.abstract_algebra.generic_methods import (
+        apply_association_thm, apply_commutation_thm,
+        apply_disassociation_thm, generic_permutation, group_commutation)
 
 
 class Intersect(Operation):
@@ -9,6 +12,9 @@ class Intersect(Operation):
         string_format='intersect',
         latex_format=r'\cap',
         theory=__file__)
+
+    _simplification_directives_ = SimplificationDirectives(
+            ungroup=True)
 
     def __init__(self, *operands, styles=None):
         '''
@@ -115,6 +121,105 @@ class Intersect(Operation):
                 {i:_i_sub, j:_j_sub, k:_k_sub, A:_A_sub})
         
         return proven_intersectall
+
+    @equality_prover('commuted', 'commute')
+    def commutation(self, init_idx=None, final_idx=None, **defaults_config):
+        '''
+        Deduce that this Intersect expression is equal to a form in
+        which the operand at index init_idx has been moved to index
+        final_idx. For example:
+
+            (A ∩ B ∩ ... ∩ Y ∩ Z).commutation(1, -2)
+
+        will produce: |-  (A ∩ B ∩ ... ∩ Y ∩ Z) = (A ∩ ... ∩ Y ∩ B ∩ Z).
+        '''
+        from . import commutation, leftward_commutation, rightward_commutation
+        return apply_commutation_thm(
+            self, init_idx, final_idx, commutation,
+            leftward_commutation, rightward_commutation)
+
+    @equality_prover('group_commuted', 'group_commute')
+    def group_commutation(self, init_idx, final_idx, length,
+                          disassociate=True, **defaults_config):
+        '''
+        Deduce that this Intersect expression is equal to a form in
+        which the operands at indices [init_idx, init_idx+length) have
+        been moved to [final_idx, final_idx+length).
+        It will do this by performing association first.
+        If disassociate is True (the default), the specified operands
+        will be disassociated before returning.
+        '''
+        return group_commutation(
+            self, init_idx, final_idx, length, disassociate=disassociate)
+
+    @equality_prover('moved', 'move')
+    def permutation_move(self, init_idx=None, final_idx=None,
+                         **defaults_config):
+        '''
+        Deduce that this Intersect expression is equal to a form in
+        which the operand at index init_idx has been moved to final_idx.
+        For example, (A ∩ B ∩ ... ∩ Y ∩ Z).permutation_move(1, -2) will
+        produce: |- (A ∩ B ∩ ... ∩ Y ∩ Z) = (A ∩ ... ∩ Y ∩ B ∩ Z),
+        moving operand B from position index 1 to position index -2.
+        For the Intersect class, this method just immediately calls the
+        Intersect.commutation() method; we keep the permutation_move()
+        method because it is used by the permutations machinery
+        available in abstract_algebra/generic_methods.py.
+        '''
+        return self.commutation(init_idx=init_idx, final_idx=final_idx)
+
+    @equality_prover('permuted', 'permute')
+    def permutation(self, new_order=None, cycles=None, **defaults_config):
+        '''
+        Deduce that this Intersect expression is equal to a Union in
+        which the operands at indices 0, 1, …, n-1 have been reordered
+        as specified EITHER by the new_order list OR by the cycles list
+        parameter. For example,
+
+            (A ∩ B ∩ C ∩ D).permutation(new_order=[0, 2, 3, 1])
+
+        and (A ∩ B ∩ C ∩ D).permutation(cycles=[(1, 2, 3)])
+
+        would both return ⊢ (A ∩ B ∩ C ∩ D) = (A ∩ C ∩ D ∩ B).
+        '''
+        return generic_permutation(self, new_order, cycles)
+
+    @equality_prover('associated', 'associate')
+    def association(self, start_idx, length, **defaults_config):
+        '''
+        Deduce that this Intersect expression is equal to a form in
+        which operands in the range [start_idx, start_idx+length) are
+        grouped together. For example,
+
+            (A ∩ B ∩ C ∩ D ∩ E ∩ ... ∩ Y ∩ Z).association(2, 3)
+
+        would derive and return:
+
+            |- (A ∩ B ∩ C ∩ D ∩ E ∩ ... ∩ Y ∩ Z)
+               = (A ∩ B ∩ (C ∩ D ∩ E) ∩ ... ∩ Y ∩ Z)
+        '''
+        from . import association
+        return apply_association_thm(self, start_idx, length, association)
+
+    @equality_prover('disassociated', 'disassociate')
+    def disassociation(self, idx, **defaults_config):
+        '''
+        Deduce that this Intersect expression is equal to a form in
+        which the operand at index idx is no longer grouped together.
+        For example,
+
+            (A ∩ B ∩ (C ∩ D ∩ E) ∩ ... ∩ Y ∩ Z).disassociation(2)
+
+        would derive and return:
+
+            |- (A ∩ B ∩ (C ∩ D ∩ E) ∩ ... ∩ Y ∩ Z)
+               = (A ∩ B ∩ C ∩ D ∩ E ∩ ... ∩ Y ∩ Z)
+        
+        Multiple indices can be provided for multiple disassociations
+        simultaneously, e.g. expr.disassociation(2, 3, 4)
+        '''
+        from . import disassociation
+        return apply_disassociation_thm(self, idx, disassociation)
 
     @equality_prover('distributed_over_union',
                      'distribute_over_union')
