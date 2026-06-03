@@ -1,7 +1,8 @@
 from proveit import (
-        equality_prover, ExprRange, Literal, Operation, USE_DEFAULTS,
-        relation_prover, SimplificationDirectives)
-from proveit import i, j, k, m, n, A, B, C, S, x
+        equality_prover, Expression, ExprRange, Lambda, Literal,
+        Operation, USE_DEFAULTS, relation_prover,
+        SimplificationDirectives, TransRelUpdater)
+from proveit import i, j, k, l, m, n, A, B, C, S, x
 from proveit.abstract_algebra.generic_methods import (
         apply_association_thm, apply_commutation_thm,
         apply_disassociation_thm, generic_permutation, group_commutation)
@@ -227,95 +228,124 @@ class Union(Operation):
         from . import disassociation
         return apply_disassociation_thm(self, idx, disassociation)
 
-    @equality_prover('distributed_over_intersection',
-                     'distribute_over_intersection')
-    def distribution_over_intersection(self, target='right', **defaults_config):
+    @equality_prover('distributed', 'distribute')
+    def distribution(self, idx=None, *, 
+                     left_factors=None, right_factors=None, 
+                     **defaults_config):
+        r'''
+        Modifies this Union expression by distributing through the
+        operand at the given index, returning the equality between
+        self and the new version. We keep the "factor" language,
+        treating Union operands analogous to multiplicative factors.
+        For example:
+
+            (A U (B1 ∩ B2 ∩ B3) U C).distribution(1) returns:
+
+            |- (A U (B1 ∩ B2 ∩ B3) U C) =
+               (A U B1 U C) ∩ (A U B2 U C) ∩ (A U B3 U C)
+        
+        For more flexibility, 'left_factors' and 'right_factors'
+        may be specified to indicate subsets of the factors to
+        distribute on the left vs right. The 'left_factors' and 
+        'right_factors' may be provided as indices instead.
+        For example:
+
+            (A U B U (C1 ∩ C2) U D).distribution(
+                1, left_factors=[B], right_factors=[D]) returns:
+
+            |- (A U B U (C1 ∩ C2) U D) =
+               A U ((B U C1 U D) ∩ (B U C2 U D))
+
+        If one of the left/right factors is specified but not the
+        other, the empty set is used for the one that isn't specified.
+        One can also use the left_factors and right_factors to force
+        factors onto opposite sides from where they start.
+
+        Currently, Union.distribute() works only to distribute Union
+        operations through Intersect() or IntersectAll() operations.
         '''
-        Given self = Union(A, Intersect(B1, B2, ..., Bn)), and
-        target='right' (the default), derive and return the equality
-        between self and its distributed form:
+        from . import (distribute_through_intersection,
+                distribute_through_intersectall)
+        from proveit.logic.sets import Intersect, IntersectAll
+        from proveit.numbers.division import prod_of_fracs
+        from proveit.numbers import Neg, Abs, Div, Sum
+        if left_factors is not None or right_factors is not None:
+            # Specific factors to be applied to the left and/or right
+            # were provided.  So we'll reorder the factors and then
+            # associate appropriately before distributing.
+            if left_factors is None: left_factors = []
+            if right_factors is None: right_factors = []
+            # Convert from expressions to indices for the left and
+            # right factors (exclude the 'idx').
+            factor_to_index = {factor:_k for _k, factor 
+                               in enumerate(self.operands) if _k != idx}
+            left_factor_indices = list(left_factors)
+            right_factor_indices = list(right_factors)
+            for factor_indices in (left_factor_indices, right_factor_indices):
+                for _k, factor in enumerate(factor_indices):
+                    try:
+                        if isinstance(factor, Expression):
+                            factor_indices[_k] = factor_to_index.pop(factor)
+                    except KeyError:
+                        raise ValueError(
+                                "The 'left_factors', %s, and 'right_factors'"
+                                ", %s, do not all appear in %s"
+                                %(self, left_factors, right_factors))
+            # Permute the factors (i.e., operands) so the left factors
+            # come just before the factor to distribute through and
+            # the right factors come just after.
+            factors = self.operands.entries
+            num_factors = len(factors)
+            special_indices = set(left_factor_indices).union(
+                    right_factor_indices)
+            before_indices = [_idx for _idx in range(idx) if
+                              _idx not in special_indices]
+            after_indices = [_idx for _idx in range(idx+1, num_factors) if
+                              _idx not in special_indices]
+            new_order = (before_indices + left_factor_indices + [idx] +
+                         right_factor_indices + after_indices)
+            eq = TransRelUpdater(self)
+            expr = eq.update(self.permutation(new_order, auto_simplify=False))
+            # Convert from indices to expressions.
+            left_factors = [factors[_i] for _i in left_factor_indices]
+            right_factors = [factors[_i] for _i in right_factor_indices]
+            # Make the distribution.
+            num_left_factors = len(left_factors)
+            distribution = Union(*left_factors, factors[idx], 
+                                *right_factors).distribution(
+                                        num_left_factors)
+            if len(before_indices)==len(after_indices)==0:
+                # No factors are left out of the distribution.
+                # For example: a b (c + d) e f = a f c b e + a f d b e
+                eq.update(distribution)
+                return eq.relation
+            # Now associate to include from left factors to right
+            # factors and simultaneously replace with the distribution.
+            start = len(before_indices)
+            length = num_left_factors + len(right_factors) + 1
+            eq.update(expr.association(
+                    start, length, replacements=[distribution],
+                    auto_simplify=False))
+            return eq.relation
 
-        |- Union(A, Intersect(B1, B2, ..., Bn))
-           = Intersect(Union(A, B1), Union(A, B2),..., Union(A, Bn))
-
-        A could be a single set or some more complex expression
-        representing a set, but will be kept as a unit.
-
-        Similarly, given self = Union(Intersect(A1, A2, ..., Am), B),
-        and target='left', derive and return the equality between self
-        and its distributed form:
-
-        |- Union(Intersect(A1, A2, ..., Am), B)
-           = Intersect(Union(A1, B), Union(A2, B),..., Union(Am, B))
-
-        For a full cross distribution of both sides, use
-        target = 'both'.
-        '''
-        from proveit.logic.sets import Intersect
-        from proveit.numbers import two
-        if not (self.operands.is_double() and
-               (isinstance(self.operands[0], Intersect)
-                or isinstance(self.operands[1], Intersect))):
-            raise ValueError(
-                    "'Union.distribution_over_intersection()' method "
-                    "only valid for Union with 2 operands with at least "
-                    "one of the operands being an Intersect().")
-
-        # Case: target = 'right' (the default)
-        if target == 'right':
-            if not isinstance(self.operands[1], Intersect):
-                raise ValueError(
-                        "'Union.distribution_over_intersection()'' method "
-                        "with target = 'right' only valid for Union with "
-                        "second of two operands being an Intersect().")
-            from . import distribution_over_intersection_right
-            from proveit.numbers import num
-            _n_sub = self.operands[1].operands.num_elements()
-            _A_sub = self.operands[0]
-            _B_sub = self.operands[1].operands
-            return distribution_over_intersection_right.instantiate(
-                    {n:_n_sub, A:_A_sub, B:_B_sub})
-
-        # Case: target = 'left'
-        if target == 'left':
-            if not isinstance(self.operands[0], Intersect):
-                raise ValueError(
-                        "'Union.distribution_over_intersection()'' method "
-                        "with target = 'left' only valid for Union with "
-                        "first of two operands being an Intersect().")
-            from . import distribution_over_intersection_left
-            from proveit.numbers import num
-            _m_sub = self.operands[0].operands.num_elements()
-            _A_sub = self.operands[0].operands
-            _B_sub = self.operands[1]
-            return distribution_over_intersection_left.instantiate(
-                    {m:_m_sub, A:_A_sub, B:_B_sub})
-
-        # Case: target = 'both'
-        if target == 'both':
-            if not (isinstance(self.operands[0], Intersect)
-                    and isinstance(self.operands[1], Intersect)):
-                raise ValueError(
-                        "'Union.distribution_over_intersection()'' method "
-                        "with target = 'both' only valid for Union with "
-                        "two operands, each of which is an Intersect().")
-
-            # Both operands are Intersect()
-            if (isinstance(self.operands[0], Intersect)
-                and isinstance(self.operands[1], Intersect)):
-                from . import distribution_over_intersection_left_right
-                _m_sub = self.operands[0].operands.num_elements()
-                _n_sub = self.operands[1].operands.num_elements()
-                _A_sub = self.operands[0].operands
-                _B_sub = self.operands[1].operands
-                print(f"_m_sub = {_m_sub}")
-                print(f"_n_sub = {_n_sub}")
-                print(f"_A_sub = {_A_sub}")
-                print(f"_B_sub = {_B_sub}")
-                return distribution_over_intersection_left_right.instantiate(
-                        {m:_m_sub, n:_n_sub, A:_A_sub, B:_B_sub})
-
-            # Both operands are IntersectAll()
-            # TBA
-
+        operand = self.operands[idx]
+        _A_sub = self.operands[:idx]
+        _C_sub = self.operands[idx + 1:]
+        _l_sub = _A_sub.num_elements()
+        _n_sub = _C_sub.num_elements()
+        if isinstance(operand, Intersect):
+            _B_sub = self.operands[idx].operands
+            _m_sub = _B_sub.num_elements()
+            return distribute_through_intersection.instantiate(
+                {l:_l_sub, m:_m_sub, n:_n_sub, A:_A_sub, B:_B_sub, C:_C_sub})
+        elif isinstance(operand, IntersectAll):
+            _lambda_param = operand.instance_param
+            _S_sub   = operand.domain
+            _B_sub = Lambda(_lambda_param, operand.operand.body.value)
+            return distribute_through_intersectall.instantiate(
+                {l:_l_sub, n:_n_sub, S:_S_sub, A:_A_sub, B:_B_sub, C:_C_sub})
+        else:
+            raise NotImplementedError(
+                "Unsupported operand type to distribute over: " +
+                str(operand.__class__))
             
