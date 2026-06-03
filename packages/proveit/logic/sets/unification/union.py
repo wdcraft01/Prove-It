@@ -44,6 +44,263 @@ class Union(Operation):
         return union_inclusion.instantiate(
                     {A:_A, m:_m, S:_S})
 
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        UNDER CONSTRUCTION. ADAPTING FROM Mult() class
+        Returns a proven simplification equation for this Union
+        expression assuming the operands have been simplified
+        according to the simplification directives as follows:
+
+        If ungroup is True (the default), dissociate nested Unions.
+        
+        Sort factors according to order_key_fn where the key is the
+        base that may be raised to a numeric rational power.
+
+        Eliminate any EmptySet operands (assuming this leaves at
+        least one non-EmptySet operand), since A U EmptySet = A,
+        and eliminate repeating operands, since A U A = A. Notice
+        that, unlike multiplication, Union has no "zero" factor or
+        "absorbing factor", which would be equivalent to a universal
+        set and not allowed.
+        '''
+
+    #     from proveit.numbers import Exp, Div, is_numeric_rational
+    #     from . import mult_zero_left, mult_zero_right, mult_zero_any
+    #     from . import empty_mult
+
+        # from proveit.logic.sets import EmptySet
+        from . import empty_union_eval, unary_union_reduction
+
+        # Empty Union ?
+        if self.operands.num_entries() == 0:
+            # empty Union is equal to the EmptySet
+            return empty_union_eval
+
+    #     # First check for any zero factors
+    #     # -- quickest way to do an evaluation.
+    #     try:
+    #         zero_idx = self.operands.index(zero)
+    #         if self.operands.is_double():
+    #             if zero_idx == 0:
+    #                 result = mult_zero_left.instantiate({x: self.operands[1]})
+    #                 return result
+    #             else:
+    #                 return mult_zero_right.instantiate({x: self.operands[0]})
+    #         _a = self.operands[:zero_idx]
+    #         _b = self.operands[zero_idx + 1:]
+    #         _i = _a.num_elements()
+    #         _j = _b.num_elements()
+    #         return mult_zero_any.instantiate({i: _i, j: _j, a: _a, b: _b})
+    #     except (ValueError, ProofFailure):
+    #         # No such "luck" regarding a simple multiplication by zero.
+    #         pass
+
+    #     if self.operands.is_single():
+    #         # Multiplication with 1 operand is just that operand
+    #         return self.unary_reduction(auto_simplify=False)
+
+        # Unary Union?
+        if self.operands.is_single():
+            # Union(A) is equal to A
+            _A_sub = self.operands[0]
+            return unary_union_reduction.instantiate({A:_A_sub})
+
+        expr = self
+        # for convenience updating our equation
+        eq = TransRelUpdater(self)
+
+    #     # Ungroup the expression (disassociate nested multiplications).
+    #     if Mult._simplification_directives_.ungroup:
+    #         idx = 0
+    #         length = expr.operands.num_entries() - 1
+    #         while idx < length:
+    #             # loop through all operands
+    #             if isinstance(expr.operands[idx], Mult):
+    #                 # if it is grouped, ungroup it
+    #                 expr = eq.update(expr.disassociation(
+    #                         idx, preserve_all=True))
+    #             else:
+    #                 idx += 1
+    #             length = expr.operands.num_entries()
+
+        # Ungroup the expression (disassociate nested Unions).
+        if Union._simplification_directives_.ungroup:
+            idx = 0
+            length = expr.operands.num_entries() - 1
+            while idx < length:
+                # loop through all operands
+                if isinstance(expr.operands[idx], Union):
+                    # if it is grouped, ungroup it
+                    expr = eq.update(expr.disassociation(
+                            idx, preserve_all=True))
+                else:
+                    idx += 1
+                length = expr.operands.num_entries()
+
+    #     # Simplify negations -- factor them out.
+    #     expr = eq.update(expr.neg_simplifications(auto_simplify=True))
+
+    #     if not isinstance(expr, Mult):
+    #         # The expression may have changed to a negation after doing
+    #         # neg_simplification.  Start the simplification of this new
+    #         # expression fresh at this point.
+    #         eq.update(expr.shallow_simplification(
+    #                 must_evaluate=must_evaluate))
+    #         return eq.relation
+
+    #     # Peform any cancelations between numerators and
+    #     # denominators of different factors.  This will also
+    #     # eliminate factors of one.
+    #     # Since this is supposed to be a shallow simplification,
+    #     # turn off auto-simplification for these cancelations.
+    #     if Div._simplification_directives_.cancel_factors:
+    #         expr = eq.update(expr.cancelations(auto_simplify=False))
+
+    #     if is_irreducible_value(expr):
+    #         return eq.relation  # done
+        
+    #     if expr != self:
+    #         if must_evaluate or (isinstance(expr, Mult) and
+    #                              expr not in self.factors.entries):
+    #             # Try starting over with a call to
+    #             # shallow_simplification, but only if must_evaluate
+    #             # is True or the new expression is a Mult not
+    #             # contained in the original (try to keep the 
+    #             # simplification shallow).
+    #             eq.update(expr.shallow_simplification(
+    #                     must_evaluate=must_evaluate))
+    #         return eq.relation
+    #     elif must_evaluate and not expr.operands_are_irreducible():
+    #         # Without a zero factor, shallow evaluation of Mult is only
+    #         # viable if the operands are all irreducible.
+    #         for _k, factor in enumerate(expr.factors):
+    #             if not is_irreducible_value(factor):
+    #                 expr = eq.update(expr.inner_expr().operands[_k].evaluation(
+    #                         preserve_all=True))
+    #         # Start over now that the terms are all evaluated to
+    #         # irreducible values.
+    #         eq.update(expr.evaluation())
+    #         return eq.relation
+
+    #     if all(is_numeric_rational(factor) for factor in self.factors):
+    #         if self.operands.is_double():
+    #             if all(is_numeric_int(factor) for factor in self.factors):
+    #                 # Because we do neg_simplifications(), we can
+    #                 # assume these integers are indeed natural numbers.
+    #                 return self._natural_binary_eval()
+    #             else:
+    #                 # Multiply a pair of rational numerals.
+    #                 return self._rational_binary_eval()
+    #         else:
+    #             # Use pairwise evaluation when multiplying more then 2
+    #             # operands.
+    #             assert self.factors.num_entries() > 2
+    #             return pairwise_evaluation(self)
+    #     elif must_evaluate:
+    #         raise NotImplementedError(
+    #             "Cabability to evaluate %s is not implemented"%expr)
+
+    #     order_key_fn = Mult._simplification_directives_.order_key_fn
+    #     combine_all_exponents = (
+    #             Mult._simplification_directives_.combine_all_exponents)
+    #     if combine_all_exponents or (
+    #             Mult._simplification_directives_
+    #             .combine_numeric_rational_exponents):
+    #         # Like factors are ones that are implicit/explicit
+    #         # exponentials with the same base raised to a literal, 
+    #         # rational power (everything is implicitly raised to the 
+    #         # power of 1).
+    #         def likeness_key_fn(factor):
+    #             if isinstance(factor, Exp) and (
+    #                     combine_all_exponents or is_numeric_rational(
+    #                             factor.exponent)):
+    #                 return factor.base
+    #             elif (Exp._simplification_directives_
+    #                   .factor_numeric_rational and
+    #                   is_numeric_rational(factor)):
+    #                 # Don't combine numeric rationals only to be
+    #                 # factored again.
+    #                 return None
+    #             else:
+    #                 return factor
+    #         # Combine like operands.
+    #         expr = eq.update(sorting_and_combining_like_operands(
+    #                 expr, order_key_fn=lambda likeness_key : 0, 
+    #                 likeness_key_fn=likeness_key_fn,
+    #                 preserve_likeness_keys=True, auto_simplify=True))
+    #     if not isinstance(expr, Mult):
+    #         # Simplified to a non-Mult. We're done.
+    #         return eq.relation
+    #     if Mult._simplification_directives_.combine_numeric_rationals:
+    #         # Combines numeric rationals as well as exactly like
+    #         # factors.
+    #         def likeness_key_fn(factor):
+    #             if is_numeric_rational(factor):
+    #                 return one
+    #             else:
+    #                 return factor
+    #         # Combine like operands.
+    #         expr = eq.update(sorting_and_combining_like_operands(
+    #                 expr, order_key_fn=lambda likeness_key : 0, 
+    #                 likeness_key_fn=likeness_key_fn,
+    #                 preserve_likeness_keys=True, auto_simplify=True))
+    #     if not isinstance(expr, Mult):
+    #         # Simplified to a non-Mult. We're done.
+    #         return eq.relation
+    #     # See if we should reorder the factors.
+    #     expr = eq.update(sorting_operands(expr, order_key_fn=order_key_fn))
+        
+    #     if Mult._simplification_directives_.distribute_fractions and (
+    #             expr.operands.is_double() and 
+    #             (isinstance(expr.operands[0], Div) or
+    #              isinstance(expr.operands[1], Div))):
+    #         expr = eq.update(expr.distribution())
+    #     elif Mult._simplification_directives_.distribute_numeric_rational:
+    #         # If there are exactly two factors and one is an Add and
+    #         # the other is a numeric literal, distribute over the Add.
+    #         if expr.operands.is_double():
+    #             _a, _b = expr.operands
+    #             if isinstance(_a, Add) or isinstance(_b, Add):
+    #                 if is_numeric_rational(_a) or is_numeric_rational(_b):
+    #                     _k = 0 if isinstance(_a, Add) else 1
+    #                     expr = eq.update(expr.distribution(_k))
+        
+    #     """
+    #     if Mult._simplification_directives_.irreducibles_in_front:
+    #         # Move irreducibles to the front.
+    #         irreducible_factor_index_ranges = []
+    #         _prev_was_irreducible = False
+    #         _all_irreducible = True
+    #         for _k, factor in enumerate(self.factors):
+    #             if is_irreducible_value(factor):
+    #                 if _prev_was_irreducible:
+    #                     # Update a range of irreducible factors.
+    #                     irreducible_factor_index_ranges[-1][-1] = _k
+    #                 else:
+    #                     # Start a new range of irreducibles.
+    #                     irreducible_factor_index_ranges.append([_k, _k])
+    #                 _prev_was_irreducible = True
+    #             else:
+    #                 _prev_was_irreducible = False
+    #                 _all_irreducible = False
+    #         if (len(irreducible_factor_index_ranges) > 0 and
+    #                 not _all_irreducible):
+    #             # Move one or more irreducible factors to the front.
+    #             offset = 0
+    #             for factor_index_range in reversed(
+    #                     irreducible_factor_index_ranges):
+    #                 # Move group of irreducibles to the front.
+    #                 start, end = factor_index_range
+    #                 expr = eq.update(expr.group_commutation(
+    #                         start+offset, 0, end-start+1, 
+    #                         auto_simplify=False))
+    #                 offset += end - start + 1
+    #     """
+        
+        return eq.relation # Should be self=self.
+
     @equality_prover('unary_reduced', 'unary_reduce')
     def unary_reduction(self, **defaults_config):
         '''
