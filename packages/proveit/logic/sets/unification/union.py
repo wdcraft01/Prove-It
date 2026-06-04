@@ -1,11 +1,12 @@
 from proveit import (
-        equality_prover, Expression, ExprRange, Lambda, Literal,
-        Operation, USE_DEFAULTS, relation_prover,
+        defaults, equality_prover, Expression, ExprRange, ExprTuple,
+        Lambda, Literal, Operation, USE_DEFAULTS, relation_prover,
         SimplificationDirectives, TransRelUpdater)
 from proveit import i, j, k, l, m, n, A, B, C, S, x
 from proveit.abstract_algebra.generic_methods import (
         apply_association_thm, apply_commutation_thm,
-        apply_disassociation_thm, generic_permutation, group_commutation)
+        apply_disassociation_thm, generic_permutation, group_commutation,
+        sorting_and_combining_like_operands)
 
 
 class Union(Operation):
@@ -139,9 +140,6 @@ class Union(Operation):
                     idx += 1
                 length = expr.operands.num_entries()
 
-    #     # Simplify negations -- factor them out.
-    #     expr = eq.update(expr.neg_simplifications(auto_simplify=True))
-
     #     if not isinstance(expr, Mult):
     #         # The expression may have changed to a negation after doing
     #         # neg_simplification.  Start the simplification of this new
@@ -233,6 +231,21 @@ class Union(Operation):
     #     if not isinstance(expr, Mult):
     #         # Simplified to a non-Mult. We're done.
     #         return eq.relation
+
+        # likeness of operands is simply equality of operands ---
+        # i.e. two operands are "alike" if they are equal
+        likeness_key_fn = lambda operand : operand
+
+        # Combine like operands.
+        expr = eq.update(sorting_and_combining_like_operands(
+                    expr, order_key_fn=lambda likeness_key : 0, 
+                    likeness_key_fn=likeness_key_fn,
+                    preserve_likeness_keys=True, auto_simplify=True))
+
+        if not isinstance(expr, Union):
+            # Simplified to a non-Union. We're done.
+            return eq.relation
+
     #     if Mult._simplification_directives_.combine_numeric_rationals:
     #         # Combines numeric rationals as well as exactly like
     #         # factors.
@@ -353,6 +366,67 @@ class Union(Operation):
                 return redundant_union_range_general.instantiate(
                     {i:_i_sub, j:_j_sub, A:_A_sub})
 
+    @equality_prover('eliminated_empty_sets', 'eliminate_empty_sets')
+    def empty_set_eliminations(self, **defaults_config):
+        '''
+        Equality prover method that derives a simplification in which
+        EmptySet operands are eliminated. For example,
+
+            Union(A, EmptySet, B, EmptySet, C, EmptySet).
+            empty_set_eliminations()
+
+        derives and returns: |- (A U ∅ U B U ∅ U C U ∅) = (A U B U C).
+        '''
+
+        from proveit.logic.sets import EmptySet
+        expr = self
+
+        # A convenience to allow successive updates to the equation
+        # via transitivities (starting with self=self).
+        eq = TransRelUpdater(self)
+
+        # Work in reverse order so indices don't need to be updated.
+        for rev_idx, operand in enumerate(reversed(self.operands.entries)):
+            if operand == EmptySet:
+                idx = self.operands.num_entries() - rev_idx - 1
+                expr = eq.update(expr.empty_set_elimination(
+                        idx, preserve_all=True))
+                if not isinstance(expr, Union):
+                    # can't do an elimination if reduced to a single term.
+                    break
+
+        return eq.relation
+
+    @equality_prover('eliminated_empty_set', 'eliminate_empty_set')
+    def empty_set_elimination(self, idx, **defaults_config):
+        '''
+        Equality prover method that derives a simplification in which
+        a single EmptySet operand, at the given index, is eliminated.
+        For example, Union(A, B, EmptySet, C).empty_set_elimination(2)
+        would return:
+                       |- (A U B U ∅ U C) = (A U B U C)
+        '''
+        from proveit.logic.sets import EmptySet
+        from . import (union_with_empty_left, union_with_empty_right,
+                       union_with_empty)
+
+        if self.operands[idx] != EmptySet: # might need isinstance?
+            raise ValueError(
+                f"Operand at the provided index idx = {idx} expected "
+                f"to be an EmptySet for {self}")
+
+        if self.operands.is_double():
+            if idx == 0:
+                return union_with_empty_left.instantiate({A: self.operands[1]})
+            else:
+                return union_with_empty_right.instantiate({A: self.operands[0]})
+        _A_sub = self.operands[:idx]
+        _B_sub = self.operands[idx + 1:]
+        _m_sub = _A_sub.num_elements()
+        _n_sub = _B_sub.num_elements()
+        return union_with_empty.instantiate(
+                {m: _m_sub, n: _n_sub, A: _A_sub, B: _B_sub})
+
     @equality_prover('consolidated_to_unionall', 'consolidate_to_unionall')
     def consolidation_to_unionall(self, instance_param=None, **defaults_config):
         '''
@@ -367,9 +441,7 @@ class Union(Operation):
         Otherwise, use the parameter of the given ExprRange (which
         will be some generic canonical such as '_a').
         '''
-        # from proveit import ExprRange
-        # from proveit.logic import InSet
-        # from proveit.numbers import Interval
+        
         if (self.operands.num_entries() != 1
             or not isinstance(self.operands[0], ExprRange)):
             raise ValueError(
@@ -388,6 +460,64 @@ class Union(Operation):
                 {i:_i_sub, j:_j_sub, k:_k_sub, A:_A_sub})
         
         return proven_unionall
+
+    @equality_prover('combined_operands', 'combine_operands')
+    def combining_operands(self, start_idx=None, end_idx=None,
+                           **defaults_config):
+        '''
+        combining_operands() is called from generic_methods.py,
+        providing a formula for combining operands.
+        For a Union, combining operands essentially means redundancy
+        reduction, where A U A can be reduced to just A.
+        Notice that "like terms" here means identical terms, and
+        combining like terms amounts to eliminating redundant terms.
+        '''
+        from proveit.abstract_algebra.generic_methods import (
+                common_likeness_key)
+        from proveit.logic import Equals
+        from proveit.numbers import one
+
+        # likeness of operands is simply equality of operands ---
+        # i.e. two operands are "alike" if they are equal
+        likeness_key_fn = lambda operand : operand
+
+        if self.operands.num_entries()==0:
+            # [U]() = EmptySet
+            from . import empty_union_eval
+            return empty_union_eval
+
+        if self.operands.num_entries()==1 and (
+                isinstance(self.operands[0], ExprRange) and 
+                self.operands[0].is_parameter_independent):
+            # A U A U ... U A = A
+            operand_range = self.operands[0]
+            _A_sub = operand_range.body
+            _n_sub = self.operands.num_elements()
+            replacements = list(defaults.replacements)
+            if operand_range.start_index != one:
+                # Transform from as ExprRange that start at 1.
+                replacements.append(operand_range.reduction().derive_reversed())
+            from . import redundant_union_range
+            inst = redundant_union_range.instantiate(
+                    {n:_n_sub, A:_A_sub}, replacements=replacements)
+            return inst
+
+        operands = list(self.operands.entries)
+
+        # try instantiating the redundant_union_range
+        from . import redundant_union_range
+        _A_sub = self.operands[0]
+        _n_sub = self.operands.num_elements()
+        from proveit import safe_dummy_var
+        replacements = []
+        replacements.append(
+            Equals(ExprTuple(ExprRange(safe_dummy_var(i), _A_sub, one, _n_sub)),
+                   self.operands).prove())
+        inst = redundant_union_range.instantiate(
+                    {n:_n_sub, A:_A_sub}, replacements=replacements)
+        return inst
+
+        return Equals(self, self).conclude_via_reflexivity()
 
     @equality_prover('commuted', 'commute')
     def commutation(self, init_idx=None, final_idx=None, **defaults_config):
