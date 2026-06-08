@@ -1,7 +1,9 @@
-from .graph_of import (BoundaryVertices, GraphOf, InteriorVertices,
-        MergedBoundsGraphOfSiteOp, MergedBoundsGraphOfSurfaceCode,
-        MergedBoundsGraphOfZError, MergedBoundsGraphOfZErrorChainSiteOp,
-        StandardInteriorVertices)
+from .graph_of import (BoundaryVertices, CoreVerticesLiteral, GraphOf,
+        InteriorVertices, MergedBoundsGraphOfSiteOp,
+        MergedBoundsGraphOfSurfaceCode, MergedBoundsGraphOfZError,
+        MergedBoundsGraphOfZErrorChainSiteOp, OriginVerticesLiteral,
+        RoughBoundaryAVerticesLiteral, RoughBoundaryBVerticesLiteral,
+        StandardInteriorVertices, XSiteVerticesLiteral)
 from .graph_of_membership import InteriorVerticesMembership
 from .surface_code import (
         Errors, KitaevPlanarSC, LogicalHadamard,

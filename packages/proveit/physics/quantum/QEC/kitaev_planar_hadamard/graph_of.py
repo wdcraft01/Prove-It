@@ -295,3 +295,115 @@ class BoundaryVertices(Function):
         Function.__init__(
                 self, BoundaryVertices._operator_, G, styles=styles)
 
+
+class RoughBoundaryAVerticesLiteral(Literal):
+    '''
+    RoughBoundaryAVertices, output formatted as RBAVerts,
+    represents one of the two disjoint sets of rough boundary vertices
+    in the graphical representation of an n x n Kitaev-style planar
+    surface code under the pseudo-rotations of a logical Hadamard.
+    'RoughBoundaryAVertices' is then defined in the
+    kitaev_planar_hadamard common notebook as
+    RoughBoundaryAVertices = RoughBoundaryAVerticesLiteral().
+    '''
+
+    # the literal string for representing the RoughBoundaryAVertices
+    def __init__(self, *, styles=None):
+        Literal.__init__(self, string_format='RBAVerts', 
+                         latex_format=r'\textrm{RBAVerts}',
+                         styles=styles)
+
+    # def membership_object(self, element):
+    #     from .graph_of_membership import InteriorVerticesMembership
+    #     return InteriorVerticesMembership(element, self)
+
+
+class RoughBoundaryBVerticesLiteral(Literal):
+    '''
+    RoughBoundaryBVertices, output formatted as RBBVerts,
+    represents one of the two disjoint sets of rough boundary vertices
+    in the graphical representation of an n x n Kitaev-style planar
+    surface code under the pseudo-rotations of a logical Hadamard.
+    'RoughBoundaryBVertices' is then defined in the
+    kitaev_planar_hadamard common notebook as
+    RoughBoundaryBVertices = RoughBoundaryBVerticesLiteral().
+    '''
+
+    # the literal string for representing the RoughBoundaryBVertices
+    def __init__(self, *, styles=None):
+        Literal.__init__(self, string_format='RBBVerts', 
+                         latex_format=r'\textrm{RBBVerts}',
+                         styles=styles)
+
+    # def membership_object(self, element):
+    #     from .graph_of_membership import InteriorVerticesMembership
+    #     return InteriorVerticesMembership(element, self)
+
+
+class XSiteVerticesLiteral(Literal):
+    '''
+    XSiteVertices, output formatted as XSiteVerts, represents
+    the set of "interior" vertices (corresponding to X site operators)
+    in the space-time lattice graph of the n x n Kitaev-style planar
+    surface code undergoing the pseudo-rotations of the logical
+    Hadamard.
+    'XSiteVertices' is then defined in the kitaev_planar_hadamard
+    common notebook as XSiteVertices = XSiteVerticesLiteral().
+    '''
+
+    # the literal string for representing the XSiteVertices
+    def __init__(self, *, styles=None):
+        Literal.__init__(self, string_format='XSiteVerts', 
+                         latex_format=r'\textrm{XSiteVerts}',
+                         styles=styles)
+
+    # def membership_object(self, element):
+    #     from .graph_of_membership import InteriorVerticesMembership
+    #     return InteriorVerticesMembership(element, self)
+
+
+class OriginVerticesLiteral(Literal):
+    '''
+    OriginVertices, output formatted as OriginVerts, represents
+    the set of origin vertices (0, 0, t) over time (where the time t
+    represents the time steps in the logical Hadamard pseudorotations
+    applied to an n x n Kitaev-style planar surface code).
+    'OriginVertices' is then defined in the kitaev_planar_hadamard
+    common notebook as OriginVertices = OriginVerticesLiteral().
+    The OriginVertices set is not generally used directly but instead
+    is useful for helping to define other sets (such as the
+    XSiteVertices).
+    '''
+
+    # the literal string for representing the OriginVertices
+    def __init__(self, *, styles=None):
+        Literal.__init__(self, string_format='OriginVerts', 
+                         latex_format=r'\textrm{OriginVerts}',
+                         styles=styles)
+
+    # def membership_object(self, element):
+    #     from .graph_of_membership import InteriorVerticesMembership
+    #     return InteriorVerticesMembership(element, self)
+
+
+class CoreVerticesLiteral(Literal):
+    '''
+    CoreVertices, output formatted as CoreVerts, represents
+    the set of "core" lattice vertices {x, y, t} for x, y in
+    {0, ..., n-1} over time steps t. This is a utility/helper class
+    mostly used in defining other important sets, such as the set of
+    XSiteVertices.
+    'CoreVertices' is then defined in the kitaev_planar_hadamard
+    common notebook as CoreVertices = CoreVerticesLiteral().
+    '''
+
+    # the literal string for representing the CoreVertices
+    def __init__(self, *, styles=None):
+        Literal.__init__(self, string_format='CoreVerts', 
+                         latex_format=r'\textrm{CoreVerts}',
+                         styles=styles)
+
+    # def membership_object(self, element):
+    #     from .graph_of_membership import InteriorVerticesMembership
+    #     return InteriorVerticesMembership(element, self)
+
