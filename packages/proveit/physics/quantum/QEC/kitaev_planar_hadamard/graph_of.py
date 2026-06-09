@@ -1,4 +1,4 @@
-from proveit import Function, Literal
+from proveit import equality_prover, Function, Literal
 
 
 class GraphOf(Function):
@@ -313,6 +313,34 @@ class RoughBoundaryAVerticesLiteral(Literal):
                          latex_format=r'\textrm{RBAVerts}',
                          styles=styles)
 
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From RoughBoundaryAVertices or from
+        RoughBoundaryAVerticesLiteral(), deduce and return:
+
+            RoughBoundaryAVertices = 
+            UnionAll_{t}[{(n, j, t)}_{j} U {(k, n, t)}_{k}]
+
+        for t in {1,...,n-1}, j in {t,...,n-1}, k in {n-t,...,n-1}.
+        '''
+
+        from . import rough_boundary_a_vertices_def
+        return rough_boundary_a_vertices_def
+
+    def as_defined(self):
+        '''
+        From self = RoughBoundaryAVertices or
+        RoughBoundaryAVerticesLiteral(), return the expression (not
+        a proven judgment):
+
+            UnionAll_{t}[{(n, j, t)}_{j} U {(k, n, t)}_{k}]
+
+        for t in {1,...,n-1}, j in {t,...,n-1}, k in {n-t,...,n-1}.
+        '''
+        from . import rough_boundary_a_vertices_def
+        return rough_boundary_a_vertices_def.rhs
+
     # def membership_object(self, element):
     #     from .graph_of_membership import InteriorVerticesMembership
     #     return InteriorVerticesMembership(element, self)
@@ -335,6 +363,34 @@ class RoughBoundaryBVerticesLiteral(Literal):
                          latex_format=r'\textrm{RBBVerts}',
                          styles=styles)
 
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self as RoughBoundaryBVertices or
+        RoughBoundaryBVerticesLiteral(), deduce and return:
+
+            RoughBoundaryBVertices = 
+            UnionAll_{t}[{(0, l, t)}_{l} U {(m, 0, t)}_{m}]
+
+        for t in {1,...,n-1}, l in {t,...,n-1-t}, m in {1,...,t}.
+        '''
+
+        from . import rough_boundary_b_vertices_def
+        return rough_boundary_b_vertices_def
+
+    def as_defined(self):
+        '''
+        From self = RoughBoundaryBVertices or
+        RoughBoundaryBVerticesLiteral(), return the expression (not
+        a proven judgment):
+
+            UnionAll_{t}[{(0, l, t)}_{l} U {(m, 0, t)}_{m}]
+
+        for t in {1,...,n-1}, l in {t,...,n-1-t}, m in {1,...,t}.
+        '''
+        from . import rough_boundary_a_vertices_def
+        return rough_boundary_a_vertices_def.rhs
+
     # def membership_object(self, element):
     #     from .graph_of_membership import InteriorVerticesMembership
     #     return InteriorVerticesMembership(element, self)
@@ -356,6 +412,29 @@ class XSiteVerticesLiteral(Literal):
         Literal.__init__(self, string_format='XSiteVerts', 
                          latex_format=r'\textrm{XSiteVerts}',
                          styles=styles)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self as XSiteVertices or XSiteVerticesLiteral(),
+        deduce and return:
+
+            XSiteVertices = 
+            (CoreVerts - (OriginVerts U RBBVerts)).
+        '''
+
+        from . import x_site_vertices_def
+        return x_site_vertices_def
+
+    def as_defined(self):
+        '''
+        From self as XSiteVertices or XSiteVerticesLiteral(),
+        return the expression (not a proven judgment):
+
+            (CoreVerts - (OriginVerts U RBBVerts)).
+        '''
+        from . import x_site_vertices_def
+        return x_site_vertices_def.rhs
 
     # def membership_object(self, element):
     #     from .graph_of_membership import InteriorVerticesMembership
@@ -381,6 +460,33 @@ class OriginVerticesLiteral(Literal):
                          latex_format=r'\textrm{OriginVerts}',
                          styles=styles)
 
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self as OriginVertices or
+        OriginVerticesLiteral(), deduce and return:
+
+            OriginVertices = 
+            UnionAll_{t}[{(0, 0, t)}]
+
+        for t in {1,...,n-1}.
+        '''
+
+        from . import origin_vertices_def
+        return origin_vertices_def
+
+    def as_defined(self):
+        '''
+        From self as OriginVertices or OriginVerticesLiteral(),
+        return the expression (not a proven judgment):
+
+            UnionAll_{t}[{(0, 0, t)}]
+
+        for t in {1,...,n-1}.
+        '''
+        from . import origin_vertices_def
+        return origin_vertices_def.rhs
+
     # def membership_object(self, element):
     #     from .graph_of_membership import InteriorVerticesMembership
     #     return InteriorVerticesMembership(element, self)
@@ -402,6 +508,34 @@ class CoreVerticesLiteral(Literal):
         Literal.__init__(self, string_format='CoreVerts', 
                          latex_format=r'\textrm{CoreVerts}',
                          styles=styles)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self as CoreVertices or
+        CoreVerticesLiteral(), deduce and return:
+
+            CoreVertices = 
+            UnionAll_{t}[{(j, k, t)}_{j, k}]
+
+        for t in {1,...,n-1} and j,k in {0,...,n-1}.
+        '''
+
+        from . import core_vertices_def
+        return core_vertices_def
+
+    def as_defined(self):
+        '''
+        From self = CoreVertices or
+        CoreVerticesLiteral(), return the expression (not
+        a proven judgment):
+
+            UnionAll_{t}[{(j, k, t)}_{j, k}]
+
+        for t in {1,...,n-1} and j,k in {0,...,n-1}.
+        '''
+        from . import core_vertices_def
+        return core_vertices_def.rhs
 
     # def membership_object(self, element):
     #     from .graph_of_membership import InteriorVerticesMembership
