@@ -92,6 +92,7 @@ class Exists(OperationOverInstances):
         '''
         yield self.deduce_not_exists  # derive the NotExists form.
 
+    # original choose() method
     def choose(self, *skolem_constants, print_message=True):
         '''
         From the existential expression
@@ -130,6 +131,93 @@ class Exists(OperationOverInstances):
 
         return ExprTuple(*Q_skolem.entries, P_skolem)
 
+    # original eliminate() method
+    # @staticmethod
+    # @prover
+    # def eliminate(skolem_constants, judgment, **defaults_config):
+    #     '''
+    #     For the provided judgment of the form S |– alpha and the tuple
+    #     of Skolem constants skolem_constants that had been specified
+    #     earlier using the Exists.choose(), derive and return a new
+    #     judgment S' |– alpha where all assumptions in S involving only
+    #     the given skolem_constants are now eliminated.
+    #     This process will only work if the provided skolem_constants
+    #     exactly match a set of Skolem constants used earlier in an
+    #     Exists.choose() method to produce the Skolem constant-based
+    #     subset of assumptions you wish to eliminate from S.
+    #     '''
+    #     from proveit import free_vars, Lambda
+    #     from proveit import n, P, Q, alpha
+    #     from proveit.logic import And
+    #     from proveit.core_expr_types import (x_1_to_n, y_1_to_n)
+    #     from proveit.logic.booleans.quantification.existence import (
+    #         skolem_elim)
+    #     if skolem_constants not in Exists.skolem_consts_to_existential:
+    #         raise KeyError("In calling Exists.eliminate(), the Skolem "
+    #                        "constants provided were: {}, but you can only "
+    #                        "eliminate Skolem constants that were chosen "
+    #                        "earlier when using Exists.choose() and the "
+    #                        "Skolem constants to be eliminated must appear "
+    #                        "exactly as specified in the original "
+    #                        "Exists.choose() method.".format(skolem_constants))
+    #     # Since the Skolem constants appear to be correct, we check
+    #     # if any of the Skolem constants appear as free variables in
+    #     # the judgment, raising an error if so:
+    #     skolem_constants_remaining = (
+    #         set(skolem_constants).intersection(free_vars(judgment)) )
+    #     if skolem_constants_remaining != set():
+    #         raise ValueError(
+    #                 "In calling the Exists.eliminate() static method, which "
+    #                 "might have arisen from a judgment.eliminate() call, "
+    #                 f"the Skolem constant(s) {skolem_constants_remaining} "
+    #                 "still appear as free variable(s) in the target judgment "
+    #                 f"{judgment}, which is not allowed. ")
+    #     existential = Exists.skolem_consts_to_existential[skolem_constants]
+    #     skolem_assumptions = set(existential.choose(
+    #         *skolem_constants, print_message=False))
+    #     with defaults.temporary() as temp_defaults:
+    #         temp_defaults.assumptions = (
+    #                 assumption for assumption in defaults.assumptions
+    #                 if assumption not in skolem_assumptions)
+
+    #         _P = Lambda(
+    #             existential.instance_params, existential.instance_expr)
+    #         if hasattr(existential, 'condition'):
+    #             _Q = Lambda(existential.instance_params, existential.condition)
+    #         else:
+    #             # There is no condition but we still need to provide
+    #             # something for _Q so we provide an empty conjunction,
+    #             # And().
+    #             _Q = Lambda(
+    #                 existential.instance_params, And())
+    #         _alpha = judgment
+    #         _n = existential.instance_params.num_elements()
+    #         x_1_to__n = ExprTuple(x_1_to_n.basic_replaced({n: _n}))
+    #         y_1_to__n = ExprTuple(y_1_to_n.basic_replaced({n: _n}))
+    
+    #         # express the judgment as an implication to match details of
+    #         # the skolem_elim theorem being instantiated further below
+    #         P_implies_alpha = _alpha.as_implication(
+    #             hypothesis=_P.apply(*skolem_constants))
+    #         # Although the generalization to further match theorem
+    #         # details can be handled through automation, it can reduce
+    #         # computations to explicitly handle it here right now:
+    #         condition = _Q.apply(*skolem_constants)
+    #         if isinstance(condition, And): conditions = condition.operands
+    #         else: conditions = [condition]
+    #         P_implies_alpha.generalize(
+    #                 skolem_constants,
+    #                 conditions=conditions)
+    
+    #         return skolem_elim.instantiate(
+    #             {n: _n, P: _P, Q: _Q, alpha: _alpha,
+    #              x_1_to__n: skolem_constants,
+    #              y_1_to__n: existential.instance_params},
+    #             preserve_all=True).derive_consequent()
+
+    # original eliminate() method
+    # WITH modifications by wdc starting Tues 6/30/2026 adapting to
+    # use new theorems and correctly update the defaults.assumptions
     @staticmethod
     @prover
     def eliminate(skolem_constants, judgment, **defaults_config):
@@ -149,7 +237,7 @@ class Exists(OperationOverInstances):
         from proveit.logic import And
         from proveit.core_expr_types import (x_1_to_n, y_1_to_n)
         from proveit.logic.booleans.quantification.existence import (
-            skolem_elim)
+            skolem_elim, nary_skolem_elim_with_conditions)
         if skolem_constants not in Exists.skolem_consts_to_existential:
             raise KeyError("In calling Exists.eliminate(), the Skolem "
                            "constants provided were: {}, but you can only "
@@ -173,6 +261,7 @@ class Exists(OperationOverInstances):
         existential = Exists.skolem_consts_to_existential[skolem_constants]
         skolem_assumptions = set(existential.choose(
             *skolem_constants, print_message=False))
+        _Q_condition = True # added 20260630
         with defaults.temporary() as temp_defaults:
             temp_defaults.assumptions = (
                     assumption for assumption in defaults.assumptions
@@ -185,7 +274,10 @@ class Exists(OperationOverInstances):
             else:
                 # There is no condition but we still need to provide
                 # something for _Q so we provide an empty conjunction,
-                # And().
+                # And(). ** COULD USE A FLAG HERE TO CONTROL WHICH THM USED LATER
+                _Q_condition = False # added 20260630;
+                # IN WHICH CASE we wouln't need the following definition
+                # since we'll use a different theorem
                 _Q = Lambda(
                     existential.instance_params, And())
             _alpha = judgment
@@ -200,18 +292,44 @@ class Exists(OperationOverInstances):
             # Although the generalization to further match theorem
             # details can be handled through automation, it can reduce
             # computations to explicitly handle it here right now:
-            condition = _Q.apply(*skolem_constants)
-            if isinstance(condition, And): conditions = condition.operands
-            else: conditions = [condition]
-            P_implies_alpha.generalize(
-                    skolem_constants,
-                    conditions=conditions)
+            # BLOCK CAN BE PARTLY CONTROLLED BY _Q_condition FLAG ABOVE
+            # condition = _Q.apply(*skolem_constants)
+            # if isinstance(condition, And): conditions = condition.operands
+            # else: conditions = [condition]
+            # P_implies_alpha.generalize(
+            #         skolem_constants,
+            #         conditions=conditions)
+            if _Q_condition:
+                condition = _Q.apply(*skolem_constants)
+                if isinstance(condition, And): conditions = condition.operands
+                else: conditions = [condition]
+                P_implies_alpha.generalize(
+                        skolem_constants,
+                        conditions=conditions)
+            else:
+                P_implies_alpha.generalize(skolem_constants)
+
     
-            return skolem_elim.instantiate(
-                {n: _n, P: _P, Q: _Q, alpha: _alpha,
-                 x_1_to__n: skolem_constants,
-                 y_1_to__n: existential.instance_params},
-                preserve_all=True).derive_consequent()
+            # return skolem_elim.instantiate(
+            #     {n: _n, P: _P, Q: _Q, alpha: _alpha,
+            #      x_1_to__n: skolem_constants,
+            #      y_1_to__n: existential.instance_params},
+            #     preserve_all=True).derive_consequent()
+
+            if _Q_condition:
+                return nary_skolem_elim_with_conditions.instantiate(
+                    {n: _n, P: _P, Q: _Q, alpha: _alpha,
+                     x_1_to__n: skolem_constants,
+                     y_1_to__n: existential.instance_params},
+                    preserve_all=True).derive_consequent()
+            else:
+                from proveit.logic.booleans.quantification.existence import (
+                        nary_skolem_elim)
+                return nary_skolem_elim.instantiate(
+                    {n: _n, P: _P, alpha: _alpha,
+                     x_1_to__n: skolem_constants,
+                     y_1_to__n: existential.instance_params},
+                    preserve_all=True).derive_consequent()
 
     @prover
     def unfold(self, **defaults_config):
