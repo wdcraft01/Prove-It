@@ -1,13 +1,12 @@
 from proveit import (
         defaults, equality_prover, Expression, ExprRange, ExprTuple,
-        Lambda, Literal, Operation, USE_DEFAULTS, relation_prover,
+        Lambda, Literal, Operation, prover, USE_DEFAULTS, relation_prover,
         SimplificationDirectives, TransRelUpdater)
 from proveit import i, j, k, l, m, n, A, B, C, S, x
 from proveit.abstract_algebra.generic_methods import (
         apply_association_thm, apply_commutation_thm,
         apply_disassociation_thm, generic_permutation, group_commutation,
         sorting_and_combining_like_operands)
-
 
 class Union(Operation):
     # operator of the Intersect operation
@@ -54,14 +53,14 @@ class Union(Operation):
         according to the simplification directives as follows:
 
         If ungroup is True (the default), dissociate nested Unions.
-        
+
         If sorting is required, sort operands according to order_key_fn
         where the key is simply the operand itself.
 
         Eliminate any EmptySet operands (assuming this leaves at
         least one non-EmptySet operand), since A U EmptySet = A,
         and eliminate repeating operands, since A U A = A (eliminating
-        EmptySet operands and repeated operands is similar to 
+        EmptySet operands and repeated operands is similar to
         eliminating multiplication factors of 1 in the Mult class).
 
         Notice that, unlike multiplication, Union has no general "zero"
@@ -109,7 +108,7 @@ class Union(Operation):
 
         # Combine like operands.
         expr = eq.update(sorting_and_combining_like_operands(
-                    expr, order_key_fn=lambda likeness_key : 0, 
+                    expr, order_key_fn=lambda likeness_key : 0,
                     likeness_key_fn=likeness_key_fn,
                     preserve_likeness_keys=True, auto_simplify=True))
 
@@ -251,7 +250,7 @@ class Union(Operation):
         Otherwise, use the parameter of the given ExprRange (which
         will be some generic canonical such as '_a').
         '''
-        
+
         if (self.operands.num_entries() != 1
             or not isinstance(self.operands[0], ExprRange)):
             raise ValueError(
@@ -268,7 +267,7 @@ class Union(Operation):
 
         proven_unionall = union_eq_unionall.instantiate(
                 {i:_i_sub, j:_j_sub, k:_k_sub, A:_A_sub})
-        
+
         return proven_unionall
 
     @equality_prover('combined_operands', 'combine_operands')
@@ -322,7 +321,7 @@ class Union(Operation):
             return empty_union_eval
 
         if self.operands.num_entries()==1 and (
-                isinstance(self.operands[0], ExprRange) and 
+                isinstance(self.operands[0], ExprRange) and
                 self.operands[0].is_parameter_independent):
             # A U A U ... U A = A
             operand_range = self.operands[0]
@@ -344,7 +343,7 @@ class Union(Operation):
         # produced by the underlying theorem is equal to an equivalent
         # ExprTuple. Instead, we try to recursively reduce the number
         # of identical operands being considered by repeatedly dealing
-        # with the operands pair-wise. 
+        # with the operands pair-wise.
         _num_operands = self.operands.num_elements().as_int()
         # It would be nice to do this via the TransRelUpdater(),
         # but for now we do the work ourselves.
@@ -477,7 +476,7 @@ class Union(Operation):
 
             |- (A U B U (C U D U E) U ... U Y U Z)
                = (A U B U C U D U E U ... U Y U Z)
-        
+
         Multiple indices can be provided for multiple disassociations
         simultaneously, e.g. expr.disassociation(2, 3, 4)
         '''
@@ -485,8 +484,8 @@ class Union(Operation):
         return apply_disassociation_thm(self, idx, disassociation)
 
     @equality_prover('distributed', 'distribute')
-    def distribution(self, idx=None, *, 
-                     left_factors=None, right_factors=None, 
+    def distribution(self, idx=None, *,
+                     left_factors=None, right_factors=None,
                      **defaults_config):
         r'''
         Modifies this Union expression by distributing through the
@@ -499,10 +498,10 @@ class Union(Operation):
 
             |- (A U (B1 ∩ B2 ∩ B3) U C) =
                (A U B1 U C) ∩ (A U B2 U C) ∩ (A U B3 U C)
-        
+
         For more flexibility, 'left_factors' and 'right_factors'
         may be specified to indicate subsets of the factors to
-        distribute on the left vs right. The 'left_factors' and 
+        distribute on the left vs right. The 'left_factors' and
         'right_factors' may be provided as indices instead.
         For example:
 
@@ -533,7 +532,7 @@ class Union(Operation):
             if right_factors is None: right_factors = []
             # Convert from expressions to indices for the left and
             # right factors (exclude the 'idx').
-            factor_to_index = {factor:_k for _k, factor 
+            factor_to_index = {factor:_k for _k, factor
                                in enumerate(self.operands) if _k != idx}
             left_factor_indices = list(left_factors)
             right_factor_indices = list(right_factors)
@@ -567,7 +566,7 @@ class Union(Operation):
             right_factors = [factors[_i] for _i in right_factor_indices]
             # Make the distribution.
             num_left_factors = len(left_factors)
-            distribution = Union(*left_factors, factors[idx], 
+            distribution = Union(*left_factors, factors[idx],
                                 *right_factors).distribution(
                                         num_left_factors)
             if len(before_indices)==len(after_indices)==0:
@@ -604,4 +603,72 @@ class Union(Operation):
             raise NotImplementedError(
                 "Unsupported operand type to distribute over: " +
                 str(operand.__class__))
-            
+    @prover
+    def prove_by_cases(self, forall_stmt, **defaults_config):
+        '''
+        For the Union S = A1 U A2 U ... U Am (i.e., self), and given
+        a universal quantification 'forall_stmt' over the set S of the
+        form [Forall_{x in S} P(x)], conclude and return the Forall
+        expression knowing/assuming:
+
+            Forall_{x in A1} P(x) AND Forall_{x in A2} P(x) AND ...
+                AND Forall_{x in Am} P(x)
+
+        The code is based on analogous code for the Set.prove_by_cases()
+        method, but omitting the treatment for Forall() instances
+        that have additional conditions beyond just a domain spec.
+        '''
+        from proveit import P, ExprTuple, Function, var_range
+        from proveit.logic import Forall, InSet
+        from proveit.numbers import one
+        assert(isinstance(forall_stmt, Forall)), (
+            "May only call the prove_by_cases() method of the Union "
+            "class using a Forall (universally quantified) expression "
+            "as the first argument. Union.prove_by_cases() was called "
+            f"with arg 'forall_stmt' = {forall_stmt}.")
+        assert(forall_stmt.conditions.num_entries() >= 1), (
+            "When calling the prove_by_cases() method of the Union "
+            "class, the Forall argument should have (at least) "
+            "a domain condition consisting of a Union.")
+        assert(isinstance(forall_stmt.conditions[0], InSet)), (
+            "When calling the prove_by_cases() method of the Union "
+            "class, the domain condition for the Forall argument "
+            "should appear as the first element in the Forall.conditions. "
+            "Consider using the 'domain=' kwarg when specifying the "
+            "domain when constructing your Forall expression, or "
+            "specify the domain using an InSet expression as the first "
+            "of the conditions you specify.")
+
+        if (forall_stmt.conditions.num_entries() > 1):
+            raise NotImplementedError(
+                "Union.prove_by_cases() implemented only for Forall "
+                "expressions without explicit conditions. The 'forall_stmt' "
+                f"argument was {forall_stmt}.")
+
+        from . import true_in_each_then_true_in_union
+
+        # forall_{x in A1 U A2 U ... U Am} P(x), assuming/knowing P(x)
+        # for all x in A1, for all x in A2, ... for all x in Am.
+        # This is the basic case where the only condition in the
+        # forall_stmt argument is the domain specification.
+
+        # Number of sets [A1, A2, ..., Am] making up the Union
+        _m_sub = self.operands.num_elements()
+
+        # Union component elements to substitute
+        var_range_update = var_range(A, one, _m_sub)
+        _var_range_sub = self.operands
+
+        # Predicate re-definition (using user-supplied instance_var)
+        Px = Function(P, forall_stmt.instance_var)
+
+        # Predicate to substitute
+        _Px_sub = forall_stmt.instance_expr
+
+        # Instance var to substitute
+        _x_sub = forall_stmt.instance_var
+
+        return (true_in_each_then_true_in_union.instantiate(
+            {m: _m_sub, ExprTuple(var_range_update): _var_range_sub,
+             x: _x_sub, Px: _Px_sub}, num_forall_eliminations=2).
+            derive_consequent())
