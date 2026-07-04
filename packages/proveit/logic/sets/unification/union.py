@@ -1,6 +1,6 @@
-from proveit import Literal, Operation, USE_DEFAULTS, relation_prover
+from proveit import (
+        Literal, Operation, prover, relation_prover, USE_DEFAULTS)
 from proveit import m, n, A, S, x
-
 
 class Union(Operation):
     # operator of the Intersect operation
@@ -35,12 +35,9 @@ class Union(Operation):
         return union_inclusion.instantiate(
                     {A:_A, m:_m, S:_S})
 
-    # @prover
+    @prover
     def prove_by_cases(self, forall_stmt, **defaults_config):
         '''
-        UNDER CONSTRUCTION.
-        BASED ON SET.PROVE_BY_CASES().
-
         For the Union S = A1 U A2 U ... U Am (i.e., self), and given
         a universal quantification 'forall_stmt' over the set S of the
         form [Forall_{x in S} P(x)], conclude and return the Forall
@@ -48,6 +45,10 @@ class Union(Operation):
 
             Forall_{x in A1} P(x) AND Forall_{x in A2} P(x) AND ...
                 AND Forall_{x in Am} P(x)
+
+        The code is based on analogous code for the Set.prove_by_cases()
+        method, but omitting the treatment for Forall() instances
+        that have additional conditions beyond just a domain spec.
         '''
         from proveit import P, ExprTuple, Function, var_range
         from proveit.logic import Forall, InSet
@@ -70,13 +71,13 @@ class Union(Operation):
             "specify the domain using an InSet expression as the first "
             "of the conditions you specify.")
 
-        from . import true_in_each_then_true_in_union
-
         if (forall_stmt.conditions.num_entries() > 1):
             raise NotImplementedError(
                 "Union.prove_by_cases() implemented only for Forall "
                 "expressions without explicit conditions. The 'forall_stmt' "
                 f"argument was {forall_stmt}.")
+
+        from . import true_in_each_then_true_in_union
 
         # forall_{x in A1 U A2 U ... U Am} P(x), assuming/knowing P(x)
         # for all x in A1, for all x in A2, ... for all x in Am.
