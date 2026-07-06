@@ -2,7 +2,7 @@ from proveit import (
         equality_prover, Expression, ExprRange, Lambda, Literal,
         Operation, SimplificationDirectives, TransRelUpdater,
         USE_DEFAULTS)
-from proveit import i, j, k, l, m, n, x, A, B, C, S
+from proveit import i, j, k, l, m, n, x, A, B, C, D, E, S
 from proveit.abstract_algebra.generic_methods import (
         apply_association_thm, apply_commutation_thm,
         apply_disassociation_thm, generic_permutation, group_commutation)
@@ -259,9 +259,9 @@ class Intersect(Operation):
         Currently, Intersect.distribute() works only to distribute
         Intersect operations through Union() or UnionAll() operations.
         '''
-        from . import (distribute_through_union,
-                distribute_through_unionall)
-        from proveit.logic.sets import Union, UnionAll
+        from . import (distribute_through_difference,
+                distribute_through_union, distribute_through_unionall)
+        from proveit.logic.sets import Difference, Union, UnionAll
         if left_factors is not None or right_factors is not None:
             # Specific factors to be applied to the left and/or right
             # were provided.  So we'll reorder the factors and then
@@ -337,6 +337,11 @@ class Intersect(Operation):
             _B_sub = Lambda(_lambda_param, operand.operand.body.value)
             return distribute_through_unionall.instantiate(
                 {l:_l_sub, n:_n_sub, S:_S_sub, A:_A_sub, B:_B_sub, C:_C_sub})
+        elif isinstance(operand, Difference):
+            _D_sub = operand.operands[0]
+            _E_sub = operand.operands[1]
+            return distribute_through_difference.instantiate(
+                {l:_l_sub, n:_n_sub, A:_A_sub, C:_C_sub, D:_D_sub, E:_E_sub})
         else:
             raise NotImplementedError(
                 "Unsupported operand type to distribute over: " +
