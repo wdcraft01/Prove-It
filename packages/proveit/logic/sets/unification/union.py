@@ -416,9 +416,9 @@ class Union(Operation):
     def readily_intersect_factorable(self, factor, **defaults_config):
         '''
         Return True iff 'factor' is factorable from 'self' in an
-        obvious manner as an intersection "factor" or operand.
+        obvious manner as an "intersection factor" or operand.
         For a Union, a "factor" is readily factorable as an
-        intersection factor if the every operand of the Union is
+        intersection factor if every operand of the Union is
         an Intersect and every such Intersect has 'factor' as an
         Intersect factor.
 
