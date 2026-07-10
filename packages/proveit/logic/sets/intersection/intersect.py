@@ -292,13 +292,13 @@ class Intersect(Operation):
                     "One or more bad factors supplied as arguments "
                     f"to Intersect.intersect_factorization(): {_bad_factors}")
 
-        # And check if the multiplicity of supplied factors is valid
-        # Perhaps modify the factorable() methods to check for multiplicity?
-
-        # Factors are legitimate; derive the factored form
+        # Factors (and multiplicities) are legitimate;
+        # so derive the factored form.
 
         if Intersect(*all_factors) == self:
             return eq.relation # self = self
+
+        
 
 
 
