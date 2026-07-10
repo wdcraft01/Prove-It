@@ -149,21 +149,22 @@ class Intersect(Operation):
         return (self.readily_intersect_factorable(factor)
                 or self.readily_union_factorable(factor))
 
-    def readily_intersect_factorable(self, factor):
+    def readily_intersect_factorable(self, factor, multiplicity=1):
         '''
         Return True iff 'factor' is factorable from 'self' in an
-        obvious manner as an intersection "factor" or operand.
-        For an Intersect, a "factor" is readily factorable as an
-        intersection factor if it appears as an operand in the
-        Intersect expression or if it appears as an intersection factor
-        of one of the Intersect operands.
+        obvious manner as an intersection "factor" or operand, with at
+        least the specified multiplicity. For an Intersect, a "factor"
+        is readily factorable as an intersection factor if it appears
+        as an operand in the Intersect expression or if it appears as
+        an intersection factor of one of the Intersect operands.
 
         For example, the Intersect expression:
 
-            A ∩ B ∩ (C ⋃ D) ∩ (E ∩ F)
+            A ∩ B ∩ (C ⋃ D) ∩ (E ∩ B)
 
-        has factorable intersection "factors" A, B, (C ⋃ D), (E ∩ F),
-        E, and F. Notice that neither C nor D are intersect factors.
+        has factorable "intersection-factors" A, B, (C ⋃ D), (E ∩ B),
+        and E. B has multiplicity 2. Notice that neither C nor D are
+        intersection factors.
 
         Despite the borrowing of the "factor" terminology from the Add
         and Mult class methods, Intersect.readily_intersect_factorable()
@@ -172,19 +173,28 @@ class Intersect(Operation):
         X such that self = X n (remainder). See also the Intersect
         readily_union_factorable() for the dual factorability method.
         '''
+        from collections import defaultdict
 
         # Perhaps the factor is itself the entire Intersect
         if self == factor:
             return True
 
+        # Create the defaultdict for counting multiplicities
+        _multiplicities = defaultdict(int)
+
         # Check to see if factor appears as an operand or as a
-        # factor in one of the operands
+        # factor in one of the operands, with at least the specified
+        # multiplicity.
+
         for _op in self.operands:
             if ((_op == factor) or
                 (hasattr(_op, 'readily_intersect_factorable')
                  and _op.readily_intersect_factorable(factor))):
 
-                return True
+                _multiplicities[_op] += 1
+
+                if _multiplicities[_op] == multiplicity:
+                    return True
         
         return False
 
@@ -228,6 +238,73 @@ class Intersect(Operation):
                 return False 
 
         return True
+
+    def intersect_factorization(self, left_factors=None, right_factors=None,
+                                group_factors=True, group_remainder=True,
+                                **defaults_config):
+        '''
+        Derive and return an equality between self and the proven
+        "factorization" of this Intersect expression produced by
+        by pulling the factor(s) from this Intersect to the 
+        "left" or "right" as "Intersect factors." For example, given
+        self = A ∩ B ∩ ((C ∩ D) ⋃ (E ∩ C)) ∩ F, and calling
+
+            self.intersect_factorization(
+                left_factors = [B], right_factors = [C])
+
+        we obtain
+
+            self = B ∩ (A ∩ (D ⋃ E) ∩ F) ∩ C
+
+        producing another Intersect expression on the rhs.
+
+        If there are multiple occurrences, the first
+        occurrence is used.  If group_factors is True, the factors are 
+        grouped together as a sub-product.
+
+        If group_remainder is True and there are multiple remaining
+        operands, then these remaining operands are grouped.
+        '''
+
+        expr = self
+        # A convenience for updating our developing equation
+        eq = TransRelUpdater(expr)
+
+        # No factors supplied for factorization?
+        if (left_factors is None and right_factors is None):
+            return eq.relation # self = self
+
+        # Safely convert None values to empty lists
+        left_factors = left_factors if left_factors is not None else []
+        right_factors = right_factors if right_factors is not None else []
+        all_factors = left_factors + right_factors
+
+        # Check for bad factors
+        _bad_factors = []
+        for factor in set(all_factors):
+            _multiplicity = all_factors.count(factor)
+            if not self.readily_intersect_factorable(factor, _multiplicity):
+                _bad_factors.append(factor)
+
+        # If bad factors supplied, raise error and abandon
+        if len(_bad_factors) > 0:
+            raise ValueError(
+                    "One or more bad factors supplied as arguments "
+                    f"to Intersect.intersect_factorization(): {_bad_factors}")
+
+        # And check if the multiplicity of supplied factors is valid
+        # Perhaps modify the factorable() methods to check for multiplicity?
+
+        # Factors are legitimate; derive the factored form
+
+        if Intersect(*all_factors) == self:
+            return eq.relation # self = self
+
+
+
+        return all_factors
+
+
 
     @equality_prover('commuted', 'commute')
     def commutation(self, init_idx=None, final_idx=None, **defaults_config):
@@ -278,10 +355,10 @@ class Intersect(Operation):
     @equality_prover('permuted', 'permute')
     def permutation(self, new_order=None, cycles=None, **defaults_config):
         '''
-        Deduce that this Intersect expression is equal to a Union in
-        which the operands at indices 0, 1, …, n-1 have been reordered
-        as specified EITHER by the new_order list OR by the cycles list
-        parameter. For example,
+        Deduce that this Intersect expression is equal to an Intersect
+        in which the operands at indices 0, 1, …, n-1 have been
+        reordered as specified EITHER by the new_order list OR by the
+        cycles list parameter. For example,
 
             (A ∩ B ∩ C ∩ D).permutation(new_order=[0, 2, 3, 1])
 
