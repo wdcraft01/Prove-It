@@ -387,6 +387,113 @@ class Union(Operation):
 
         return Equals(self, self).conclude_via_reflexivity()
 
+    def readily_factorable(self, factor):
+        '''
+        Return True iff 'factor' is readily factorable as a Union
+        factor or as an Intersect factor from 'self' in an
+        obvious manner. See the readily_intersect_factorable() and
+        readily_union_factorable() for details.
+
+        For example, the Union expression:
+
+            A ⋃ B ⋃ (C ∩ D) ⋃ (E ⋃ F)
+
+        has factorable "Union factors" A, B, (C ∩ D), (E ⋃ F), E,
+        and F. Notice that neither C nor D are factorable factors.
+
+        Despite the borrowing of the "factor" terminology from the Add
+        and Mult class methods, Intersect.readily_factorable() is
+        not nearly so general as the Add and Mult versions, with a
+        "factor" here limited to being a simple "factor" X such that
+        self could theoretically be rewritten as X ∩ (remainder) or
+        X ⋃ (remainder).
+        '''
+
+        return (self.readily_intersect_factorable(factor)
+                or self.readily_union_factorable(factor))
+
+    def readily_intersect_factorable(self, factor, **defaults_config):
+        '''
+        Return True iff 'factor' is factorable from 'self' in an
+        obvious manner as an "intersection factor" or operand.
+        For a Union, a "factor" is readily factorable as an
+        intersection factor if every operand of the Union is
+        an Intersect and every such Intersect has 'factor' as an
+        Intersect factor.
+
+        For example, the Union expression:
+
+            (A n B) U (B n C)
+
+        has B as a factorable intersect "factor," and the expression
+        can be re-written as [B n (A U C)].
+
+        Despite the borrowing of the "factor" terminology from the Add
+        and Mult class methods, Union.readily_intersect_factorable()
+        is not nearly so general as the Add and Mult versions, with a
+        "factor" here limited to being an Intersect operand appearing
+        in every one of the Union operands. More complex factoring
+        situations might require user pre-processing of the expression.
+        See also the Union readily_union_factorable() for the dual
+        factorability method.
+        '''
+
+        # For the Union to even be possibly intersect factorable,
+        # each of the operands must be an Intersect
+        from proveit.logic.sets import Intersect
+        for _op in self.operands:
+            if not isinstance(_op, Intersect):
+                return False
+
+        # Given that every operand is an Intersect, every such
+        # Intersect must then have factor as an Intersect factor
+        for _op in self.operands:
+            if not _op.readily_intersect_factorable(factor):
+                return False 
+
+        return True
+
+    def readily_union_factorable(self, factor):
+        '''
+        Return True iff 'factor' is factorable from 'self' in an
+        obvious manner as a "union factor" or operand.
+        For a Union, a "factor" is readily factorable as a
+        "union factor" if it appears as an operand in the
+        Union expression or if it appears as a Union factor
+        of one of the Union operands.
+
+        For example, the Union expression:
+
+            A ⋃ B ⋃ (C ∩ D) ⋃ (E ⋃ F)
+
+        has factorable "union factors" A, B, (C ∩ D), (E ⋃ F),
+        E, and F. Notice that neither C nor D are union factors.
+
+        Despite the borrowing of the "factor" terminology from the Add
+        and Mult class methods, Union.readily_union_factorable() is not
+        nearly so general as the Add and Mult readily_factorable()
+        methods, with a "factor" here limited to being a Union
+        operand or an item X such that self = X ⋃ (remainder).
+        More complex factoring situations might require user pre-
+        processing of the expression. See also the Union
+        readily_intersect_factorable() for the dualfactorability method.
+        '''
+
+        # Perhaps the factor is itself the entire Union
+        if self == factor:
+            return True
+
+        # Check to see if factor appears as an operand or as a
+        # "union factor" in one of the operands
+        for _op in self.operands:
+            if ((_op == factor) or
+                (hasattr(_op, 'readily_union_factorable')
+                 and _op.readily_union_factorable(factor))):
+
+                return True
+        
+        return False
+
     @equality_prover('commuted', 'commute')
     def commutation(self, init_idx=None, final_idx=None, **defaults_config):
         '''
