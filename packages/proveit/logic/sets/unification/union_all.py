@@ -61,7 +61,7 @@ class UnionAll(OperationOverInstances):
         from proveit.logic.sets import EmptySet
 
         # UnionAll with empty indexing domain: always the empty set
-        if Equals(self.domain, EmptySet).readily_provable():
+        if (self.domain == EmptySet):
             from . import union_all_empty_domain
             _f_sub = Lambda(self.instance_param, self.instance_expr)
             _i_relabel = self.instance_param
@@ -72,7 +72,7 @@ class UnionAll(OperationOverInstances):
             return _inst_relabeled
 
         # UnionAll of EmptySet is the EmptySet
-        if Equals(self.instance_expr, EmptySet).readily_provable():
+        if (self.instance_expr == EmptySet):
             from . import union_all_of_empty
             _S_sub = self.domain
             _i_relabel = self.instance_param
