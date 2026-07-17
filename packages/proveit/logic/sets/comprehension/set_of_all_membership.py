@@ -156,11 +156,20 @@ class SetOfAllMembership(SetMembership):
         producing an antecedent that does not exactly match the
         original membership object.
         '''
-
         from . import (unfold, unfold_basic_comprehension,
                        in_superset_if_in_comprehension)
 
         element = self.element
+
+        # Added temporarily 202607151412 to intercept odd case
+        if self.domain.domain is None:
+            # We have a strange SetOfAll with an empty domain,
+            # but we need to return a Judgment, so we
+            # return a trivial Judgment |- element = element
+            from proveit.logic import Equals
+            return (Equals(self.element, self.element).
+                    conclude_via_reflexivity())
+        # end of temporary addition
 
         if len(self.domain.explicit_conditions())==1:
             explicit_conditions = self.domain.explicit_conditions()[0]
