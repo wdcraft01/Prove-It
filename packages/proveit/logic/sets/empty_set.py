@@ -1,4 +1,4 @@
-from proveit import x, A, Judgment, Literal
+from proveit import m, n, x, A, B, C, Judgment, Literal, relation_prover
 from proveit.logic import Exists, NotEquals
 from proveit.logic.irreducible_value import IrreducibleValue
 from proveit.logic.sets import InSet
@@ -16,21 +16,6 @@ class EmptySetLiteral(Literal, IrreducibleValue):
         Literal.__init__(
             self, string_format='emptyset', latex_format=r'\emptyset',
             styles=styles)
-
-    # def deduce_not_equal(self, other, **defaults_config):
-    #     '''
-    #     Deduce that self (i.e., the empty set) is not equal to other.
-    #     Currently we address two special cases:
-    #     (1) We can conclude that A ≠ EmptySet if we know there exists
-    #         some x in A.
-    #     (2) We can conclude that A U B ≠ EmptySet if we know that
-    #         either A ≠ EmptySet or B ≠ EmptySet (or both). This can
-    #         be generalized to the case of A1 U A2 U ... U An ≠ EmptySet.
-    #     '''
-
-    #     # (1) There exists x in A.
-    #     exists_x_in_A = Exists(x, InSet(x, A))
-    #     if exists_x_in_A.readily_provable():
     
     def membership_object(self, element):
         from .empty_set_membership import EmptySetMembership
@@ -69,3 +54,66 @@ class EmptySetLiteral(Literal, IrreducibleValue):
         from proveit.logic.sets import non_empty_unfolding
         _A_sub = judgment.lhs
         yield (lambda : non_empty_unfolding.instantiate({A:_A_sub}))
+
+    @relation_prover
+    def deduce_not_equal(self, other, **defaults_config):
+        '''
+        Deduce that self (i.e., the empty set) is not equal to other.
+        Currently we address one special case:
+        
+        (2) We can conclude that A U B ≠ EmptySet if we know that
+            either A ≠ EmptySet or B ≠ EmptySet (or both). This can
+            be generalized to the case of
+            A1 U A2 U ... U An ≠ EmptySet.
+        
+        Interestingly, we can also automatically prove that
+        A ≠ EmptySet if we know there exists some x in A, but that
+        automaticity is built-in as a side-effect in
+        Exists.side_effects(), which in turn calls
+        InSet.existential_side_effects().
+
+        '''
+
+        # (1) A Union is non-empty if any set in the Union is non-empty
+        from proveit.logic.sets import EmptySet, Union
+        if isinstance(other, Union):
+            if other.operands.is_double():
+                # A U B ≠ EmptySet if A ≠ EmptySet or B ≠ EmptySet.
+                if NotEquals(other.operands[0], EmptySet).readily_provable():
+                    from proveit.logic.sets.unification import (
+                            union_with_nonempty_left)
+                    _A_sub = other.operands[0]
+                    _B_sub = other.operands[1]
+                    return union_with_nonempty_left.instantiate(
+                            {A:_A_sub, B:_B_sub}).derive_reversed()
+                if NotEquals(other.operands[1], EmptySet).readily_provable():
+                    from proveit.logic.sets.unification import (
+                            union_with_nonempty_right)
+                    _A_sub = other.operands[0]
+                    _B_sub = other.operands[1]
+                    return union_with_nonempty_right.instantiate(
+                            {A:_A_sub, B:_B_sub}).derive_reversed()
+
+            if other.operands.num_elements().as_int() > 2:
+                _nonempty_idx = -1
+                for _idx, _op in enumerate(other.operands):
+                    if NotEquals(_op, EmptySet).readily_provable():
+                        _nonempty_idx = _idx
+                        break
+                if _nonempty_idx != -1:
+                    from proveit.logic.sets.unification import (
+                            union_with_nonempty)
+                    _A_sub = other.operands[:_idx]
+                    _B_sub = other.operands[_idx]
+                    _C_sub = other.operands[_idx+1:]
+                    _m_sub = _A_sub.num_elements()
+                    _n_sub = _C_sub.num_elements()
+                    return (union_with_nonempty.instantiate(
+                            {m:_m_sub, n:_n_sub,
+                             A:_A_sub, B:_B_sub, C:_C_sub}).
+                           derive_reversed())
+
+
+        # (2) If it isn't a special case treated here, just use
+        #     conclude-as-folded.
+        return NotEquals(self, other).conclude_as_folded()
