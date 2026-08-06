@@ -1,5 +1,6 @@
 from proveit import (
-        m, n, x, A, B, C, S, Judgment, Lambda, Literal, relation_prover)
+        m, n, x, A, B, C, S, equality_prover, Judgment,
+        Lambda, Literal, relation_prover)
 from proveit.logic import Exists, NotEquals
 from proveit.logic.irreducible_value import IrreducibleValue
 from proveit.logic.sets import InSet
@@ -35,7 +36,6 @@ class EmptySetLiteral(Literal, IrreducibleValue):
         (i.e., if A is not empty, there must exist an element in A).
         This side-effect method is called from NotEquals.side_effects().
         '''
-
         from . import EmptySet
         if not isinstance(judgment, Judgment):
             raise ValueError(
@@ -182,3 +182,33 @@ class EmptySetLiteral(Literal, IrreducibleValue):
         # (3) If it isn't a special case treated here, just use
         #     conclude-as-folded.
         return NotEquals(self, other).conclude_as_folded()
+
+    @equality_prover('equated', 'equate')
+    def deduce_equal(self, other, **defaults_config):
+        '''
+        Prove the given equality EmptySet = X, with self (i.e.,
+        EmptySet) on the left-hand side.
+        The only case currently addressed here is the special case
+        of the form [Intersect(A-B, B-A)=EmptySet], which often arises
+        in SymmetricDifference expressions, which themselves arise
+        in several QEC contexts.
+        '''
+        from proveit.logic.sets import Intersect, Difference
+        if (isinstance(other, Intersect)
+            and other.operands.is_double()
+            and isinstance(other.operands[0], Difference)
+            and isinstance(other.operands[1], Difference)):
+
+            diff_left  = other.operands[0]
+            diff_right = other.operands[1]
+            if (diff_left.operands[0] == diff_right.operands[1]
+                and diff_left.operands[1] == diff_right.operands[0]):
+                # We have a rhs expr of the form Intersect(A-B,B-A)
+                from proveit.logic.sets.intersection import (
+                        set_diff_commuted_intersect_empty)
+                _A_sub = diff_left.operands[0]
+                _B_sub = diff_left.operands[1]
+                inst = set_diff_commuted_intersect_empty.instantiate(
+                        {A:_A_sub, B:_B_sub}).derive_reversed()
+                return inst
+
