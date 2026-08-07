@@ -183,22 +183,51 @@ class Disjoint(Function):
             is_intersect_1 = isinstance(set_1, Intersect)
 
             diff_expr, int_expr = None, None
+
+            # Track if original expr is Disjoint(Intersect, Diff)
+            # instead of Disjoint(Diff, Intersect)
+            disjoint_is_reversed = False
+
             if is_diff_0 and is_intersect_1:
                 diff_expr, int_expr = set_0, set_1
             elif is_diff_1 and is_intersect_0:
                 diff_expr, int_expr = set_1, set_0
+                disjoint_is_reversed = True
 
             if diff_expr and int_expr:
                 # We found something of the form Disjoint(A-B, AnB)
                 print(f"Found form Disjoint(A-B,AnB).")
                 _A_sub = diff_expr.operands[0]
                 _B_sub = diff_expr.operands[1]
-                intersect_operands = set(int_expr.operands)
-                if intersect_operands == {_A_sub, _B_sub}:
+
+                # Form standard and flipped Intersect operand pairs
+                standard_int_operands = [_A_sub, _B_sub]
+                reversed_int_operands = [_B_sub, _A_sub]
+
+                # Check if intersection ops match either permutation
+                int_operands_list = list(int_expr.operands)
+                intersect_is_reversed = False
+                if int_operands_list == standard_int_operands:
+                    match_found = True
+                elif int_operands_list == reversed_int_operands:
+                    match_found = True
+                    intersect_is_reversed = True
+                else:
+                    match_found = False
+
+                # intersect_operands = set(int_expr.operands)
+                # if intersect_operands == {_A_sub, _B_sub}:
+                if match_found:
                     from proveit.logic.sets.disjointness import (
                             diff_and_intersect_disjoint)
                     inst = diff_and_intersect_disjoint.instantiate(
                             {A:_A_sub, B:_B_sub})
+                    # manipulate result as required to match orig exp
+                    if disjoint_is_reversed:
+                        inst = (inst.commutation(0,1).
+                                derive_right_via_equality())
+                    if intersect_is_reversed:
+                        inst = inst.inner_expr().operands[1].commute(0,1)
                     return inst
 
         for operand in self.sets:
@@ -262,7 +291,7 @@ class Disjoint(Function):
             return nary_disjoint_folding.instantiate({n:_n_sub, A:_A_sub})
 
         raise NotImplementedError(
-                f"Cannot conclude {self}; non of the sets have a "
+                f"Cannot conclude {self}; none of the sets have a "
                 "'deduce_disjointness' method, and it is unknown if the "
                 "sets are all pairwise disjoint and unknown if all "
                 "pairwise intersections are empty.")
