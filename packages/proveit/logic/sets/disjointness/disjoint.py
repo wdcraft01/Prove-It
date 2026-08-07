@@ -1,5 +1,8 @@
 from proveit import (
-        n, A, B, S, T, X, Y, equality_prover, Function, Literal, prover)
+        n, A, B, S, T, X, Y, equality_prover, Function,
+        Literal, prover, SimplificationDirectives)
+from proveit.abstract_algebra.generic_methods import (
+        apply_commutation_thm, generic_permutation, group_commutation)
 
 class Disjoint(Function):
     '''
@@ -10,6 +13,9 @@ class Disjoint(Function):
     (there are no pairs of sets, so all pairs are vacuously disjoint).
     '''
     _operator_ = Literal('disjoint', r'\textrm{disjoint}', theory=__file__)
+
+    _simplification_directives_ = SimplificationDirectives(
+            ungroup=True)
 
     def __init__(self, *sets, styles=None):
         Function.__init__(self, Disjoint._operator_, sets,
@@ -298,6 +304,77 @@ class Disjoint(Function):
         return (disjoint_imp_disjoint_subsets.instantiate(
                 {A:_A_sub, B:_B_sub, X:_X_sub, Y:_Y_sub}).
                 derive_consequent())
+
+    @equality_prover('commuted', 'commute')
+    def commutation(self, init_idx=None, final_idx=None, **defaults_config):
+        '''
+        Deduce that this Disjoint expression is equal to a form in which
+        the operand at index init_idx has been moved to index final_idx.
+        For example, Disjoint(A, B, ..., Y, Z).commutation(1, -2) will
+        produce:
+
+            |- Disjoint(A, B, ..., Y, Z) = Disjoint(A, ..., Y, B, Z).
+
+        '''
+        from . import commutation, leftward_commutation, rightward_commutation
+        return apply_commutation_thm(
+            self, init_idx, final_idx, commutation,
+            leftward_commutation, rightward_commutation)
+
+    # Underlying mechanism(s) for group_commutation utilizes an
+    # associative property for the operands, which doesn't really
+    # make sense for operands of Disjoint. Leaving this here for
+    # further consideration.
+    # @equality_prover('group_commuted', 'group_commute')
+    # def group_commutation(self, init_idx, final_idx, length,
+    #                       disassociate=True, **defaults_config):
+    #     '''
+    #     Deduce that this Disjoint expression is equal to a form in which
+    #     the operands at indices [init_idx, init_idx+length) have been
+    #     moved to [final_idx, final_idx+length).
+    #     It will do this by performing association first.
+    #     If disassociate is True (the default), the specified operands
+    #     will be disassociated before returning.
+    #     '''
+    #     return group_commutation(
+    #         self, init_idx, final_idx, length, disassociate=disassociate)
+
+    @equality_prover('moved', 'move')
+    def permutation_move(self, init_idx=None, final_idx=None,
+                         **defaults_config):
+        '''
+        Deduce that this Disjoint expression is equal to a form in which
+        the operand at index init_idx has been moved to final_idx.
+        For example, Disjoint(A, B, ..., Y, Z).permutation_move(1, -2)
+        will produce:
+
+            |- Disjoint(A, B, ..., Y, Z) = Disjoint(A, ..., Y, B, Z),
+
+        moving operand B from position index 1 to position index -2.
+        For the Disjoint class, this method just immediately calls the
+        Disjoint.commutation() method; we keep the permutation_move()
+        method because it is used by the permutations machinery
+        available in abstract_algebra/generic_methods.py.
+        '''
+        return self.commutation(init_idx=init_idx, final_idx=final_idx)
+
+    @equality_prover('permuted', 'permute')
+    def permutation(self, new_order=None, cycles=None, **defaults_config):
+        '''
+        Deduce that this Disjoint expression is equal to a Disjoint
+        expression in which the operands at indices 0, 1, …, n-1 have
+        been reordered as specified EITHER by the new_order list OR by
+        the cycles list parameter. For example,
+
+            Disjoint(A, B, C, D).permutation(new_order=[0, 2, 3, 1])
+
+        and Disjoint(A, B, C, D).permutation(cycles=[(1, 2, 3)])
+
+        would both return
+
+            ⊢ Disjoint(A, B, C, D) = Disjoint(A, C, D, B).
+        '''
+        return generic_permutation(self, new_order, cycles)
 
 
 
