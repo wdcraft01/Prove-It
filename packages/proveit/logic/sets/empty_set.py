@@ -188,27 +188,94 @@ class EmptySetLiteral(Literal, IrreducibleValue):
         '''
         Prove the given equality EmptySet = X, with self (i.e.,
         EmptySet) on the left-hand side.
-        The only case currently addressed here is the special case
-        of the form [Intersect(A-B, B-A)=EmptySet], which often arises
-        in SymmetricDifference expressions, which themselves arise
-        in several QEC contexts.
+        The only cases currently addressed here are the special cases
+        of the form
+
+          * [Intersect(A-B, B-A) = EmptySet]
+          * [Intersect(A-B, AnB) = EmptySet]
+
+        which often arise in SymmetricDifference expressions and
+        related expressions, which themselves arise in several QEC
+        contexts.
         '''
         from proveit.logic.sets import Intersect, Difference
-        if (isinstance(other, Intersect)
-            and other.operands.is_double()
-            and isinstance(other.operands[0], Difference)
-            and isinstance(other.operands[1], Difference)):
 
-            diff_left  = other.operands[0]
-            diff_right = other.operands[1]
-            if (diff_left.operands[0] == diff_right.operands[1]
-                and diff_left.operands[1] == diff_right.operands[0]):
-                # We have a rhs expr of the form Intersect(A-B,B-A)
-                from proveit.logic.sets.intersection import (
-                        set_diff_commuted_intersect_empty)
-                _A_sub = diff_left.operands[0]
-                _B_sub = diff_left.operands[1]
-                inst = set_diff_commuted_intersect_empty.instantiate(
-                        {A:_A_sub, B:_B_sub}).derive_reversed()
-                return inst
+        if (isinstance(other, Intersect)
+            and other.operands.is_double()):
+
+            set_0, set_1 = other.operands[0], other.operands[1]
+
+            # Check for Disjoint(A-B, B-A)
+            if (isinstance(set_0, Difference)
+                and isinstance(set_1, Difference)):
+
+                if (set_0.operands[0] == set_1.operands[1]
+                    and set_0.operands[1] == set_1.operands[0]):
+                    # We have a rhs expr of the form Intersect(A-B,B-A)
+                    from proveit.logic.sets.intersection import (
+                            set_diff_commuted_intersect_empty)
+                    _A_sub = set_0.operands[0]
+                    _B_sub = set_0.operands[1]
+                    inst = set_diff_commuted_intersect_empty.instantiate(
+                            {A:_A_sub, B:_B_sub}).derive_reversed()
+                    return inst
+
+            # Check for Disjoint(A-B, A n B)
+            # and its commuted variations
+            is_diff_0 = isinstance(set_0, Difference)
+            is_diff_1 = isinstance(set_1, Difference)
+            is_intersect_0 = isinstance(set_0, Intersect)
+            is_intersect_1 = isinstance(set_1, Intersect)
+
+            diff_expr, int_expr = None, None
+
+            # Track if original expr is Disjoint(Intersect, Diff)
+            # instead of Disjoint(Diff, Intersect)
+            outer_intersect_is_reversed = False
+
+            if is_diff_0 and is_intersect_1:
+                diff_expr, int_expr = set_0, set_1
+            elif is_diff_1 and is_intersect_0:
+                diff_expr, int_expr = set_1, set_0
+                outer_intersect_is_reversed = True
+
+            if diff_expr and int_expr:
+                # We found something of the form Disjoint(A-B, AnB)
+                _A_sub = diff_expr.operands[0]
+                _B_sub = diff_expr.operands[1]
+
+                # Form standard and flipped Intersect operand pairs
+                standard_int_operands = [_A_sub, _B_sub]
+                reversed_int_operands = [_B_sub, _A_sub]
+
+                # Check if intersection ops match either permutation
+                int_operands_list = list(int_expr.operands)
+                inner_intersect_is_reversed = False
+                if int_operands_list == standard_int_operands:
+                    match_found = True
+                elif int_operands_list == reversed_int_operands:
+                    match_found = True
+                    inner_intersect_is_reversed = True
+                else:
+                    match_found = False
+
+                if match_found:
+
+                    from proveit.logic.sets.intersection import (
+                            intersect_diff_and_intersect_empty)
+                    inst = intersect_diff_and_intersect_empty.instantiate(
+                            {A:_A_sub, B:_B_sub})
+                    # manipulate result as required to match orig exp
+                    if outer_intersect_is_reversed:
+                        inst = inst.inner_expr().lhs.commute(0,1)
+                    if inner_intersect_is_reversed:
+                        inner_int_idx = 0 if outer_intersect_is_reversed else 1
+                        inst = (inst.inner_expr().lhs.operands[inner_int_idx].
+                                commute(0,1))
+                    return inst.derive_reversed()
+
+        raise NotImplementedError(
+                f"Cannot conclude {self} using EmptySet.deduce_equal(). "
+                "This is not one of the special cases addressed in the "
+                "EmptySet.deduce_equal() method.")
 
