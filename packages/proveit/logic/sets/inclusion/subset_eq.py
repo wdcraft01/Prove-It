@@ -2,7 +2,7 @@ from proveit import (as_expression, Function, Literal, Operation,
                      free_vars, safe_dummy_var,
                      Judgment, UnsatisfiedPrerequisites,
                      defaults, USE_DEFAULTS, prover, relation_prover)
-from proveit import A, B, C, Q, x
+from proveit import m, n, x, A, B, C, Q, X
 from proveit import S
 from .inclusion_relation import InclusionRelation
 
@@ -110,6 +110,23 @@ class SubsetEq(InclusionRelation):
                     {S: set_of_all.domain, y:_y_sub, Q_op: Q_op_sub})
 
                 return concluded
+
+        # Check for special case of SubsetEq(X, Union(X,...))
+        from proveit.logic.sets import Union
+        if (isinstance(self.superset, Union)
+            and self.subset in self.superset.operands):
+            # We have [X subseteq (A1 U ... U Am U X U B1 U ... U Bn)]
+            from proveit.logic.sets.unification import (
+                    union_inclusion_of_union_operand)
+            _x_idx = self.superset.operands.index(self.subset)
+            _A_sub = self.superset.operands[:_x_idx]
+            _B_sub = self.superset.operands[_x_idx+1:]
+            _X_sub = self.subset
+            _m_sub = _A_sub.num_elements()
+            _n_sub = _B_sub.num_elements()
+            _concluded = union_inclusion_of_union_operand.instantiate(
+                    {m:_m_sub, n:_n_sub, X:_X_sub, A:_A_sub, B:_B_sub})
+            return _concluded
 
         _A, _B = self.operands.entries
         if hasattr(_A, 'deduce_superset_eq_relation'):

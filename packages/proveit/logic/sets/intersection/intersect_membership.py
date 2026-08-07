@@ -1,6 +1,5 @@
 from proveit import USE_DEFAULTS, equality_prover, prover
 from proveit.logic import SetMembership, SetNonmembership
-from proveit.numbers import num
 from proveit import m, x, A
 
 

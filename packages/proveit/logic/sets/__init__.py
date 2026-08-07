@@ -14,7 +14,7 @@ from .symmetric_difference import SymmetricDifference
 from .comprehension import SetOfAll
 from .power_set import PowerSet
 from .cartesian_products import CartProd, CartExp
-from .disjointness import Disjoint, Distinct
+from .disjointness import AllDisjoint, AllDistinct, Disjoint, Distinct
 from .cardinality import Card
 from .functions import (IsFunction, Functions, IsInjection, Injections,
                         IsSurjection, Surjections, IsBijection, Bijections,

@@ -223,6 +223,14 @@ class Equals(EquivRelation):
                 # particular case, so carry on with default approach.
                 pass
 
+        if hasattr(rhs, 'deduce_equal'):
+            try:
+                return rhs.deduce_equal(lhs).derive_reversed()
+            except (NotImplementedError, UnsatisfiedPrerequisites):
+                # 'deduce_equal' not implemented for this 
+                # particular case, so carry on with default approach.
+                pass
+
         # Try to prove equality via standard EquiRelation
         # strategies (simplify both sides then try transitivity).
         return EquivRelation.conclude(self,
