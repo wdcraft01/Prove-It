@@ -1,4 +1,4 @@
-from proveit import Literal, Operation
+from proveit import Function, Literal, Operation
 
 
 class BufiloSetsLiteral(Literal):
@@ -44,7 +44,7 @@ class MalignantSetsLiteral(Literal):
                          styles=styles)
 
 
-class Weight(Operation):
+class Weight(Function):
     '''
     Weight(e), appearing as w(e) in outputs, represents the weight
     of error e, where error e consists of a set of faults. When
@@ -61,7 +61,7 @@ class Weight(Operation):
         '''
         Create Weight(e), the weight of error or fault set 'e'.
         '''
-        Operation.__init__(
+        Function.__init__(
                 self, Weight._operator_, e, styles=styles)
 
 
