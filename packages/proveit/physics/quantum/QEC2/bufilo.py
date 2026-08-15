@@ -1,4 +1,6 @@
-from proveit import Function, Literal, Operation
+from proveit import A, Function, Literal, Operation, relation_prover
+from proveit.logic import InSet
+from proveit.numbers import Complex, Integer, Natural, Real
 
 
 class BufiloSetsLiteral(Literal):
@@ -63,6 +65,28 @@ class Weight(Function):
         '''
         Function.__init__(
                 self, Weight._operator_, e, styles=styles)
+
+    # @relation_prover
+    def deduce_in_number_set(self, number_set, **defaults_config):
+        '''
+        Attempt to prove that the given Weight expression is in the
+        given number set number_set using the basic weight-defining
+        set theorem. Weight(e) is always a Natural, and thus Weight(e)
+        is also an Integer, a Real, and a Complex.
+        '''
+        
+        if number_set in {Complex, Integer, Natural, Real}:
+            from proveit.physics.quantum.QEC2 import weight_in_natural
+            _A_sub = self.operand
+            weight_in_natural_inst = weight_in_natural.instantiate({A:_A_sub})
+            if number_set == Natural:
+                return weight_in_natural_inst
+            return InSet(self, number_set).prove()
+
+        raise NotImplementedError(
+            f"'Weight.deduce_in_number_set()' on {self} not "
+            f"implemented for the {number_set} set. Remember that "
+            f"Weight(e) is always a Natural number.")
 
 
 
