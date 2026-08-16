@@ -66,7 +66,7 @@ class Weight(Function):
         Function.__init__(
                 self, Weight._operator_, e, styles=styles)
 
-    # @relation_prover
+    @relation_prover
     def deduce_in_number_set(self, number_set, **defaults_config):
         '''
         Attempt to prove that the given Weight expression is in the
@@ -87,6 +87,21 @@ class Weight(Function):
             f"'Weight.deduce_in_number_set()' on {self} not "
             f"implemented for the {number_set} set. Remember that "
             f"Weight(e) is always a Natural number.")
+
+    def readily_provable_number_set(self):
+        '''
+        Return the most restrictive number set we can readily
+        prove contains the evaluation of this Weight operation.
+        Generally, the most restrictive set is the set of Natural,
+        but for an operand that is provably not the EmptySet, the
+        most restrictive set would be the set NaturalPos.
+        '''
+        from proveit.logic import NotEquals
+        from proveit.logic.sets import EmptySet
+        from proveit.numbers import Natural, NaturalPos
+        if NotEquals(self.operand, EmptySet).readily_provable():
+            return NaturalPos
+        return Natural
 
 
 
