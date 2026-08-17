@@ -1,5 +1,7 @@
-from proveit import A, Function, Literal, Operation, relation_prover
+from proveit import (n, A, B, equality_prover, Function, Literal,
+                     Operation, relation_prover, TransRelUpdater)
 from proveit.logic import InSet
+from proveit.logic.sets import Disjoint
 from proveit.numbers import Complex, Integer, Natural, Real
 
 
@@ -65,6 +67,86 @@ class Weight(Function):
         '''
         Function.__init__(
                 self, Weight._operator_, e, styles=styles)
+
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        Returns a proven simplification equation for this Weight
+        expression assuming its operand has been simplified.
+        
+        Originally implemented to handles the following Weight
+        expression "simplification":
+
+             1. w(A U B) = w(A) + w(B) for Disjoint(A, B)
+
+        but later decided not to make that an automatic simplification,
+        and created a separate distribution_over_union() method instead.
+
+        Left the shell of the shallow_simplification() method here for
+        future development.
+
+        '''
+        expr = self
+        # for convenience in updating our equation,
+        # beginning with self = self
+        eq = TransRelUpdater(expr)
+
+        # (1) w(A U B) = w(A) + w(B) for Disjoint(A,B)
+        # from proveit.logic.sets import Union
+        # if isinstance(self.operand, Union):
+        #     from proveit.logic.sets import Disjoint
+        #     if Disjoint(*self.operand.operands).readily_provable():
+        #         from proveit.physics.quantum.QEC2 import weight_additivity
+        #         _A_sub = expr.operand.operands
+        #         _n_sub = _A_sub.num_elements()
+        #         expr = eq.update(weight_additivity.instantiate(
+        #                     {n:_n_sub, A:_A_sub}))
+
+        return eq.relation # Might be just [self = self]
+
+    @equality_prover('distributed_over_union', 'distribute_over_union')
+    def distribution_over_union(self, **defaults_config):
+        '''
+        Distribute a Weight(A U B) expression across its (binary)
+        Union operand, returning an equality between the original
+        expression and a sum of weights, as follows:
+
+            1. The general case:
+               w(A U B) = w(A) + w(B) - w(A n B)
+
+            2. If Disjoint(A, B):
+               w(A U B) = w(A) + w(B)
+        
+        Currently implemented only for the binary case, but could
+        be generalized.
+        '''
+        from proveit.logic.sets import Union
+        if (not isinstance(self.operand, Union)
+            or not self.operand.operands.is_double()):
+            raise ValueError(
+                f"Weight.distribution_over_union() implemented only for "
+                f"Weight() operation on a binary Union expression, but "
+                f"received the expression: {self}.")
+
+        _A_sub = self.operand.operands[0]
+        _B_sub = self.operand.operands[1]
+        if Disjoint(_A_sub, _B_sub).readily_provable():
+            from proveit.physics.quantum.QEC2 import (
+                    binary_disjoint_weight_additivity)
+            return binary_disjoint_weight_additivity.instantiate(
+                    {A:_A_sub, B:_B_sub})
+
+        # Else return the more general case
+        from proveit.physics.quantum.QEC2 import binary_weight_additivity
+        return binary_weight_additivity.instantiate(
+                {A:_A_sub, B:_B_sub})
+
+        # raise NotImplementedError(
+        #     f"Weight.distribution_over_union() not yet implemented for "
+        #     f"the case of {self}. ")
+
+
 
     @relation_prover
     def deduce_in_number_set(self, number_set, **defaults_config):
