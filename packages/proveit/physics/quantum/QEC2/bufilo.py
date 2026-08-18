@@ -27,6 +27,38 @@ class BufiloSetsLiteral(Literal):
                          styles=styles)
 
 
+class BufiloSequencesLiteral(Literal):
+    '''
+    BufiloSequencesLiteral() (formatted as F_{l,w} in outputs)
+    represents a restricted set of fault sequences, each sequence
+    having the following properties:
+
+      * its weight is less than or equal to w_{BUF}
+      * the first fault in the sequence anti-commutes with the
+        logical operator l (i.e., A_{l} f_{1} = 1)
+      * consider as a _set_, the sequence is equivalent to an
+        l^{perp}-BUFILO (i.e., letting f = {f1, f2, ..., fn}, we
+        have H f = ZeroVector while A_{l} f = 1).
+
+    See BufiloSetsLiteral class above for further description of the
+    related BUFILO sets.
+
+    These sequences could eventually be parameterized to specify a
+    specific logical operator l with which the sequences anti-commute,
+    and/or the specific QEC system of interest.
+
+    'BufiloSequences' is then defined in the QEC2 common notebook as
+    BufiloSequences = BufiloSequencesLiteral().
+    '''
+
+    # the literal string for representing the BufiloSequences
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='F_{l w_BUF}', 
+            latex_format=r'\mathcal{F}_{\ell w_{\textsc{buf}}}^{\text{seq}}',
+            styles=styles)
+
+
 class MalignantSetsLiteral(Literal):
     '''
     MalignantSetsLiteral() (formatted as MALS in outputs) represents
