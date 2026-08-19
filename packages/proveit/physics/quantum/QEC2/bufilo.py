@@ -23,7 +23,7 @@ class BufiloSetsLiteral(Literal):
     # the literal string for representing the BufiloSets
     def __init__(self, *, styles=None):
         Literal.__init__(self, string_format='BUF', 
-                         latex_format=r'\textrm{BUF}',
+                         latex_format=r'\textsc{buf}',
                          styles=styles)
 
 
@@ -76,7 +76,7 @@ class MalignantSetsLiteral(Literal):
     # The literal string for representing the malignant sets
     def __init__(self, *, styles=None):
         Literal.__init__(self, string_format='MALS', 
-                         latex_format=r'\textrm{MALS}',
+                         latex_format=r'\textsc{mals}',
                          styles=styles)
 
 
@@ -218,5 +218,24 @@ class Weight(Function):
         return Natural
 
 
+class FaultsLiteral(Literal):
+    '''
+    FaultsLiteral() (formatted as FAULTS in outputs) represents the
+    set of possible faults across a QEC system. An error e consists
+    of a set of such faults, and as described elsewhere, a BUFILO is
+    a special set of such faults.
 
+    See BufiloSetsLiteral class above for further description of the
+    related BUFILO sets.
+
+    'Faults' is then defined in the QEC2 common notebook as
+    Faults = FaultsLiteral().
+    '''
+
+    # the literal string for representing the set of Faults
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='FAULTS', 
+            latex_format=r'\textsc{faults}',
+            styles=styles)
 
