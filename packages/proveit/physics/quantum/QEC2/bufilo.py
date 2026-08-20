@@ -239,3 +239,37 @@ class FaultsLiteral(Literal):
             latex_format=r'\textsc{faults}',
             styles=styles)
 
+
+class SyndromesLiteral(Literal):
+    '''
+    SyndromesLiteral() (formatted as mathcal{S} in outputs) represents
+    the set of all possible syndromes, equivalent to the power set of
+    the set of all detectors.
+    This might eventually need to be generalized to a function 
+    parameterized with an operator type, etc.
+    '''
+    # the literal string for representing the set of Syndromes
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='Syndromes', 
+            latex_format=r'\mathcal{S}',
+            styles=styles)
+
+
+class DetectorsLiteral(Literal):
+    '''
+    DetectorsLiteral() (formatted as mathcal{D} in outputs) represents
+    the set of all possible detectors.
+    This might eventually need to be generalized to a function 
+    parameterized with an operator type, etc.
+    '''
+    # the literal string for representing the set of Detectors
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='Detectors', 
+            latex_format=r'\mathcal{D}',
+            styles=styles)
+
+
+# Is it useful to then have an Error class?
+
