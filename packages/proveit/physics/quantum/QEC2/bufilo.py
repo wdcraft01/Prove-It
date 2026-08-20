@@ -240,6 +240,28 @@ class FaultsLiteral(Literal):
             styles=styles)
 
 
+class ErrorsLiteral(Literal):
+    '''
+    ErrorsLiteral() (formatted as ERRS in outputs) represents the set
+    of all possible errors across a QEC system, with an error simply
+    being a set of faults.
+
+    'Errors' is then defined in the QEC2 common notebook as
+    Errors = ErrorsLiteral().
+
+    The Errors class is a convenience to help facilitate expressiveness.
+    One might use [e in Errors], for example, but often one could
+    instead simply directly consider a set {f1, f2, ..., fn} of faults.
+    '''
+
+    # the literal string for representing the set of Errors
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='ERRS', 
+            latex_format=r'\textsc{errs}',
+            styles=styles)
+
+
 class SyndromesLiteral(Literal):
     '''
     SyndromesLiteral() (formatted as mathcal{S} in outputs) represents
@@ -263,6 +285,7 @@ class DetectorsLiteral(Literal):
     This might eventually need to be generalized to a function 
     parameterized with an operator type, etc.
     '''
+
     # the literal string for representing the set of Detectors
     def __init__(self, *, styles=None):
         Literal.__init__(
@@ -271,5 +294,58 @@ class DetectorsLiteral(Literal):
             styles=styles)
 
 
-# Is it useful to then have an Error class?
+class CheckFunction(Function):
+    '''
+    CheckFunction(e) is a function version of the 'check matrix',
+    taking an error e as input (and recall that an error e is just
+    a set of faults) and producing/representing a syndrome output
+    (i.e., a set of checks or detectors)
+    '''
+
+    # operator for the CheckFunction function.
+    _operator_ = Literal(
+            string_format='H',
+            latex_format=r'H',
+            theory=__file__)
+
+    def __init__(self, e, *, styles=None):
+        '''
+        Create CheckFunction(e), as H(e), the syndrome associated
+        with error e.
+        '''
+        super().__init__(
+                CheckFunction._operator_, e, styles=styles)
+
+
+class ActionFunction(Function):
+    '''
+    ActionFunction(l, e) is a function version of the 'action matrix',
+    taking a logical operator l and error e as input (and recall that
+    an error e is just a set of faults) and producing/representing 
+    the logical action (relative to the logical operator l), which
+    should be 0 (no action) or 1 (logical l applied).
+    '''
+
+    # operator for the ActionFunction function.
+    _operator_ = Literal(
+            string_format='A',
+            latex_format=r'A',
+            theory=__file__)
+
+    def __init__(self, l, e, *, styles=None):
+        '''
+        Create ActionFunction(e), as A_{l}(e), the logical action
+        l resulting from error e.
+        '''
+        super().__init__(
+                ActionFunction._operator_, (l, e), styles=styles)
+
+    def string(self, **kwargs):
+        return ('A_{' + self.operands[0].string()
+                + '}(' + self.operands[1].string() + ')')
+
+    def latex(self, **kwargs):
+        return (r'A_{' + self.operands[0].latex()
+                + r'}(' + self.operands[1].latex() + r')')
+
 

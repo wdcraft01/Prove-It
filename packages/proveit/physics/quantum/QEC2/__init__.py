@@ -1,6 +1,7 @@
 from .bufilo import (
-        BufiloSetsLiteral, BufiloSequencesLiteral, DetectorsLiteral,
-        FaultsLiteral, MalignantSetsLiteral, SyndromesLiteral, Weight)
+        ActionFunction, BufiloSetsLiteral, BufiloSequencesLiteral,
+        CheckFunction, DetectorsLiteral, ErrorsLiteral, FaultsLiteral,
+        MalignantSetsLiteral, SyndromesLiteral, Weight)
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
 #  Make additions above, or add to sys.modules[__name__].__dict__ below.
