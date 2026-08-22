@@ -1,6 +1,6 @@
 from proveit import (n, A, B, equality_prover, Function, Literal,
                      Operation, relation_prover, TransRelUpdater)
-from proveit.logic import InSet
+from proveit.logic import InSet, SetMembership, SetNonmembership
 from proveit.logic.sets import Disjoint
 from proveit.numbers import Complex, Integer, Natural, Real
 
@@ -294,6 +294,199 @@ class DetectorsLiteral(Literal):
             styles=styles)
 
 
+class StatesLiteral(Literal):
+    '''
+    StatesLiteral() (formatted as S_{l} in outputs) represents the set
+    of all possible augmented syndrome states of the form
+
+        S_{l}(e) = (H e, A_{l} e)
+
+    for all possible errors e, check matrix (or check function) H,
+    and action matrix (or action function) A_{l}.
+    '''
+
+    # the literal string for representing the set of States
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='States', 
+            latex_format=r'\mathcal{S}_{\ell}',
+            styles=styles)
+
+    def membership_object(self, element):
+        from . import StatesMembership
+        return StatesMembership(element, self)
+
+    def nonmembership_object(self, element):
+        from . import StatesNonmembership
+        return StatesNonmembership(element, self)
+
+
+class StatesMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    augmented syndrome states.
+
+    UNDER CONSTRUCTION, with the code below borrowed from the
+    logic/sets/Union class and serving as a placeholder.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    # @equality_prover('defined', 'define')
+    # def definition(self, **defaults_config):
+    #     '''
+    #     Deduce and return 
+    #         [element in (A union B ...)] = 
+    #         [(element in A) or (element in B) ...]
+    #     where self = (A union B ...).
+    #     '''
+    #     from . import union_def
+    #     element = self.element
+    #     operands = self.domain.operands
+    #     _A = operands
+    #     _m = _A.num_elements()
+    #     return union_def.instantiate(
+    #             {m: _m, x: element, A: _A}, auto_simplify=False)
+
+    # def as_defined(self):
+    #     '''
+    #     From self=[elem in (A U B U ...)], return
+    #     [(element in A) or (element in B) or ...].
+    #     '''
+    #     from proveit.logic import Or, InSet
+    #     element = self.element
+    #     return Or(*self.domain.operands.map_elements(
+    #             lambda subset : InSet(element, subset)))
+
+    # @prover
+    # def unfold(self, **defaults_config):
+    #     '''
+    #     From [element in (A union B ...)], derive and return
+    #     [(element in A) or (element in B) ...],
+    #     where self represents [element in (A union B ...)].
+    #     '''
+    #     from . import membership_unfolding
+    #     element = self.element
+    #     operands = self.domain.operands
+    #     _A = operands
+    #     _m = _A.num_elements()
+    #     return membership_unfolding.instantiate(
+    #         {m: _m, x: element, A: _A}, auto_simplify=False)
+
+    # @prover
+    # def conclude(self, **defaults_config):
+    #     '''
+    #     Called on self = [elem in (A U B U ...)], and knowing or
+    #     assuming [[elem in A] OR [elem in B] OR ...], derive and
+    #     return self.
+    #     '''
+    #     from . import membership_folding
+    #     element = self.element
+    #     operands = self.domain.operands
+    #     _A = operands
+    #     _m = _A.num_elements()
+    #     return membership_folding.instantiate({m: _m, x: element, A: _A})
+
+
+class StatesNonmembership(SetNonmembership):
+    '''
+    Defines methods that apply to non-membership in the set of all
+    augmented syndrome states.
+
+    UNDER CONSTRUCTION, with the code below borrowed from the
+    logic/sets/Union class and serving as a placeholder.
+    '''
+
+    def __init__(self, element, domain):
+        SetNonmembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     return
+    #     yield
+
+    # @equality_prover('defined', 'define')
+    # def definition(self, **defaults_config):
+    #     '''
+    #     From self=[elem not in (A U B U ...)], deduce and return
+    #         |- [elem not in (A U B U ...)] = 
+    #         [(element not in A) and (element not in B) and ...].
+    #     '''
+    #     from . import nonmembership_equiv
+    #     element = self.element
+    #     operands = self.domain.operands
+    #     _A = operands
+    #     _m = _A.num_elements()
+    #     return nonmembership_equiv.instantiate(
+    #         {m: _m, x: element, A: _A}, auto_simplify=False)
+
+    # def as_defined(self):
+    #     '''
+    #     From self=[elem not in (A U B U ...)], return
+    #     [(element not in A) and (element not in B) and ...].
+    #     '''
+    #     from proveit.logic import And, NotInSet
+    #     element = self.element
+    #     return And(*self.domain.operands.map_elements(
+    #             lambda subset : NotInSet(element, subset)))
+
+    # @prover
+    # def conclude(self, **defaults_config):
+    #     '''
+    #     Called on the self = [elem not in (A U B U ...)], from known
+    #     or assumed [element not in A] and [element not in B] ...,
+    #     derive and return self.
+    #     '''
+    #     from . import nonmembership_folding
+    #     element = self.element
+    #     operands = self.domain.operands
+    #     _A = operands
+    #     _m = _A.num_elements()
+    #     return nonmembership_folding.instantiate(
+    #         {m: _m, x: element, A: _A})
+
+
+class State(Function):
+    '''
+    State(l, e) represents the augmented syndrome state
+
+        (H e, A_{l} e)
+
+    for error e and logical operator l.
+    '''
+
+    # operator for the State function.
+    _operator_ = Literal(
+            string_format='S',
+            latex_format=r'H',
+            theory=__file__)
+
+    def __init__(self, l, e, *, styles=None):
+        '''
+        Create State(l, e), as S_{l}(e), the augmented syndrome state
+        (H e, A_{l} e).
+        '''
+        super().__init__(
+                State._operator_, (l, e), styles=styles)
+
+    def string(self, **kwargs):
+        return ('S_{' + self.operands[0].string()
+                + '}(' + self.operands[1].string() + ')')
+
+    def latex(self, **kwargs):
+        return (r'S_{' + self.operands[0].latex()
+                + r'}(' + self.operands[1].latex() + r')')
+
+
 class CheckFunction(Function):
     '''
     CheckFunction(e) is a function version of the 'check matrix',
@@ -305,7 +498,7 @@ class CheckFunction(Function):
     # operator for the CheckFunction function.
     _operator_ = Literal(
             string_format='H',
-            latex_format=r'H',
+            latex_format=r'H\!',
             theory=__file__)
 
     def __init__(self, e, *, styles=None):
