@@ -1,5 +1,6 @@
 from .is_function import IsFunction
 from .functions import Functions
+from .restriction import Restriction 
 from .images import Image, InvImage
 from .injections import IsInjection, Injections
 from .surjections import IsSurjection, Surjections

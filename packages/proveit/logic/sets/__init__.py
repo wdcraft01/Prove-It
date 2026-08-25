@@ -12,13 +12,15 @@ from .intersection import Intersect, IntersectAll
 from .subtraction import Difference
 from .symmetric_difference import SymmetricDifference
 from .comprehension import SetOfAll
-from .power_set import PowerSet
+from .k_power_set import KPowerSet
+from .power_set import PowerSet, KElemSubsets
 from .cartesian_products import CartProd, CartExp
 from .disjointness import AllDisjoint, AllDistinct, Disjoint, Distinct
 from .cardinality import Card
 from .functions import (IsFunction, Functions, IsInjection, Injections,
                         IsSurjection, Surjections, IsBijection, Bijections,
-                        Image, InvImage)
+                        Image, InvImage, Restriction)
+from .partitions import Partitions
 
 def is_infinite_set(expr):
     if hasattr(expr, 'is_infinite_set'):

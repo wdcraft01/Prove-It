@@ -15,6 +15,7 @@ from .linear_maps import (IsLinMap, LinMaps, LinMapAdd, Identity,
 from .matrices import (MatrixSpace, MatrixMult, MatrixExp,
                        Unitary, SpecialUnitary, Diagonal)
 from .tensors import TensorExp, TensorProd
+from .distance import EuclideanDistance, ManhattanDistance, MinkowskiDistance
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
 #  Make additions above, or add to sys.modules[__name__].__dict__ below.
@@ -26,7 +27,7 @@ sys.modules[__name__] = TheoryPackage(__name__, __file__, locals())
 
 import proveit
 if proveit.defaults.running_theory_notebook is None:
-    # Import some fundamental theorems without quantifiers when not 
+    # Import some fundamental theorems without quantifiers when not
     # running an common/axioms/theorems theory notebook.
     from . import (rational_set_is_vec_space, real_set_is_vec_space,
                    complex_set_is_vec_space)

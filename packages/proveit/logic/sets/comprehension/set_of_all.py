@@ -1,6 +1,7 @@
 from proveit import (
         ExprTuple, Function, Literal, OperationOverInstances,
-        Lambda, composite_expression, relation_prover, defaults)
+        Lambda, composite_expression, relation_prover, defaults,
+        prover)
 from proveit import f, n, x, y, Q, R, S
 
 
@@ -32,8 +33,16 @@ class SetOfAll(OperationOverInstances):
             if not hasattr(self, 'domains') or None in self.domains:
                 raise ValueError("SetOfAll requires domains")
         else:
-            assert False, ("Expecting either 'instance_param' or 'instance_params' "
-                           "to be set")
+            assert False, ("Expecting either 'instance_param' or "
+                           "'instance_params' to be set")
+
+    def membership_object(self, element):
+        from .set_of_all_membership import SetOfAllMembership
+        return SetOfAllMembership(element, self)
+
+    def nonmembership_object(self, element):
+        from .set_of_all_membership import SetOfAllNonmembership
+        return SetOfAllNonmembership(element, self)
 
     def _formatted(self, format_type, fence=False, **kwargs):
         out_str = ''
@@ -48,7 +57,7 @@ class SetOfAll(OperationOverInstances):
         has_multi_domain = (formatted_class is None)
         if hasattr(self, 'condition'):
             with defaults.temporary() as temp_defaults:
-                # Add the condition as an assumption when formatting 
+                # Add the condition as an assumption when formatting
                 # the instance expression.
                 temp_defaults.assumptions = defaults.assumptions + (
                         self.condition,)
@@ -88,6 +97,22 @@ class SetOfAll(OperationOverInstances):
         out_str += '}'
         return out_str
 
+    # @equality_prover('shallow_simplified', 'shallow_simplify')
+    # def shallow_simplification(self, *, must_evaluate=False,
+    #                            **defaults_config):
+    #     '''
+    #     From this forall statement, evaluate it to TRUE or FALSE if
+    #     possible by calling the domain's forall_evaluation method
+
+    #     A possible fix --- play around with this and test 20250321
+    #     possibly look at Operation.shallow_simplification as model.
+    #     Consider a simplification() method??
+    #     '''
+    #     with defaults.temporary() as temp_defaults:
+    #         temp_defaults.preserved_exprs.add(self.condition)
+
+    #         return OperationOverInstances.shallow_simplification(self)
+
     @relation_prover
     def deduce_superset_eq_relation(self, superset, **defaults_config):
         '''
@@ -99,11 +124,11 @@ class SetOfAll(OperationOverInstances):
             _y = superset.instance_param_or_params
             _f = Lambda(_y, superset.instance_element)
             _g = Lambda(_x, self.instance_element)
-            if (_f == _g and 
+            if (_f == _g and
                     self.explicit_domains() == superset.explicit_domains()):
-                _Q = Lambda(superset.instance_param_or_params, 
+                _Q = Lambda(superset.instance_param_or_params,
                             superset.non_domain_condition())
-                _R = Lambda(self.instance_param_or_params, 
+                _R = Lambda(self.instance_param_or_params,
                             self.non_domain_condition())
                 _S = self.explicit_domains()
                 _n = _x.num_elements()
@@ -132,7 +157,7 @@ class SetOfAll(OperationOverInstances):
     # The below must be updated
     # Being updated gradually by wdc starting 12/21/2021
 
-    @relation_prover
+    @prover
     def unfold_membership(self, element, **defaults_config):
         '''
         From (x in {y | Q(y)})_{y in S}, derive and return
@@ -142,41 +167,69 @@ class SetOfAll(OperationOverInstances):
         From (x in {f(y) | ..Q(y)..})_{y in S}, derive and return
         exists_{y in S | ..Q(y)..} x = f(y).
         Also derive x in S, but this is not returned.
+        As an example, consider the set A defined by:
+
+            A = SetOfAll(i, ExprTuple(i, zero),
+                domain = Interval(zero, num(10)))
+
+        which gives a set of tuples like this:
+
+            {(0,0), (1,0), ... (10,0)}.
+
+        Then A.unfold_membership(x, assumptions = [InSet(x, A)])
+        yields the judgment:
+
+            x in A |- Exists_{i in {0, 1, ..., 10}} s.t. x = (i, 0).
+
+        This method might now be obsolete with the establishment of
+        the SetOfAllMemberhip class and related methods.
+
         '''
         from . import (unfold, unfold_basic_comprehension,
                        in_superset_if_in_comprehension)
         from proveit.logic import And
+        from proveit.numbers import num
+
         if len(self.explicit_conditions())==1:
             explicit_conditions = self.explicit_conditions()[0]
         else:
+            # which includes case of no explicit conditions!
             explicit_conditions = And(*self.explicit_conditions())
-        # why is the following line there before testing number of vars
-        _Q_op, _Q_op_sub = Function(Q, self.all_instance_vars()), explicit_conditions
+
+        _Q_op, _Q_op_sub = (
+                Function(Q, self.all_instance_vars()), explicit_conditions)
+
         if (len(self.all_instance_vars()) == 1 and
             self.instance_element == self.instance_var):
-            # simple case of {x | Q(x)}_{x in S};
-            # derive x in S side-effect
-            print("(1) SetOfAll.unfold_membership(): inside first if.")
-            print("_Q_op = ")
-            display(_Q_op)
-            print("_Q_op_sub = ")
-            display(_Q_op_sub)
+            # simple case of {y | Q(y)}_{y in S}
+            # or {y | Q1(y), ..., Qn(y)}_{y in S}: derive (but don't
+            # explicitly return) side-effect (x in S);
+            # we do this here because some cases below do not include
+            # the membership (x in S) in the returned result
             in_superset_if_in_comprehension.instantiate(
                     {S: self.domain, _Q_op: _Q_op_sub,
                      x: element, y: self.instance_var})
-            print("SetOfAll.unfold_membership(): end")
-            if len(self.explicit_conditions())==1:
-                _Q_op, _Q_op_sub = (
-                    Function(Q, self.all_instance_vars()), explicit_conditions)
-            #     return unfold_basic1_cond_comprehension.instantiate(
-            #             {S:self.domain, Q_op:Q_op_sub,
-            #              x:element, y:self.instance_vars[0]})
-            # else:
-            #     return unfold_basic_comprehension.instantiate({S:self.domain, Q_op:Q_op_sub, x:element}, {y:self.instance_vars[0]}, assumptions=assumptions)
-        # else:
-        #     f_op, f_sub = Function(f, self.instance_vars), self.instance_element
-        #     return unfold_comprehension.instantiate({S:self.domain,  Q_op:Q_op_sub, f_op:f_sub, x:element}, {y_multi:self.instance_vars}).derive_conclusion(assumptions)
-
+            _y_sub = self.all_instance_vars()[0]
+            return unfold_basic_comprehension.instantiate(
+                    {S:self.domain, _Q_op:_Q_op_sub, x:element, y:_y_sub})
+        else:
+            # cases where we have:
+            # (1) multiple instance_vars,
+            # (2) and/or instance_element is not just an instance_var
+            # In fact, this doesn't yet work with multiple instance vars
+            _n_sub = num(len(self.all_instance_vars()))
+            _f_op, _f_sub = (
+                Function(f, self.all_instance_vars()), self.instance_element)
+            _y_sub = self.all_instance_vars()
+            if len(self.explicit_conditions())<=1:
+                should_auto_simplify = True
+                # will simplify vacuous And() and trivial And(Q(y))
+            else:
+                should_auto_simplify = False
+            return unfold.instantiate(
+                {n:_n_sub, S:self.all_domains(),  _Q_op:_Q_op_sub, _f_op:_f_sub,
+                x:element, y:_y_sub},
+                auto_simplify = should_auto_simplify).derive_consequent()
 
 
     """
