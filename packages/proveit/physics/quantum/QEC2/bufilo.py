@@ -487,6 +487,54 @@ class State(Function):
                 + r'}(' + self.operands[1].latex() + r')')
 
 
+class StateSyndrome(Function):
+    '''
+    StateSyndrome(S) represents the syndrome H(e) of the given augmented
+    syndrome state S = (H(e), A_{l}(e)). This is useful when working
+    with expressions utilizing an abstract state instead of the more
+    concrete tuple (H(e), A_{l}(e)) when you end up also needing or
+    wanting to refer to the state's syndrome component H(e).
+    '''
+
+    # operator for the StateSyndrome function.
+    _operator_ = Literal(
+            string_format='SYN',
+            latex_format=r'\textsc{syn}',
+            theory=__file__)
+
+    def __init__(self, s, *, styles=None):
+        '''
+        Create StateSyndrome(s), as StateSyn(s), the syndrome
+        associated with augmented syndrome state s
+        '''
+        super().__init__(
+                StateSyndrome._operator_, s, styles=styles)
+
+
+class StateAction(Function):
+    '''
+    StateAction(s) represents the logical l-relative "action" of the
+    given augmented syndrome state s = (H(e), A_{l}(e)). This is useful
+    when working with expressions utilizing an abstract state instead
+    of the more concrete tuple (H(e), A_{l}(e)) when you end up also
+    wanting to refer to the state's action component A_{l}(e).
+    '''
+
+    # operator for the StateAction function.
+    _operator_ = Literal(
+            string_format='ACT',
+            latex_format=r'\textsc{act}',
+            theory=__file__)
+
+    def __init__(self, s, *, styles=None):
+        '''
+        Create StateAction(s), as ACT(s), the "action"
+        associated with augmented syndrome state s.
+        '''
+        super().__init__(
+                StateAction._operator_, s, styles=styles)
+
+
 class CheckFunction(Function):
     '''
     CheckFunction(e) is a function version of the 'check matrix',
