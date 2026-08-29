@@ -1,5 +1,5 @@
 from proveit import (n, A, B, equality_prover, Function, Literal,
-                     Operation, relation_prover, TransRelUpdater)
+                     NamedExprs, Operation, relation_prover, TransRelUpdater)
 from proveit.logic import InSet, SetMembership, SetNonmembership
 from proveit.logic.sets import Disjoint
 from proveit.numbers import Complex, Integer, Natural, Real
@@ -22,8 +22,31 @@ class BufiloSetsLiteral(Literal):
 
     # the literal string for representing the BufiloSets
     def __init__(self, *, styles=None):
-        Literal.__init__(self, string_format='BUF', 
-                         latex_format=r'\textsc{buf}',
+        Literal.__init__(self, string_format='BUFS', 
+                         latex_format=r'\textsc{bufs}',
+                         styles=styles)
+
+
+class SingleBufiloSetsLiteral(Literal):
+    '''
+    SingleBufiloSetsLiteral() (formatted as 1-BUF in outputs) represents
+    the set of possible single BUFILOs (standing for Bad Undetectable
+    Fault-Induced Logical Operator) across a surface code. A BUFILO
+    is itself a set of faults, the combination of which produce the
+    equivalent of a logical operator L. A "single BUFILO" is a
+    BUFILO that does not properly contain another BUFILO as a subset.
+    The sets of interest can eventually be parameterized to specify a
+    specific logical operator L, the logical operator L_{perp} with
+    which it anti-commutes, and/or the specific QEC system of interest.
+
+    'SingleBufiloSets' is then defined in the QEC2 common notebook as
+    SingleBufiloSets = SingleBufiloSetsLiteral().
+    '''
+
+    # the literal string for representing the SingleBufiloSets
+    def __init__(self, *, styles=None):
+        Literal.__init__(self, string_format='1-BUFS', 
+                         latex_format=r'\textsc{{\footnotesize 1}-bufs}',
                          styles=styles)
 
 
@@ -395,79 +418,79 @@ class StatesMembership(SetMembership):
     #     return membership_folding.instantiate({m: _m, x: element, A: _A})
 
 
-class StatesNonmembership(SetNonmembership):
-    '''
-    Defines methods that apply to non-membership in the set of all
-    augmented syndrome states.
-
-    UNDER CONSTRUCTION, with the code below borrowed from the
-    logic/sets/Union class and serving as a placeholder.
-    '''
-
-    def __init__(self, element, domain):
-        SetNonmembership.__init__(self, element, domain)
-
-    # def side_effects(self, judgment):
-    #     '''
-    #     TBA.
-    #     '''
-    #     return
-    #     yield
-
-    # @equality_prover('defined', 'define')
-    # def definition(self, **defaults_config):
-    #     '''
-    #     From self=[elem not in (A U B U ...)], deduce and return
-    #         |- [elem not in (A U B U ...)] = 
-    #         [(element not in A) and (element not in B) and ...].
-    #     '''
-    #     from . import nonmembership_equiv
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return nonmembership_equiv.instantiate(
-    #         {m: _m, x: element, A: _A}, auto_simplify=False)
-
-    # def as_defined(self):
-    #     '''
-    #     From self=[elem not in (A U B U ...)], return
-    #     [(element not in A) and (element not in B) and ...].
-    #     '''
-    #     from proveit.logic import And, NotInSet
-    #     element = self.element
-    #     return And(*self.domain.operands.map_elements(
-    #             lambda subset : NotInSet(element, subset)))
-
-    # @prover
-    # def conclude(self, **defaults_config):
-    #     '''
-    #     Called on the self = [elem not in (A U B U ...)], from known
-    #     or assumed [element not in A] and [element not in B] ...,
-    #     derive and return self.
-    #     '''
-    #     from . import nonmembership_folding
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return nonmembership_folding.instantiate(
-    #         {m: _m, x: element, A: _A})
-
-
 class State(Function):
     '''
-    State(l, e) represents the augmented syndrome state
+    State(syndrome, action, logical_obs) represents the augmented
+    syndrome state tuple S_{l}(syndrome, action) specified by the
+    detector 'syndrome' set and logical_obs-related 'action' (where
+    the action is 0 or 1).
+    
+    This class is meant to allow the explicit specification of states
+    such as (EmptySet, 0) or ({a, b, ..., m}, 1), instead of specifying
+    the state in terms of the error set e. For the error-specified
+    state, see the ErrorState class.
+    '''
+
+    # Literal operator for the State function,
+    # but see further below for actual string and latex forms.
+    _operator_ = Literal(
+            string_format='state',
+            latex_format=r'\textrm{state}',
+            theory=__file__)
+
+    def __init__(self, syndrome, action, logical_obs=None, *, styles=None):
+        '''
+        Create the explicit augmented syndrome state tuple
+        (syndrome, action), with respect to the logical observable
+        logical_obs (if any).
+        '''
+        
+        # (1) Build the list of (keyword, expression) pairs
+        items = [
+            ("syndrome", syndrome),
+            ("action", action)
+        ]
+        
+        # (2) Add optional logical observable only if
+        #     it was actually provided
+        if logical_obs is not None:
+            items.append(("logical_observable", logical_obs))
+        
+        # (3) Initialize NamedExprs with the list of tuples
+        operands = NamedExprs(*items)
+        
+        # (4) Call Function's init
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        str_format = ('(' + self.syndrome.string()
+                + ', ' + self.action.string() + ')')
+        if hasattr(self, 'logical_observable'):
+            str_format += '_{' + self.logical_observable.string() + '}'
+        return str_format
+
+    def latex(self, **kwargs):
+        latex_str = (r'(' + self.syndrome.latex()
+                + r', ' + self.action.latex() + r')')
+        if hasattr(self, 'logical_observable'):
+            latex_str += r'_{' + self.logical_observable.latex() + r'}'
+        return latex_str
+
+
+class ErrorState(Function):
+    '''
+    ErrorState(l, e) represents the augmented syndrome state
 
         (H e, A_{l} e)
 
-    for error e and logical operator l.
+    for error e and logical observable l.
     '''
 
-    # operator for the State function.
+    # Literal operator for the ErrorState function,
+    # but see further below for actual string and latex forms.
     _operator_ = Literal(
-            string_format='S',
-            latex_format=r'H',
+            string_format='err_state',
+            latex_format=r'\textrm{err\_state}',
             theory=__file__)
 
     def __init__(self, l, e, *, styles=None):
@@ -476,7 +499,7 @@ class State(Function):
         (H e, A_{l} e).
         '''
         super().__init__(
-                State._operator_, (l, e), styles=styles)
+                self._operator_, (l, e), styles=styles)
 
     def string(self, **kwargs):
         return ('S_{' + self.operands[0].string()
@@ -494,6 +517,11 @@ class StateSyndrome(Function):
     with expressions utilizing an abstract state instead of the more
     concrete tuple (H(e), A_{l}(e)) when you end up also needing or
     wanting to refer to the state's syndrome component H(e).
+
+    If the state S is an explicit State such as (D, i),
+    StateSyndrome(S) represents the syndrome D. If the state S is
+    an ErrorState of the form ErrorState(l, e), then StateSyndrome(S)
+    represents the syndrome H(e).
     '''
 
     # operator for the StateSyndrome function.
@@ -518,6 +546,11 @@ class StateAction(Function):
     when working with expressions utilizing an abstract state instead
     of the more concrete tuple (H(e), A_{l}(e)) when you end up also
     wanting to refer to the state's action component A_{l}(e).
+
+    If the state S is an explicit State such as (D, i),
+    StateAction(S) represents the logical action i. If the state S is
+    an ErrorState of the form ErrorState(l, e), then StateAction(S)
+    represents the logical action A_{l}(e).
     '''
 
     # operator for the StateAction function.
@@ -533,6 +566,35 @@ class StateAction(Function):
         '''
         super().__init__(
                 StateAction._operator_, s, styles=styles)
+
+
+class AllStatesGraphLiteral(Literal):
+    '''
+    AllStatesGraphLiteral() (formatted as G_{states} in outputs)
+    represents the graph G = (V, E) where the the set V of vertices
+    is the sets of all possible augmented syndrome states S_{l}, and
+    the set E of (directed) edges is the set of all ordered pairs
+    (s, s'), where:
+
+      * s, s' in S_{l};
+      * [ACT(s)=0 AND ACT(s')=1] OR
+        [ACT(s)=1 AND v(s) in (SYN(s) - SYN(s'))]
+
+    where: ACT(s) is the logical action (0 or 1) for state s,
+           SYN(s) is the syndrome for state s,
+           and v(s) is the function that determines the next detector
+                    to deactivate given state s.
+
+    'AllStatesGraph' is then defined in the QEC2 common notebook as
+    AllStatesGraph = AllStatesGraphLiteral().
+    '''
+
+    # the literal string for representing the AllStatesGraphLiteral
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='G_{S_l}', 
+            latex_format=r'G_{S_{\ell}}',
+            styles=styles)
 
 
 class CheckFunction(Function):
@@ -590,3 +652,99 @@ class ActionFunction(Function):
                 + r'}(' + self.operands[1].latex() + r')')
 
 
+class EdgeFaults(Function):
+    '''
+    EdgeFaults(s, s') represents the set of faults (possibly errors?)
+    each of which can take augmented syndrome state s to augmented
+    syndrome state s'.
+    If s = (D, j) and s' = (D', j'), then we have:
+
+      [f in EdgeFaults(s, s')] =
+      [D ∆ (H({f})) = D']
+
+    where H is our check matrix function.
+    We use the class name 'EdgeFaults' because we envision the faults
+    as taking state s to state s' in the AllStatesGraph, the vertices
+    of which are the States and edge transitions from state to state
+    represent a choice of syndrome component to eliminate.
+    '''
+
+    # The literal operator for the EdgeFaults function.
+    _operator_ = Literal(
+            string_format='EdgeFaults',
+            latex_format=r'\textrm{EdgeFaults}',
+            theory=__file__)
+
+    def __init__(self, s, t, *, styles=None):
+        '''
+        Create/represent EdgeFaults(s, t), the set of faults each of
+        which takes state s to state t.
+        '''
+        super().__init__(
+                self._operator_, (s, t), styles=styles)
+
+    def membership_object(self, element):
+        from . import EdgeFaultsMembership
+        return EdgeFaultsMembership(element, self)
+
+
+class EdgeFaultsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set
+    EdgeFaults(s, s'), the set of faults that each take state s
+    to state s'.
+
+    UNDER CONSTRUCTION. See the logic/sets/Union class for related
+    example code.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+
+class Realizations(Function):
+    '''
+    Realizations(p), for some path p = (p1, p2, ..., pn) in a graph G,
+    where p1, p2, ..., pn are all augmented syndrome states, is a set
+    of sequences of faults, each sequence (f1, f2, ..., fm)
+    corresponding to the path p, in the sense that the sequence of
+    faults "produces" the sequence of state vertices p2, ..., pn,
+    beginning at p1, by having f_{i} take state p_{i} to state p_{i+1}.
+    As you can see, this is somewhat difficult to describe. An element
+    of Realizations(p) is a sequence of faults that "produces" the
+    the sequence p1, p2, ..., pn of states. There might be more than
+    one such fault sequence that can produce the same sequence of
+    states.
+    '''
+
+    # The literal operator for the EdgeFaults function.
+    _operator_ = Literal(
+            string_format='Realizations',
+            latex_format=r'\textrm{Realizations}',
+            theory=__file__)
+
+    def __init__(self, p, *, styles=None):
+        '''
+        Create/represent Realizations(p), the set of fault sequences,
+        that produce the vertex sequence p = (p1,...,pn).
+        '''
+        super().__init__(
+                self._operator_, p, styles=styles)
+
+    def membership_object(self, element):
+        from . import RealizationsMembership
+        return RealizationsMembership(element, self)
+
+
+class RealizationsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set
+    Realizations(p), the set of fault sequences corresponding
+    to the path p.
+
+    UNDER CONSTRUCTION. See the logic/sets/Union class for related
+    example code.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
