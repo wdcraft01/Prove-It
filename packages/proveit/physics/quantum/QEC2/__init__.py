@@ -2,10 +2,10 @@ from .bufilo import (
         ActionFunction, AllStatesGraphLiteral, BufiloSetsLiteral,
         BufiloSequencesLiteral, CheckFunction, DetectorsLiteral,
         EdgeFaults, EdgeFaultsMembership, ErrorsLiteral, ErrorState,
-        FaultsLiteral, MalignantSetsLiteral, Realizations,
-        RealizationsMembership, SingleBufiloSetsLiteral,
-        State, StateAction, StatesLiteral, StatesMembership,
-        StateSyndrome, SyndromesLiteral, Weight)
+        FaultsLiteral, IrreducibleBufiloSetsLiteral, MalignantSetsLiteral,
+        Realizations, RealizationsMembership, State, StateAction,
+        StatesLiteral, StatesMembership,StateSyndrome, SyndromesLiteral,
+        Weight)
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
 #  Make additions above, or add to sys.modules[__name__].__dict__ below.

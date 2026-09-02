@@ -1,5 +1,6 @@
-from proveit import (n, A, B, equality_prover, Function, Literal,
-                     NamedExprs, Operation, relation_prover, TransRelUpdater)
+from proveit import (
+        f, n, s, A, B, G, equality_prover, Function, Literal,
+        NamedExprs, Operation, relation_prover, TransRelUpdater)
 from proveit.logic import InSet, SetMembership, SetNonmembership
 from proveit.logic.sets import Disjoint
 from proveit.numbers import Complex, Integer, Natural, Real
@@ -27,26 +28,28 @@ class BufiloSetsLiteral(Literal):
                          styles=styles)
 
 
-class SingleBufiloSetsLiteral(Literal):
+class IrreducibleBufiloSetsLiteral(Literal):
     '''
-    SingleBufiloSetsLiteral() (formatted as 1-BUF in outputs) represents
-    the set of possible single BUFILOs (standing for Bad Undetectable
-    Fault-Induced Logical Operator) across a surface code. A BUFILO
-    is itself a set of faults, the combination of which produce the
-    equivalent of a logical operator L. A "single BUFILO" is a
-    BUFILO that does not properly contain another BUFILO as a subset.
+    IrreducibleBufiloSetsLiteral() (formatted as iBUF in outputs)
+    represents the set of possible irreducible BUFILOs (standing for
+    Bad Undetectable Fault-Induced Logical Operator) across a surface
+    code. A BUFILO is itself a set of faults, the combination of which
+    produce the equivalent of a logical operator L. An irreducible
+    BUFILO is a BUFILO that does not properly contain another BUFILO
+    as a subset and does not contain any homologically trivial loops.
+    
     The sets of interest can eventually be parameterized to specify a
     specific logical operator L, the logical operator L_{perp} with
     which it anti-commutes, and/or the specific QEC system of interest.
 
-    'SingleBufiloSets' is then defined in the QEC2 common notebook as
-    SingleBufiloSets = SingleBufiloSetsLiteral().
+    'IrreducibleBufiloSets' is then defined in the QEC2 common
+    notebook as IrreducibleBufiloSets = IrreducibleBufiloSetsLiteral().
     '''
 
-    # the literal string for representing the SingleBufiloSets
+    # the literal string for representing the IrreducibleBufiloSets
     def __init__(self, *, styles=None):
-        Literal.__init__(self, string_format='1-BUFS', 
-                         latex_format=r'\textsc{{\footnotesize 1}-bufs}',
+        Literal.__init__(self, string_format='iBUFS', 
+                         latex_format=r'i\textsc{bufs}',
                          styles=styles)
 
 
@@ -704,32 +707,35 @@ class EdgeFaultsMembership(SetMembership):
 
 class Realizations(Function):
     '''
-    Realizations(p), for some path p = (p1, p2, ..., pn) in a graph G,
-    where p1, p2, ..., pn are all augmented syndrome states, is a set
-    of sequences of faults, each sequence (f1, f2, ..., fm)
+    Realizations(p, G), for some path p = (p1, p2, ..., pn) in a graph
+    G, where p1, p2, ..., pn are all augmented syndrome states, is the
+    set of sequences of faults, each sequence (f1, f2, ..., fm)
     corresponding to the path p, in the sense that the sequence of
     faults "produces" the sequence of state vertices p2, ..., pn,
     beginning at p1, by having f_{i} take state p_{i} to state p_{i+1}.
-    As you can see, this is somewhat difficult to describe. An element
-    of Realizations(p) is a sequence of faults that "produces" the
-    the sequence p1, p2, ..., pn of states. There might be more than
-    one such fault sequence that can produce the same sequence of
-    states.
+    This is somewhat difficult to describe. An element of
+    Realizations(p, G) is a sequence of faults that "produces" the
+    the sequence p2, ..., pn of states beginning at state p1. There
+    might be more than one such fault sequence that can produce the
+    same sequence of states.
     '''
 
-    # The literal operator for the EdgeFaults function.
+    # The literal operator for the Realizations function.
     _operator_ = Literal(
             string_format='Realizations',
             latex_format=r'\textrm{Realizations}',
             theory=__file__)
 
-    def __init__(self, p, *, styles=None):
+    def __init__(self, p, G, *, styles=None):
         '''
-        Create/represent Realizations(p), the set of fault sequences,
-        that produce the vertex sequence p = (p1,...,pn).
+        Create/represent Realizations(p, G), the set of fault sequences
+        each of which produce the vertex sequence p = (p1,...,pn) in
+        graph G.
         '''
+        self.graph = G
+        self.path = p
         super().__init__(
-                self._operator_, p, styles=styles)
+                self._operator_, (p, G), styles=styles)
 
     def membership_object(self, element):
         from . import RealizationsMembership
@@ -739,8 +745,8 @@ class Realizations(Function):
 class RealizationsMembership(SetMembership):
     '''
     Defines methods that apply to membership in the set
-    Realizations(p), the set of fault sequences corresponding
-    to the path p.
+    Realizations(p, G), the set of fault sequences corresponding
+    to the path p in graph G.
 
     UNDER CONSTRUCTION. See the logic/sets/Union class for related
     example code.
@@ -748,3 +754,29 @@ class RealizationsMembership(SetMembership):
 
     def __init__(self, element, domain):
         SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     Unfold the enumerated set membership as a side-effect.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        Deduce and return 
+
+          [(f1, f2, ..., f_{n-1}) in Realizations(s1, s2, ..., sn)] = 
+          Forall_{i in {1..n-1}}[f_i in EdgeFaults(s_{i}, s_{i+1})]
+
+        Obviously this only works if the element is a fault sequence
+        and the Realizations operand is an explicit sequence of graph
+        nodes (or equal to such a sequence).
+        '''
+        from . import realizations_membership_def
+        element = self.element               # a fault sequence
+        _s_sub  = self.domain.operands[0]    # a node sequence (path)
+        _n_sub  = _s_sub.num_elements()      # num elems in node seq
+        _G_sub  = self.domain.operands[1]    # the graph context
+        return realizations_membership_def.instantiate(
+                {G:_G_sub, n:_n_sub, s:_s_sub, f:element})
