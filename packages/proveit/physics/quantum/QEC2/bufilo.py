@@ -136,6 +136,10 @@ class IrreducibleBufiloSetsLiteral(Literal):
                          latex_format=r'i\textsc{bufs}',
                          styles=styles)
 
+    def membership_object(self, element):
+        from . import IrreducibleBufiloSetsMembership
+        return IrreducibleBufiloSetsMembership(element, self)
+
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
         '''
@@ -150,6 +154,86 @@ class IrreducibleBufiloSetsLiteral(Literal):
 
         from . import irreducible_bufs_def
         return irreducible_bufs_def
+
+
+class IrreducibleBufiloSetsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    irreducible BUFILOs, iBUFS.
+
+    UNDER CONSTRUCTION, with the code below borrowed from the
+    logic/sets/Union class and serving as a placeholder.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    # @equality_prover('defined', 'define')
+    # def definition(self, **defaults_config):
+    #     '''
+    #     From [b in BUFS], deduce and return the equality
+
+    #         [b in BUFS] = 
+    #         [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+    #     where H is the CheckFunction and A is the ActionFunction.
+    #     '''
+
+    #     from . import bufs_membership_def
+    #     _b_sub = self.element
+    #     return bufs_membership_def.instantiate(
+    #             {b: _b_sub}, auto_simplify=False)
+
+    # def as_defined(self):
+    #     '''
+    #     From [b in BUFS], return the expression (NOT a Judgment):
+
+    #         [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+    #     where H is the CheckFunction and A is the ActionFunction.
+    #     '''
+    #     from proveit.logic import And, Equals
+    #     from proveit.logic.sets import EmptySet
+    #     from proveit.numbers import one
+    #     from . import _ell, ActionFunction, CheckFunction, Errors
+    #     element = self.element
+    #     return And(InSet(element, Errors),
+    #                Equals(CheckFunction(element), EmptySet),
+    #                Equals(ActionFunction(_ell, element), one))
+
+    # @prover
+    # def unfold(self, **defaults_config):
+    #     '''
+    #     From [b in BUFS], deduce and return the Judgment:
+
+    #         [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+    #     where H is the CheckFunction and A is the ActionFunction.
+    #     '''
+    #     from . import bufs_membership_unfolding
+    #     _b_sub = self.element
+    #     return bufs_membership_unfolding.instantiate(
+    #         {b: _b_sub}, auto_simplify=False)
+
+    # @prover
+    # def conclude(self, **defaults_config):
+    #     '''
+    #     From [b in BUFS], and knowing or assuming that 
+
+    #         [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+    #     where H is the CheckFunction and A is the ActionFunction,
+    #     derive and return self (as a Judgment).
+    #     '''
+    #     from . import bufs_membership_folding
+    #     _b_sub = self.element
+    #     return bufs_membership_folding.instantiate({b: _b_sub})
 
 
 class BufiloSequencesLiteral(Literal):
