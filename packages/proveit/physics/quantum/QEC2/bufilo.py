@@ -52,6 +52,21 @@ class IrreducibleBufiloSetsLiteral(Literal):
                          latex_format=r'i\textsc{bufs}',
                          styles=styles)
 
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        Deduce and return 
+            iBUFS = 
+            [b | b in BUFS
+                 AND (NotExists(b' in BUFS) s.t. b' subset b].
+
+        That is, iBUFS is the set of BUFS each of which has no BUF
+        as a proper subset.
+        '''
+
+        from . import irreducible_bufs_def
+        return irreducible_bufs_def
+
 
 class BufiloSequencesLiteral(Literal):
     '''
