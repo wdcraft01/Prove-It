@@ -13,7 +13,7 @@ class BufiloSetsLiteral(Literal):
     Fault-Induced Logical Operator) across a surface code. A BUFILO
     is itself a set of faults, the combination of which produce the
     equivalent of a logical operator L. The sets of interest can
-    eventually be parameterized to specify a specific logical operator
+    eventually be parameterized to specify a logical operator
     L, the logical operator L_{perp} with which it anti-commutes,
     and/or the specific QEC system of interest.
 
@@ -66,15 +66,22 @@ class BufiloSetsMembership(SetMembership):
         return bufs_membership_def.instantiate(
                 {b: _b_sub}, auto_simplify=False)
 
-    # def as_defined(self):
-    #     '''
-    #     From self=[elem in (A U B U ...)], return
-    #     [(element in A) or (element in B) or ...].
-    #     '''
-    #     from proveit.logic import Or, InSet
-    #     element = self.element
-    #     return Or(*self.domain.operands.map_elements(
-    #             lambda subset : InSet(element, subset)))
+    def as_defined(self):
+        '''
+        From [b in BUFS], return the expression (NOT a Judgment):
+
+            [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+        where H is the CheckFunction and A is the ActionFunction.
+        '''
+        from proveit.logic import And, Equals, InSet
+        from proveit.logic.sets import EmptySet
+        from proveit.numbers import one
+        from . import _ell, ActionFunction, CheckFunction, Errors
+        element = self.element
+        return And(InSet(element, Errors),
+                   Equals(CheckFunction(element), EmptySet),
+                   Equals(ActionFunction(_ell, element), one))
 
     # @prover
     # def unfold(self, **defaults_config):
@@ -108,7 +115,7 @@ class BufiloSetsMembership(SetMembership):
 
 class IrreducibleBufiloSetsLiteral(Literal):
     '''
-    IrreducibleBufiloSetsLiteral() (formatted as iBUF in outputs)
+    IrreducibleBufiloSetsLiteral() (formatted as iBUFS in outputs)
     represents the set of possible irreducible BUFILOs (standing for
     Bad Undetectable Fault-Induced Logical Operator) across a surface
     code. A BUFILO is itself a set of faults, the combination of which
