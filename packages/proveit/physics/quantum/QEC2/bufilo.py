@@ -1,6 +1,6 @@
 from proveit import (
         b, f, n, s, A, B, G, equality_prover, Function, Literal,
-        NamedExprs, Operation, relation_prover, TransRelUpdater)
+        NamedExprs, Operation, prover, relation_prover, TransRelUpdater)
 from proveit.logic import InSet, SetMembership, SetNonmembership
 from proveit.logic.sets import Disjoint
 from proveit.numbers import Complex, Integer, Natural, Real
@@ -74,7 +74,7 @@ class BufiloSetsMembership(SetMembership):
 
         where H is the CheckFunction and A is the ActionFunction.
         '''
-        from proveit.logic import And, Equals, InSet
+        from proveit.logic import And, Equals
         from proveit.logic.sets import EmptySet
         from proveit.numbers import one
         from . import _ell, ActionFunction, CheckFunction, Errors
@@ -83,20 +83,24 @@ class BufiloSetsMembership(SetMembership):
                    Equals(CheckFunction(element), EmptySet),
                    Equals(ActionFunction(_ell, element), one))
 
-    # @prover
-    # def unfold(self, **defaults_config):
-    #     '''
-    #     From [element in (A union B ...)], derive and return
-    #     [(element in A) or (element in B) ...],
-    #     where self represents [element in (A union B ...)].
-    #     '''
-    #     from . import membership_unfolding
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return membership_unfolding.instantiate(
-    #         {m: _m, x: element, A: _A}, auto_simplify=False)
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From [element in (A union B ...)], derive and return
+        [(element in A) or (element in B) ...],
+        where self represents [element in (A union B ...)].
+        '''
+        '''
+        From [b in BUFS], deduce and return the Judgment:
+
+            [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+        where H is the CheckFunction and A is the ActionFunction.
+        '''
+        from . import bufs_membership_unfolding
+        _b_sub = self.element
+        return bufs_membership_unfolding.instantiate(
+            {b: _b_sub}, auto_simplify=False)
 
     # @prover
     # def conclude(self, **defaults_config):
