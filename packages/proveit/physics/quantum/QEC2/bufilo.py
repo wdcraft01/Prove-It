@@ -86,11 +86,6 @@ class BufiloSetsMembership(SetMembership):
     @prover
     def unfold(self, **defaults_config):
         '''
-        From [element in (A union B ...)], derive and return
-        [(element in A) or (element in B) ...],
-        where self represents [element in (A union B ...)].
-        '''
-        '''
         From [b in BUFS], deduce and return the Judgment:
 
             [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
@@ -102,19 +97,19 @@ class BufiloSetsMembership(SetMembership):
         return bufs_membership_unfolding.instantiate(
             {b: _b_sub}, auto_simplify=False)
 
-    # @prover
-    # def conclude(self, **defaults_config):
-    #     '''
-    #     Called on self = [elem in (A U B U ...)], and knowing or
-    #     assuming [[elem in A] OR [elem in B] OR ...], derive and
-    #     return self.
-    #     '''
-    #     from . import membership_folding
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return membership_folding.instantiate({m: _m, x: element, A: _A})
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From [b in BUFS], and knowing or assuming that 
+
+            [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+        where H is the CheckFunction and A is the ActionFunction,
+        derive and return self (as a Judgment).
+        '''
+        from . import bufs_membership_folding
+        _b_sub = self.element
+        return bufs_membership_folding.instantiate({b: _b_sub})
 
 
 class IrreducibleBufiloSetsLiteral(Literal):
