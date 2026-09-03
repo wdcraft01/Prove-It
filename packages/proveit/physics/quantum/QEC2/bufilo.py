@@ -1,5 +1,5 @@
 from proveit import (
-        f, n, s, A, B, G, equality_prover, Function, Literal,
+        b, f, n, s, A, B, G, equality_prover, Function, Literal,
         NamedExprs, Operation, relation_prover, TransRelUpdater)
 from proveit.logic import InSet, SetMembership, SetNonmembership
 from proveit.logic.sets import Disjoint
@@ -8,7 +8,7 @@ from proveit.numbers import Complex, Integer, Natural, Real
 
 class BufiloSetsLiteral(Literal):
     '''
-    BufiloSetsLiteral() (formatted as BUF in outputs) represents
+    BufiloSetsLiteral() (formatted as BUFS in outputs) represents
     the set of possible BUFILOs (standing for Bad Undetectable
     Fault-Induced Logical Operator) across a surface code. A BUFILO
     is itself a set of faults, the combination of which produce the
@@ -26,6 +26,84 @@ class BufiloSetsLiteral(Literal):
         Literal.__init__(self, string_format='BUFS', 
                          latex_format=r'\textsc{bufs}',
                          styles=styles)
+
+    def membership_object(self, element):
+        from . import BufiloSetsMembership
+        return BufiloSetsMembership(element, self)
+
+
+class BufiloSetsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    BUFILOs.
+
+    UNDER CONSTRUCTION, with the code below borrowed from the
+    logic/sets/Union class and serving as a placeholder.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From [b in BUFS], deduce and return the equality
+
+            [b in BUFS] = 
+            [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+        where H is the CheckFunction and A is the ActionFunction.
+        '''
+
+        from . import bufs_membership_def
+        _b_sub = self.element
+        return bufs_membership_def.instantiate(
+                {b: _b_sub}, auto_simplify=False)
+
+    # def as_defined(self):
+    #     '''
+    #     From self=[elem in (A U B U ...)], return
+    #     [(element in A) or (element in B) or ...].
+    #     '''
+    #     from proveit.logic import Or, InSet
+    #     element = self.element
+    #     return Or(*self.domain.operands.map_elements(
+    #             lambda subset : InSet(element, subset)))
+
+    # @prover
+    # def unfold(self, **defaults_config):
+    #     '''
+    #     From [element in (A union B ...)], derive and return
+    #     [(element in A) or (element in B) ...],
+    #     where self represents [element in (A union B ...)].
+    #     '''
+    #     from . import membership_unfolding
+    #     element = self.element
+    #     operands = self.domain.operands
+    #     _A = operands
+    #     _m = _A.num_elements()
+    #     return membership_unfolding.instantiate(
+    #         {m: _m, x: element, A: _A}, auto_simplify=False)
+
+    # @prover
+    # def conclude(self, **defaults_config):
+    #     '''
+    #     Called on self = [elem in (A U B U ...)], and knowing or
+    #     assuming [[elem in A] OR [elem in B] OR ...], derive and
+    #     return self.
+    #     '''
+    #     from . import membership_folding
+    #     element = self.element
+    #     operands = self.domain.operands
+    #     _A = operands
+    #     _m = _A.num_elements()
+    #     return membership_folding.instantiate({m: _m, x: element, A: _A})
 
 
 class IrreducibleBufiloSetsLiteral(Literal):

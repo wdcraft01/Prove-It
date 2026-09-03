@@ -1,8 +1,9 @@
 from .bufilo import (
         ActionFunction, AllStatesGraphLiteral, BufiloSetsLiteral,
-        BufiloSequencesLiteral, CheckFunction, DetectorsLiteral,
-        EdgeFaults, EdgeFaultsMembership, ErrorsLiteral, ErrorState,
-        FaultsLiteral, IrreducibleBufiloSetsLiteral, MalignantSetsLiteral,
+        BufiloSetsMembership, BufiloSequencesLiteral, CheckFunction,
+        DetectorsLiteral,EdgeFaults, EdgeFaultsMembership,
+        ErrorsLiteral, ErrorState,FaultsLiteral,
+        IrreducibleBufiloSetsLiteral, MalignantSetsLiteral,
         Realizations, RealizationsMembership, State, StateAction,
         StatesLiteral, StatesMembership,StateSyndrome, SyndromesLiteral,
         Weight)
