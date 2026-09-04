@@ -174,66 +174,66 @@ class IrreducibleBufiloSetsMembership(SetMembership):
     #     '''
     #     yield self.unfold
 
-    # @equality_prover('defined', 'define')
-    # def definition(self, **defaults_config):
-    #     '''
-    #     From [b in BUFS], deduce and return the equality
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From [b in iBUFS], deduce and return the equality
 
-    #         [b in BUFS] = 
-    #         [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+            [b in iBUFS] = 
+            [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
 
-    #     where H is the CheckFunction and A is the ActionFunction.
-    #     '''
+        where the BufiloSets BUFS class is defined above.
+        '''
 
-    #     from . import bufs_membership_def
-    #     _b_sub = self.element
-    #     return bufs_membership_def.instantiate(
-    #             {b: _b_sub}, auto_simplify=False)
+        from . import irreducible_bufs_membership_def
+        _b_sub = self.element
+        return irreducible_bufs_membership_def.instantiate(
+                {b: _b_sub}, auto_simplify=False)
 
-    # def as_defined(self):
-    #     '''
-    #     From [b in BUFS], return the expression (NOT a Judgment):
+    def as_defined(self):
+        '''
+        From [b in iBUFS], return the expression (NOT a Judgment):
 
-    #         [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+            [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
 
-    #     where H is the CheckFunction and A is the ActionFunction.
-    #     '''
-    #     from proveit.logic import And, Equals
-    #     from proveit.logic.sets import EmptySet
-    #     from proveit.numbers import one
-    #     from . import _ell, ActionFunction, CheckFunction, Errors
-    #     element = self.element
-    #     return And(InSet(element, Errors),
-    #                Equals(CheckFunction(element), EmptySet),
-    #                Equals(ActionFunction(_ell, element), one))
+        where the BufiloSets BUFS class is defined above.
+        '''
+        from proveit.logic import And, NotExists
+        from proveit.logic.sets import SubsetProper
+        # from proveit.numbers import one
+        from . import b_prime, BufiloSets
+        element = self.element
+        return And(InSet(element, BufiloSets),
+                   NotExists(b_prime, SubsetProper(b_prime, element),
+                             domain=BufiloSets))
 
-    # @prover
-    # def unfold(self, **defaults_config):
-    #     '''
-    #     From [b in BUFS], deduce and return the Judgment:
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From [b in iBUFS], deduce and return the Judgment:
 
-    #         [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+            [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
 
-    #     where H is the CheckFunction and A is the ActionFunction.
-    #     '''
-    #     from . import bufs_membership_unfolding
-    #     _b_sub = self.element
-    #     return bufs_membership_unfolding.instantiate(
-    #         {b: _b_sub}, auto_simplify=False)
+        where the BufiloSets BUFS class is defined above.
+        '''
+        from . import irreducible_bufs_membership_unfolding
+        _b_sub = self.element
+        return irreducible_bufs_membership_unfolding.instantiate(
+            {b: _b_sub}, auto_simplify=False)
 
-    # @prover
-    # def conclude(self, **defaults_config):
-    #     '''
-    #     From [b in BUFS], and knowing or assuming that 
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [b in iBUFS], and knowing or assuming that 
 
-    #         [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+            [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
 
-    #     where H is the CheckFunction and A is the ActionFunction,
-    #     derive and return self (as a Judgment).
-    #     '''
-    #     from . import bufs_membership_folding
-    #     _b_sub = self.element
-    #     return bufs_membership_folding.instantiate({b: _b_sub})
+        where the BufiloSets BUFS class is defined above, derive and
+        return self (as a Judgment).
+        '''
+        from . import irreducible_bufs_membership_folding
+        _b_sub = self.element
+        return irreducible_bufs_membership_folding.instantiate({b: _b_sub})
 
 
 class BufiloSequencesLiteral(Literal):
