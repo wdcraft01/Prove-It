@@ -2,7 +2,7 @@ from .bufilo import (
         ActionFunction, AllStatesGraphLiteral, BufiloSetsLiteral,
         BufiloSetsMembership, BufiloSequencesLiteral, CheckFunction,
         DetectorsLiteral,EdgeFaults, EdgeFaultsMembership,
-        ErrorsLiteral, ErrorState, FaultsLiteral,
+        ErrorsLiteral, ErrorsMembership, ErrorState, FaultsLiteral,
         IrreducibleBufiloSetsLiteral, IrreducibleBufiloSetsMembership,
         MalignantSetsLiteral, Realizations, RealizationsMembership,
         State, StateAction, StatesLiteral, StatesMembership,
