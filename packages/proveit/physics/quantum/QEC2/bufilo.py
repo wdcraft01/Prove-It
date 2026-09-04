@@ -1,8 +1,8 @@
 from proveit import (
-        b, f, n, s, A, B, G, equality_prover, Function, Literal,
+        b, e, f, n, s, A, B, G, equality_prover, Function, Literal,
         NamedExprs, Operation, prover, relation_prover, TransRelUpdater)
-from proveit.logic import InSet, SetMembership, SetNonmembership
-from proveit.logic.sets import Disjoint
+from proveit.logic import Equals, InSet, SetMembership, SetNonmembership
+from proveit.logic.sets import Disjoint, Set
 from proveit.numbers import Complex, Integer, Natural, Real
 
 
@@ -493,66 +493,68 @@ class ErrorsMembership(SetMembership):
     #     '''
     #     yield self.unfold
 
-    # @equality_prover('defined', 'define')
-    # def definition(self, **defaults_config):
-    #     '''
-    #     From [b in iBUFS], deduce and return the equality
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [e in ERRS], deduce and return the equality
 
-    #         [b in iBUFS] = 
-    #         [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
+            [e in ERRS] = 
+            [Exists_{n in Natural} Exists_{f1, ..., fn in FAULTS}
+                (e = {f1, ..., fn})]
 
-    #     where the BufiloSets BUFS class is defined above.
-    #     '''
+        where FAULTS is the set of all faults.
+        '''
 
-    #     from . import irreducible_bufs_membership_def
-    #     _b_sub = self.element
-    #     return irreducible_bufs_membership_def.instantiate(
-    #             {b: _b_sub}, auto_simplify=False)
+        from . import errors_membership_def
+        _e_sub = self.element
+        return errors_membership_def.instantiate(
+                {e: _e_sub}, auto_simplify=False)
 
-    # def as_defined(self):
-    #     '''
-    #     From [b in iBUFS], return the expression (NOT a Judgment):
+    def as_defined(self):
+        '''
+        From self = [e in ERRS], return the expression (NOT a Judgment):
 
-    #         [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
+            [Exists_{n in Natural} Exists_{f1, ..., fn in FAULTS}
+                (e = {f1, ..., fn})]
 
-    #     where the BufiloSets BUFS class is defined above.
-    #     '''
-    #     from proveit.logic import And, NotExists
-    #     from proveit.logic.sets import SubsetProper
-    #     # from proveit.numbers import one
-    #     from . import b_prime, BufiloSets
-    #     element = self.element
-    #     return And(InSet(element, BufiloSets),
-    #                NotExists(b_prime, SubsetProper(b_prime, element),
-    #                          domain=BufiloSets))
+        where FAULTS is the set of all faults.
+        '''
+        from proveit.logic import Exists
+        from . import f_one_to_n, Faults
+        element = self.element
+        return Exists(n, Exists((f_one_to_n),
+               Equals(element, Set(f_one_to_n)),
+               domain=Faults), domain=Natural)
 
-    # @prover
-    # def unfold(self, **defaults_config):
-    #     '''
-    #     From [b in iBUFS], deduce and return the Judgment:
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [e in ERRS], deduce and return the Judgment:
 
-    #         [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
+            [Exists_{n in Natural} Exists_{f1, ..., fn in FAULTS}
+                (e = {f1, ..., fn})]
 
-    #     where the BufiloSets BUFS class is defined above.
-    #     '''
-    #     from . import irreducible_bufs_membership_unfolding
-    #     _b_sub = self.element
-    #     return irreducible_bufs_membership_unfolding.instantiate(
-    #         {b: _b_sub}, auto_simplify=False)
+        where FAULTS is the set of all faults.
+        '''
+        from . import errors_membership_unfolding
+        _e_sub = self.element
+        return errors_membership_unfolding.instantiate(
+            {e: _e_sub}, auto_simplify=False)
 
-    # @prover
-    # def conclude(self, **defaults_config):
-    #     '''
-    #     From self = [b in iBUFS], and knowing or assuming that 
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [e in ERRS], and knowing or assuming that 
 
-    #         [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
+            [Exists_{n in Natural} Exists_{f1, ..., fn in FAULTS}
+                (e = {f1, ..., fn})]
 
-    #     where the BufiloSets BUFS class is defined above, derive and
-    #     return self (as a Judgment).
-    #     '''
-    #     from . import irreducible_bufs_membership_folding
-    #     _b_sub = self.element
-    #     return irreducible_bufs_membership_folding.instantiate({b: _b_sub})
+        where FAULTS is the set of all faults, derive and return
+        self.
+        '''
+        from . import errors_membership_folding
+        _e_sub = self.element
+        return errors_membership_folding.instantiate({e: _e_sub})
 
 
 class SyndromesLiteral(Literal):
