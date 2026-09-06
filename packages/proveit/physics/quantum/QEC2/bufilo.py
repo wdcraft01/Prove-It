@@ -932,13 +932,19 @@ class EdgeFaults(Function):
     If s = (D, j) and s' = (D', j'), then we have:
 
       [f in EdgeFaults(s, s')] =
-      [D ∆ (H({f})) = D']
+      [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
 
-    where H is our check matrix function.
+    where:
+
+      H is our check matrix function, CheckFunction;
+      A is our action matrix function, ActionFunction;
+      ∆ denotes the set-theoretic symmetric difference;
+      ⊕ denotes mod-2 addition
+
     We use the class name 'EdgeFaults' because we envision the faults
     as taking state s to state s' in the AllStatesGraph, the vertices
     of which are the States and edge transitions from state to state
-    represent a choice of syndrome component to eliminate.
+    represent a choice of syndrome component(s) to eliminate.
     '''
 
     # The literal operator for the EdgeFaults function.
@@ -972,6 +978,129 @@ class EdgeFaultsMembership(SetMembership):
 
     def __init__(self, element, domain):
         SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [f in EdgeFaults(s, s')], deduce and return the
+        equality
+
+          [f in EdgeFaults(s, s')] =
+          [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
+
+        where:
+
+          s, s' = (D, j), (D', j')
+          H is our check matrix function, CheckFunction;
+          A is our action matrix function, ActionFunction;
+          ∆ denotes the set-theoretic symmetric difference;
+          ⊕ denotes mod-2 addition.
+        '''
+
+        from . import edge_faults_membership_def, s_prime
+        _f_sub = self.element
+        _s_sub = self.domain.operands[0]
+        _s_prime_sub = self.domain.operands[1]
+        
+        return edge_faults_membership_def.instantiate(
+                {f:_f_sub, s:_s_sub, s_prime:_s_prime_sub},
+                auto_simplify=False)
+
+    def as_defined(self):
+        '''
+        From self = [f in EdgeFaults(s, s')], return the expression
+        (NOT a judgment):
+
+          [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
+
+        where:
+
+          s, s' = (D, j), (D', j')
+          H is our check matrix function, CheckFunction;
+          A is our action matrix function, ActionFunction;
+          ∆ denotes the set-theoretic symmetric difference;
+          ⊕ denotes mod-2 addition.
+        '''
+        from proveit.logic import And, Equals
+        from proveit.logic.sets import Set, SymmetricDifference
+        from proveit.numbers import two, Add, Mod
+        from . import (
+            _ell, ActionFunction, f_one_to_n, Faults, StateAction, StateSyndrome)
+        element = self.element
+        _s = self.domain.operands[0]
+        _s_prime = self.domain.operands[1]
+
+        return And(
+            Equals(StateSyndrome(_s_prime),
+                   SymmetricDifference(StateSyndrome(_s),
+                                       StateSyndrome(Set(element)))),
+            Equals(StateAction(_s_prime),
+                   Mod(Add(StateAction(_s),
+                           ActionFunction(_ell, Set(element))), two)))
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [e in ERRS], deduce and return the Judgment:
+
+            [Exists_{n in Natural} Exists_{f1, ..., fn in FAULTS}
+                (e = {f1, ..., fn})]
+
+        where FAULTS is the set of all faults.
+        '''
+        '''
+        From self = [f in EdgeFaults(s, s')], deduce and return the
+        Judgment
+
+          [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
+
+        where:
+
+          s, s' = (D, j), (D', j')
+          H is our check matrix function, CheckFunction;
+          A is our action matrix function, ActionFunction;
+          ∆ denotes the set-theoretic symmetric difference;
+          ⊕ denotes mod-2 addition.
+        '''
+        from . import edge_faults_membership_unfolding, s_prime
+        _f_sub = self.element
+        _s_sub = self.domain.operands[0]
+        _s_prime_sub = self.domain.operands[1]
+
+        return edge_faults_membership_unfolding.instantiate(
+            {f:_f_sub, s:_s_sub, s_prime:_s_prime_sub},
+            auto_simplify=False)
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [f in EdgeFaults(s, s')], and knowing or assuming
+        that 
+
+            [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
+
+        where:
+
+          s, s' = (D, j), (D', j')
+          H is our check matrix function, CheckFunction;
+          A is our action matrix function, ActionFunction;
+          ∆ denotes the set-theoretic symmetric difference;
+          ⊕ denotes mod-2 addition,
+
+        derive and return self.
+        '''
+        from . import edge_faults_membership_folding, s_prime
+        _f_sub = self.element
+        _s_sub = self.domain.operands[0]
+        _s_prime_sub = self.domain.operands[1]
+        return edge_faults_membership_folding.instantiate(
+            {f: _f_sub, s:_s_sub, s_prime:_s_prime_sub})
 
 
 class Realizations(Function):
