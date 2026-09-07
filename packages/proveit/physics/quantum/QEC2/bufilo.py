@@ -953,13 +953,48 @@ class EdgeFaults(Function):
             latex_format=r'\textrm{EdgeFaults}',
             theory=__file__)
 
-    def __init__(self, s, t, *, styles=None):
+    def __init__(self, *operands, styles=None):
         '''
-        Create/represent EdgeFaults(s, t), the set of faults each of
-        which takes state s to state t.
+        Create/represent EdgeFaults(e) or EdgeFaults(s, t), the set
+        of faults each of which takes state s to state t (via edge e,
+        which then implicitly determines state s and state t).
         '''
+        if len(operands) == 2:
+            # the operands consist of an edge e and a graph G
+            self.edge = operands[0]
+            self.graph = operands[1]
+        elif len(operands) == 3:
+            # the operands consist of two nodes s, t (defining an edge),
+            # followed by a graph G
+            from proveit import ExprTuple
+            self.edge = ExprTuple(operands[0], operands[1])
+            self.graph = operands[2]
+        else:
+            # wrong number of operands supplied
+            raise ValueError(
+                f"Usage: EdgeFaults(e, G) or EdgeFaults(s, t, G), "
+                f"using two or three operands, where the operands consist "
+                f"of either: (1) a single edge 'e' and a graph 'G' "
+                f"containing the supplied edge, OR (2) two adjacent nodes "
+                f"'s' and 't' and the graph 'G' containing those nodes. "
+                f"Instead, the supplied operands were: {operands}.")
+
         super().__init__(
-                self._operator_, (s, t), styles=styles)
+                self._operator_, (self.edge, self.graph), styles=styles)
+
+    def string(self, **kwargs):
+        return ('F_{edge, ' + self.graph.string()
+                + '}(' + self.edge.string() + ')')
+
+    def latex(self, **kwargs):
+        from proveit import ExprTuple
+        if not isinstance(self.edge, ExprTuple):
+            return (r'\mathcal{F}_{' + self.graph.latex()
+                    + r'}^{\text{edge}}(' + self.edge.latex() + r')')
+        return (r'\mathcal{F}_{' + self.graph.latex()
+                    + r'}^{\text{edge}}('
+                    + self.edge[0].latex() + ', '
+                    + self.edge[1].latex() + r')')
 
     def membership_object(self, element):
         from . import EdgeFaultsMembership
@@ -969,8 +1004,8 @@ class EdgeFaults(Function):
 class EdgeFaultsMembership(SetMembership):
     '''
     Defines methods that apply to membership in the set
-    EdgeFaults(s, s'), the set of faults that each take state s
-    to state s'.
+    EdgeFaults(e, G) or EdgeFaults(s, s', G), the set of faults
+    that each take state s to state s' (or along edge e).
 
     UNDER CONSTRUCTION. See the logic/sets/Union class for related
     example code.
@@ -988,10 +1023,10 @@ class EdgeFaultsMembership(SetMembership):
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
         '''
-        From self = [f in EdgeFaults(s, s')], deduce and return the
+        From self = [f in EdgeFaults(s, s', G)], deduce and return the
         equality
 
-          [f in EdgeFaults(s, s')] =
+          [f in EdgeFaults(s, s', G)] =
           [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
 
         where:
@@ -1001,12 +1036,22 @@ class EdgeFaultsMembership(SetMembership):
           A is our action matrix function, ActionFunction;
           ∆ denotes the set-theoretic symmetric difference;
           ⊕ denotes mod-2 addition.
-        '''
 
+        If the edge (s, s') is specified abstractly simply as 'e',
+        with no specified end-nodes, then the definition() method
+        fails.
+        '''
+        from proveit import ExprTuple
+        if not isinstance(self.domain.edge, ExprTuple):
+            raise NotImplementedError(
+                f"EdgeFaultsMembership.definition() method implemented "
+                f"only for cases where the edge has explicit "
+                f"end-nodes specified, which is not the case for "
+                f"the supplied edge: {self.domain.edge}. ")
         from . import edge_faults_membership_def, s_prime
         _f_sub = self.element
-        _s_sub = self.domain.operands[0]
-        _s_prime_sub = self.domain.operands[1]
+        _s_sub = self.domain.edge[0]
+        _s_prime_sub = self.domain.edge[1]
         
         return edge_faults_membership_def.instantiate(
                 {f:_f_sub, s:_s_sub, s_prime:_s_prime_sub},
@@ -1026,15 +1071,28 @@ class EdgeFaultsMembership(SetMembership):
           A is our action matrix function, ActionFunction;
           ∆ denotes the set-theoretic symmetric difference;
           ⊕ denotes mod-2 addition.
+
+        If the edge (s, s') is specified abstractly simply as 'e',
+        with no specified end-nodes, then the as_defined() method
+        fails.
         '''
+        from proveit import ExprTuple
         from proveit.logic import And, Equals
         from proveit.logic.sets import Set, SymmetricDifference
         from proveit.numbers import two, Add, Mod
         from . import (
             _ell, ActionFunction, f_one_to_n, Faults, StateAction, StateSyndrome)
+
+        if not isinstance(self.domain.edge, ExprTuple):
+            raise NotImplementedError(
+                f"EdgeFaultsMembership.as_defined() method implemented "
+                f"only for cases where the edge has explicit "
+                f"end-nodes specified, which is not the case for "
+                f"the supplied edge: {self.domain.edge}. ")
+
         element = self.element
-        _s = self.domain.operands[0]
-        _s_prime = self.domain.operands[1]
+        _s = self.domain.edge[0]
+        _s_prime = self.domain.edge[1]
 
         return And(
             Equals(StateSyndrome(_s_prime),
@@ -1067,14 +1125,28 @@ class EdgeFaultsMembership(SetMembership):
           A is our action matrix function, ActionFunction;
           ∆ denotes the set-theoretic symmetric difference;
           ⊕ denotes mod-2 addition.
+
+        If the edge (s, s') is specified abstractly simply as 'e',
+        with no specified end-nodes, then the unfold() method
+        fails.
         '''
+        from proveit import ExprTuple
         from . import edge_faults_membership_unfolding, s_prime
-        _f_sub = self.element
-        _s_sub = self.domain.operands[0]
-        _s_prime_sub = self.domain.operands[1]
+
+        if not isinstance(self.domain.edge, ExprTuple):
+            raise NotImplementedError(
+                f"EdgeFaultsMembership.as_defined() method implemented "
+                f"only for cases where the edge has explicit "
+                f"end-nodes specified, which is not the case for "
+                f"the supplied edge: {self.domain.edge}. ")
+
+        _f_sub       = self.element
+        _s_sub       = self.domain.edge[0]
+        _s_prime_sub = self.domain.edge[1]
+        _G_sub       = self.domain.graph
 
         return edge_faults_membership_unfolding.instantiate(
-            {f:_f_sub, s:_s_sub, s_prime:_s_prime_sub},
+            {G:_G_sub, f:_f_sub, s:_s_sub, s_prime:_s_prime_sub},
             auto_simplify=False)
 
     @prover
@@ -1094,13 +1166,28 @@ class EdgeFaultsMembership(SetMembership):
           ⊕ denotes mod-2 addition,
 
         derive and return self.
+
+        If the edge (s, s') is specified abstractly simply as 'e',
+        with no specified end-nodes, then the conclude() method
+        fails.
+
         '''
+        from proveit import ExprTuple
         from . import edge_faults_membership_folding, s_prime
-        _f_sub = self.element
-        _s_sub = self.domain.operands[0]
-        _s_prime_sub = self.domain.operands[1]
+
+        if not isinstance(self.domain.edge, ExprTuple):
+            raise NotImplementedError(
+                f"EdgeFaultsMembership.as_defined() method implemented "
+                f"only for cases where the edge has explicit "
+                f"end-nodes specified, which is not the case for "
+                f"the supplied edge: {self.domain.edge}. ")
+
+        _f_sub       = self.element
+        _s_sub       = self.domain.edge[0]
+        _s_prime_sub = self.domain.edge[1]
+        _G_sub       = self.domain.graph
         return edge_faults_membership_folding.instantiate(
-            {f: _f_sub, s:_s_sub, s_prime:_s_prime_sub})
+            {G:_G_sub, f: _f_sub, s:_s_sub, s_prime:_s_prime_sub})
 
 
 class Realizations(Function):
