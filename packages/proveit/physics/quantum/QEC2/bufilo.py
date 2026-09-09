@@ -448,6 +448,63 @@ class FaultsLiteral(Literal):
             latex_format=r'\textsc{faults}',
             styles=styles)
 
+    def membership_object(self, element):
+        from . import FaultsMembership
+        return FaultsMembership(element, self)
+
+
+class FaultsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set Faults of all
+    faults.
+
+    UNDER CONSTRUCTION.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [f in FAULTS], deduce and return ... what?
+        '''
+        raise NotImplementedError(
+            "Sorry! FaultsMembership.definition() not yet implemented.")
+
+    def as_defined(self):
+        '''
+        From self = [f in FAULTS], deduce and return ... what?
+        '''
+        raise NotImplementedError(
+            "Sorry! FaultsMembership.definition() not yet implemented.")
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [f in FAULTS], deduce and return ... what?
+        '''
+        raise NotImplementedError(
+            "Sorry! FaultsMembership.definition() not yet implemented.")
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [f in FAULTS], and knowing or assuming that 
+
+            [f in e, for some error e in ERRS]
+
+        derive and return self.
+        '''
+        raise NotImplementedError(
+            "Sorry! FaultsMembership.definition() not yet implemented.")
+
 
 class ErrorsLiteral(Literal):
     '''

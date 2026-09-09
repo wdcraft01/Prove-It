@@ -3,7 +3,8 @@ from .bufilo import (
         BufiloSetsMembership, BufiloSequencesLiteral, CheckFunction,
         DetectorsLiteral,EdgeFaults, EdgeFaultsMembership,
         ErrorsLiteral, ErrorsMembership, ErrorState, FaultsLiteral,
-        IrreducibleBufiloSetsLiteral, IrreducibleBufiloSetsMembership,
+        FaultsMembership, IrreducibleBufiloSetsLiteral,
+        IrreducibleBufiloSetsMembership,
         MalignantSetsLiteral, Realizations, RealizationsMembership,
         State, StateAction, StatesLiteral, StatesMembership,
         StateSyndrome, SyndromesLiteral, Weight)
