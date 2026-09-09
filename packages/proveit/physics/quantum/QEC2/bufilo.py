@@ -1,7 +1,10 @@
 from proveit import (
-        b, e, f, n, s, A, B, G, equality_prover, Function, Literal,
-        NamedExprs, Operation, prover, relation_prover, TransRelUpdater)
-from proveit.logic import Equals, InSet, SetMembership, SetNonmembership
+        b, e, f, i, n, s, A, B, D, G, equality_prover,
+        Function, Literal, NamedExprs, Operation, prover,
+        relation_prover, TransRelUpdater)
+from proveit.logic import (
+        And, Equals, InSet, SetMembership,
+        SetNonmembership)
 from proveit.logic.sets import Disjoint, Set
 from proveit.numbers import Complex, Integer, Natural, Real
 
@@ -668,18 +671,13 @@ class StatesLiteral(Literal):
         from . import StatesMembership
         return StatesMembership(element, self)
 
-    def nonmembership_object(self, element):
-        from . import StatesNonmembership
-        return StatesNonmembership(element, self)
-
 
 class StatesMembership(SetMembership):
     '''
     Defines methods that apply to membership in the set of all
-    augmented syndrome states.
+    States, which is the set of all augmented syndrome states.
 
-    UNDER CONSTRUCTION, with the code below borrowed from the
-    logic/sets/Union class and serving as a placeholder.
+    UNDER CONSTRUCTION
     '''
 
     def __init__(self, element, domain):
@@ -691,60 +689,115 @@ class StatesMembership(SetMembership):
     #     '''
     #     yield self.unfold
 
-    # @equality_prover('defined', 'define')
-    # def definition(self, **defaults_config):
-    #     '''
-    #     Deduce and return 
-    #         [element in (A union B ...)] = 
-    #         [(element in A) or (element in B) ...]
-    #     where self = (A union B ...).
-    #     '''
-    #     from . import union_def
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return union_def.instantiate(
-    #             {m: _m, x: element, A: _A}, auto_simplify=False)
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [s in States], deduce and return
+        
+            [s in States] = 
+            [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}]
+        
+        and from self = [State(D, i) in States], deduce and return
 
-    # def as_defined(self):
-    #     '''
-    #     From self=[elem in (A U B U ...)], return
-    #     [(element in A) or (element in B) or ...].
-    #     '''
-    #     from proveit.logic import Or, InSet
-    #     element = self.element
-    #     return Or(*self.domain.operands.map_elements(
-    #             lambda subset : InSet(element, subset)))
+            [State(D, i) in States] = 
+            [D ⊆ Detectors AND i in {0,1}]
+        '''
+        element = self.element
 
-    # @prover
-    # def unfold(self, **defaults_config):
-    #     '''
-    #     From [element in (A union B ...)], derive and return
-    #     [(element in A) or (element in B) ...],
-    #     where self represents [element in (A union B ...)].
-    #     '''
-    #     from . import membership_unfolding
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return membership_unfolding.instantiate(
-    #         {m: _m, x: element, A: _A}, auto_simplify=False)
+        if not isinstance(element, State):
+            from . import states_membership_def
+            return states_membership_def.instantiate(
+                    {s:element})
 
-    # @prover
-    # def conclude(self, **defaults_config):
-    #     '''
-    #     Called on self = [elem in (A U B U ...)], and knowing or
-    #     assuming [[elem in A] OR [elem in B] OR ...], derive and
-    #     return self.
-    #     '''
-    #     from . import membership_folding
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return membership_folding.instantiate({m: _m, x: element, A: _A})
+        from . import states_membership_tuple_def
+        _D_sub = element.syndrome
+        _i_sub = element.action
+        return states_membership_tuple_def.instantiate(
+                {D:_D_sub, i:_i_sub})
+
+    def as_defined(self):
+        '''
+        From self = [s in States], construct and return the expression
+        (NOT a Judgment):
+        
+            [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}]
+        
+        and from self = [State(D, i) in States], construct and return
+        the expression (NOT a Judgment):
+
+            [D ⊆ Detectors AND i in {0,1}]
+        '''
+        element = self.element
+
+        from . import Detectors, StateAction, StateSyndrome
+        from proveit.logic.sets import SubsetEq
+        from proveit.numbers import zero, one
+
+        if not isinstance(element, State):
+            # The state is generic
+            return And(SubsetEq(StateSyndrome(element), Detectors),
+                       InSet(StateAction(element), Set(zero, one)))
+
+        # The state is of the form State(D, i)
+        _D = element.syndrome
+        _i = element.action
+        return And(SubsetEq(_D, Detectors), InSet(_i, Set(zero, one)))
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [s in States], and knowing or assuming self
+        to be True, deduce and return
+        
+            [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}],
+        
+        and from self = [State(D, i) in States], and knowing or
+        assuming self to be True, deduce and return
+
+            [D ⊆ Detectors AND i in {0,1}]
+        '''
+        element = self.element
+
+        if not isinstance(element, State):
+            from . import states_membership_unfolding
+            return states_membership_unfolding.instantiate(
+                    {s:element})
+
+        from . import states_membership_tuple_unfolding
+        _D_sub = element.syndrome
+        _i_sub = element.action
+        return states_membership_tuple_unfolding.instantiate(
+                {D:_D_sub, i:_i_sub})
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [s in States], and knowing or assuming:
+
+            [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}]
+
+        to be True, deduce and return self.
+        
+        And from self = [State(D, i) in States], and knowing or
+        assuming
+
+            [D ⊆ Detectors AND i in {0,1}]
+
+        to be True, deduce and return self.
+
+        '''
+        element = self.element
+
+        if not isinstance(element, State):
+            from . import states_membership_folding
+            return states_membership_folding.instantiate(
+                    {s:element})
+
+        from . import states_membership_tuple_folding
+        _D_sub = element.syndrome
+        _i_sub = element.action
+        return states_membership_tuple_folding.instantiate(
+                {D:_D_sub, i:_i_sub})
 
 
 class State(Function):
