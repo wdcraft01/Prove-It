@@ -632,6 +632,83 @@ class SyndromesLiteral(Literal):
             latex_format=r'\mathcal{S}',
             styles=styles)
 
+    def membership_object(self, element):
+        from . import SyndromesMembership
+        return SyndromesMembership(element, self)
+
+
+class SyndromesMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    Syndromes, where a Syndrome is a subset of the set of Detectors.
+
+    UNDER CONSTRUCTION
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [s in Syndromes], deduce and return
+        
+            [s in Syndromes] = [s ⊆ Detectors]
+        '''
+        element = self.element
+
+        from . import syndromes_membership_def
+        return syndromes_membership_def.instantiate(
+                {s:element})
+
+    def as_defined(self):
+        '''
+        From self = [s in Syndromes], construct and return the
+        expression (NOT a Judgment):
+        
+            [s ⊆ Detectors]
+        '''
+        element = self.element
+
+        from . import Detectors
+        from proveit.logic.sets import SubsetEq
+
+        return SubsetEq(element, Detectors)
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [s in Syndromes], deduce and return
+        
+            |- [s ⊆ Detectors]
+        '''
+        element = self.element
+
+        from . import syndromes_membership_unfolding
+        return syndromes_membership_unfolding.instantiate(
+                {s:element})
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [s in Syndromes], and knowing or assuming that:
+        
+            [s ⊆ Detectors]
+
+        deduce and return self.
+        '''
+        element = self.element
+
+        from . import syndromes_membership_folding
+        return syndromes_membership_folding.instantiate(
+                {s:element})
+
 
 class DetectorsLiteral(Literal):
     '''

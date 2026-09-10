@@ -7,7 +7,7 @@ from .bufilo import (
         IrreducibleBufiloSetsMembership,
         MalignantSetsLiteral, Realizations, RealizationsMembership,
         State, StateAction, StatesLiteral, StatesMembership,
-        StateSyndrome, SyndromesLiteral, Weight)
+        StateSyndrome, SyndromesLiteral, SyndromesMembership, Weight)
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
 #  Make additions above, or add to sys.modules[__name__].__dict__ below.
