@@ -611,10 +611,28 @@ class ErrorsMembership(SetMembership):
 
         where FAULTS is the set of all faults, derive and return
         self.
+
+        OR, from self = [{f1,...,fn} in ERRS], and knowing or assuming
+        that
+
+            f1, ..., fn in FAULTS,
+
+        derive and return self.
         '''
+        element = self.element
+
+        if isinstance(element, Set):
+            # try the following, thinking we have a set of Faults
+            from . import fault_set_is_error
+            _f_sub = element.operands
+            _n_sub = _f_sub.num_elements()
+            return fault_set_is_error.instantiate(
+                    {n:_n_sub, f:_f_sub})
+
+        # Else we have something else more general
         from . import errors_membership_folding
-        _e_sub = self.element
-        return errors_membership_folding.instantiate({e: _e_sub})
+        return errors_membership_folding.instantiate({e: element})
+
 
 
 class SyndromesLiteral(Literal):
@@ -1078,6 +1096,16 @@ class CheckFunction(Function):
         super().__init__(
                 CheckFunction._operator_, e, styles=styles)
 
+    @relation_prover
+    def deduce_in_syndromes(self, **defaults_config):
+        '''
+        Deduce that this CheckFunction(e) operation is an element
+        of the set of Syndromes.
+        '''
+        from . import check_fxn_of_e_is_syndrome
+        _e_sub = self.operand
+        return check_fxn_of_e_is_syndrome.instantiate({e:_e_sub})
+
 
 class ActionFunction(Function):
     '''
@@ -1109,6 +1137,16 @@ class ActionFunction(Function):
     def latex(self, **kwargs):
         return (r'A_{' + self.operands[0].latex()
                 + r'}(' + self.operands[1].latex() + r')')
+
+    @relation_prover
+    def deduce_in_bit_set(self, **defaults_config):
+        '''
+        Deduce that this ActionFunction(e) operation is an element
+        of the two-element bit set {0, 1}.
+        '''
+        from . import action_fxn_of_e_is_0_or_1
+        _e_sub = self.operands[1]
+        return action_fxn_of_e_is_0_or_1.instantiate({e:_e_sub})
 
 
 class EdgeFaults(Function):
