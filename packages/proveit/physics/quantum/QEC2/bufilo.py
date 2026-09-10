@@ -723,6 +723,12 @@ class SyndromesMembership(SetMembership):
         '''
         element = self.element
 
+        if isinstance(element, CheckFunction):
+            try:
+                return element.deduce_in_syndromes()
+            except Exception:
+                pass
+
         from . import syndromes_membership_folding
         return syndromes_membership_folding.instantiate(
                 {s:element})
@@ -1015,6 +1021,34 @@ class StateSyndrome(Function):
         super().__init__(
                 StateSyndrome._operator_, s, styles=styles)
 
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        Returns a proven simplification equation for this StateSyndrome
+        expression assuming the operands have been simplified.
+        
+        From self = StateSyndrome((D, i)), deduce and return the
+        equality:
+
+            SYN((D, i)) = D
+
+        '''
+        if isinstance(self.operand, State):
+
+            from . import state_syndrome_def
+
+            _state = self.operand
+            _D_sub = _state.syndrome
+            _i_sub = _state.action
+
+            return state_syndrome_def.instantiate(
+                    {D:_D_sub, i:_i_sub})
+
+
+        # Default is no simplification.
+        return Equals(self, self).prove()
+
 
 class StateAction(Function):
     '''
@@ -1043,6 +1077,34 @@ class StateAction(Function):
         '''
         super().__init__(
                 StateAction._operator_, s, styles=styles)
+
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        Returns a proven simplification equation for this StateAction
+        expression assuming the operands have been simplified.
+        
+        From self = StateAction((D, i)), deduce and return the
+        equality:
+
+            ACT((D, i)) = i
+
+        '''
+        if isinstance(self.operand, State):
+
+            from . import state_action_def
+
+            _state = self.operand
+            _D_sub = _state.syndrome
+            _i_sub = _state.action
+
+            return state_action_def.instantiate(
+                    {D:_D_sub, i:_i_sub})
+
+
+        # Default is no simplification.
+        return Equals(self, self).prove()
 
 
 class AllStatesGraphLiteral(Literal):
