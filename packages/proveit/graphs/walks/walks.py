@@ -1,4 +1,4 @@
-from proveit import ( equality_prover, ExprTuple, Function, Literal,
+from proveit import ( n, v, equality_prover, ExprTuple, Function, Literal,
                       NamedExprs, Operation )
 from proveit.graphs import Size
 
@@ -781,6 +781,75 @@ class EdgeSequence(Function):
         self.walk = W
         Function.__init__(
                 self, EdgeSequence._operator_, W, styles=styles)
+
+
+class EdgeSequenceOf(Function):
+    '''
+    Given a walk W in Walks(k, G) consisting of vertex sequence S
+    in graph G, EdgeSequenceOf(W) represents the sequence of edges
+    traveled along the walk, which for a simple graph is completely
+    determined by the vertex sequence S. The number of edges in
+    EdgeSequenceOf(W) is the length of the walk W, represented with
+    WalkLength(W).
+
+    This is intended to replace the more ambiguously named
+    EdgeSequence() defined previously.
+
+    Temporarily we approach this in a very naive way, using a
+    simplification/evaluation that simply converts the sequence
+    of vertices to a sequence of edges, without checking that the
+    vertices are actually adjacent in some graph context.
+    '''
+
+    # the literal operator of the EdgeSequence operation
+    _operator_ = Literal(string_format='EdgeSeqOf',
+                         latex_format=r'\mathrm{EdgeSeqOf}',
+                         theory=__file__)
+
+    def __init__(self, W, *, styles=None):
+        '''
+        Given a walk W = Walk(S, G) in graph G, represent the
+        sequence of edges traveled during the walk.
+        '''
+        self.walk = W
+        
+        super().__init__(self._operator_, W, styles=styles)
+
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        Returns a proven simplification equation for this
+        EdgeSequenceOf expression assuming the operand has been
+        simplified.
+        
+        Currently handles just one case in a naive way:
+
+             1. EdgeSequenceOf((v1,v2,...,vn))
+                = ((v1,v2),(v2,v3),...,(v_{n-1}, vn))
+
+        '''
+
+        if isinstance(self.walk, ExprTuple):
+            # we have an explicit listing of vertices
+            from . import edge_sequence_of_def
+            _v_sub = self.walk
+            _n_sub = _v_sub.num_elements()
+            return edge_sequence_of_def.instantiate(
+                    {n:_n_sub, v:_v_sub})
+        
+        # Default is no simplification.
+        from proveit.logic import Equals
+        return Equals(self, self).prove()
+
+    # @classmethod
+    # def extract_init_arg_value(cls, arg_name, operator, operands):
+    #     # The base Operation.__init__ already maps keys to attributes 
+    #     # via getattr/setattr, but for reconstruction (remaking exprs), 
+    #     # we check the NamedExprs specifically.
+    #     if isinstance(operands, NamedExprs):
+    #         return operands.get(arg_name, None)
+    #     return None
 
 
 class EdgeSet(Function):
