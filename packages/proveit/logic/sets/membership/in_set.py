@@ -146,6 +146,30 @@ class InSet(Relation):
         _A_sub = judgment.expr.instance_expr.domain
         yield (lambda : non_empty_folding.instantiate({A:_A_sub}))
 
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        Returns a proven simplification equation for this InSet
+        expression assuming the operands have been simplified.
+        
+        Primarily handles the special of:
+
+            A ∈ ∅
+
+        returning A ∈ ∅ = FALSE for such cases, but then simply
+        calling shallow_simplification() on the parent class for
+        other cases.
+        '''
+        from proveit.logic.sets import EmptySet
+        _domain = self.domain
+        if _domain == EmptySet:
+            from proveit.logic import Equals, FALSE
+            return Equals(self, FALSE).prove()
+
+        return Relation.shallow_simplification(
+                self, must_evaluate=must_evaluate)
+
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
         '''
