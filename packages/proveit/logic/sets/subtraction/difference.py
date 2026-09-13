@@ -5,7 +5,9 @@ from proveit import x, A, B
 
 class Difference(Operation):
     # operator of the Difference operation
-    _operator_ = Literal(string_format='-', theory=__file__)
+    _operator_ = Literal(string_format='\\',
+                         latex_format=r'\setminus',
+                         theory=__file__)
 
     def __init__(self, A, B, *, styles=None):
         Operation.__init__(self, Difference._operator_, [A, B],
