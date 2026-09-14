@@ -1,5 +1,6 @@
 from .bufilo import (
-        ActionFunction, AllStatesGraphLiteral, BufiloSetsLiteral,
+        ActionFunction, AllStatesGraphLiteral,
+        BufiloGeneratingGraphLiteral, BufiloSetsLiteral,
         BufiloSetsMembership, BufiloSequencesLiteral, CheckFunction,
         DetectorsLiteral,EdgeFaults, EdgeFaultsMembership,
         ErrorsLiteral, ErrorsMembership, ErrorState, FaultsLiteral,

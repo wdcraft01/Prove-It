@@ -1294,6 +1294,48 @@ class AllStatesGraphLiteral(Literal):
             styles=styles)
 
 
+class BufiloGeneratingGraphLiteral(Literal):
+    '''
+    BufiloGeneratingGraphLiteral() (formatted as G_{l,v}^{BUF} in
+    outputs), for logical operator l and choice function v,
+    represents the BUFILO-generating graph G = (V, E), where the
+    set V of vertices is the set ObsSets_{l} of all possible
+    observable sets, and the set E of (directed) edges is
+    the set of all ordered pairs (s, s'), where:
+
+      * s, s' in ObsSets_{l};
+      * v(s) ∈ (s - s')
+
+    BufiloGeneratingGraph is then defined in the QEC2 common
+    notebook as
+
+        BufiloGeneratingGraph = BufiloGeneratingGraphLiteral().
+    '''
+
+    # the literal string for representing the AllStatesGraphLiteral
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='G_{l v}', 
+            latex_format=r'G_{\ell v}^{\textsc{buf}}',
+            styles=styles)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [BufiloGeneratingGraph], deduce and return
+        
+            [BufiloGeneratingGraph] = Graph(V, E),
+
+        where:
+
+            V = ObservableSets;
+            E = {(s, s') | s,s' ∈ ObservableSets ⋀ v(s) = (s - s')}
+
+        '''
+        from . import buf_gen_graph_def
+        return buf_gen_graph_def
+
+
 class CheckFunction(Function):
     '''
     CheckFunction(e) is a function version of the 'check matrix',
