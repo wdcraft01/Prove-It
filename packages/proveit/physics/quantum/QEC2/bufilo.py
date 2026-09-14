@@ -1,5 +1,5 @@
 from proveit import (
-        b, e, f, i, n, s, A, B, D, G, equality_prover,
+        b, e, f, i, l, n, s, A, B, D, G, equality_prover,
         Function, Literal, NamedExprs, Operation, prover,
         relation_prover, TransRelUpdater)
 from proveit.logic import (
@@ -901,7 +901,6 @@ class StatesMembership(SetMembership):
                 {D:_D_sub, i:_i_sub})
 
 
-# class StatesLiteral(Literal):
 class ObservableSetsLiteral(Literal):
     '''
     ObservableSetsLiteral() (formatted as ObsSets_{l} in outputs)
@@ -919,6 +918,8 @@ class ObservableSetsLiteral(Literal):
 
     Elements of ObservableSets serve as nodes in the BUFILO-generating
     graph.
+
+    Note: this class is intended to replace the States class.
 
     '''
 
@@ -992,7 +993,6 @@ class ObservableSetsMembership(SetMembership):
         from . import observable_sets_membership_unfolding
         return observable_sets_membership_unfolding.instantiate(
                 {s:element})
-
 
     @prover
     def conclude(self, **defaults_config):
@@ -1068,6 +1068,54 @@ class State(Function):
         if hasattr(self, 'logical_observable'):
             latex_str += r'_{' + self.logical_observable.latex() + r'}'
         return latex_str
+
+
+class ObservableSet(Function):
+    '''
+    ObservableSet(e, l), appearing as Obs_{l}(e) in outputs, represents
+    the set of observables associated with error e, given by:
+
+        Obs_{l}(e) = [H(e)       if A_{l}(e) = 0],
+                     [H(e) U {l} if A_{l}(e) = 1]
+    '''
+
+    # Literal operator for the ObservableSet function,
+    # but see further below for actual string and latex forms.
+    _operator_ = Literal(
+            string_format='Obs_{l}',
+            latex_format=r'\textsc{Obs}_{\ell}',
+            theory=__file__)
+
+    def __init__(self, e, l, *, styles=None):
+        '''
+        Create/represent ObservableSet(e, l), the set of observables
+        associated with error e with respect to logical operator l.
+        '''
+        super().__init__(
+                self._operator_, (e, l), styles=styles)
+
+    def string(self, **kwargs):
+        return ('Obs_{' + self.operands[1].string()
+                + '}(' + self.operands[0].string() + ')')
+
+    def latex(self, **kwargs):
+        return (r'\textsc{Obs}_{' + self.operands[1].latex()
+                + r'}(' + self.operands[0].latex() + r')')
+
+    
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [ObservableSet(e, l)], deduce and return
+        
+            [ObservableSet(e, l)] = H(e) U {l | A_{l}(e) = 1}
+
+        '''
+        _e_sub = self.operands[0]
+        _l_sub = self.operands[1]
+
+        from . import observable_set_def
+        return observable_set_def.instantiate({l:_l_sub, e:_e_sub})
 
 
 class ErrorState(Function):
