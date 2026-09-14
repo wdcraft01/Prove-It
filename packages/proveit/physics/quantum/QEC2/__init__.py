@@ -4,8 +4,8 @@ from .bufilo import (
         DetectorsLiteral,EdgeFaults, EdgeFaultsMembership,
         ErrorsLiteral, ErrorsMembership, ErrorState, FaultsLiteral,
         FaultsMembership, IrreducibleBufiloSetsLiteral,
-        IrreducibleBufiloSetsMembership,
-        MalignantSetsLiteral, Realizations, RealizationsMembership,
+        IrreducibleBufiloSetsMembership,MalignantSetsLiteral,
+        ObservableSetsLiteral, Realizations, RealizationsMembership,
         State, StateAction, StatesLiteral, StatesMembership,
         StateSyndrome, SyndromesLiteral, SyndromesMembership, Weight)
 

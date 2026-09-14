@@ -901,6 +901,166 @@ class StatesMembership(SetMembership):
                 {D:_D_sub, i:_i_sub})
 
 
+# class StatesLiteral(Literal):
+class ObservableSetsLiteral(Literal):
+    '''
+    ObservableSetsLiteral() (formatted as ObsSets_{l} in outputs)
+    represents the set of all possible subsets of the set of applicable
+    observables (detectors and the logical observable l).
+
+    An element s of the ObservableSets is an observable set, give by:
+
+        s = H(e),       if A_{l}(e) = 0
+            H(e) U {l}, if A_{l}(e) = 1
+
+    for all possible errors e, check matrix (or check function) H,
+    and action matrix (or action function) A_{l}.
+
+    Elements of ObservableSets serve as nodes in the BUFILO-generating
+    graph.
+
+    '''
+
+    # the literal string for representing the set of ObservableSets
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='ObsSets', 
+            latex_format=r'\textsc{ObsSets}_{\ell}',
+            styles=styles)
+
+    def membership_object(self, element):
+        from . import StatesMembership
+        return ObservableSetsMembership(element, self)
+
+
+class ObservableSetsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    ObservableSets.
+
+    UNDER CONSTRUCTION
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    # @equality_prover('defined', 'define')
+    # def definition(self, **defaults_config):
+    #     '''
+    #     From self = [s in States], deduce and return
+        
+    #         [s in States] = 
+    #         [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}]
+        
+    #     and from self = [State(D, i) in States], deduce and return
+
+    #         [State(D, i) in States] = 
+    #         [D ⊆ Detectors AND i in {0,1}]
+    #     '''
+    #     element = self.element
+
+    #     if not isinstance(element, State):
+    #         from . import states_membership_def
+    #         return states_membership_def.instantiate(
+    #                 {s:element})
+
+    #     from . import states_membership_tuple_def
+    #     _D_sub = element.syndrome
+    #     _i_sub = element.action
+    #     return states_membership_tuple_def.instantiate(
+    #             {D:_D_sub, i:_i_sub})
+
+    # def as_defined(self):
+    #     '''
+    #     From self = [s in States], construct and return the expression
+    #     (NOT a Judgment):
+        
+    #         [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}]
+        
+    #     and from self = [State(D, i) in States], construct and return
+    #     the expression (NOT a Judgment):
+
+    #         [D ⊆ Detectors AND i in {0,1}]
+    #     '''
+    #     element = self.element
+
+    #     from . import Detectors, StateAction, StateSyndrome
+    #     from proveit.logic.sets import SubsetEq
+    #     from proveit.numbers import zero, one
+
+    #     if not isinstance(element, State):
+    #         # The state is generic
+    #         return And(SubsetEq(StateSyndrome(element), Detectors),
+    #                    InSet(StateAction(element), Set(zero, one)))
+
+    #     # The state is of the form State(D, i)
+    #     _D = element.syndrome
+    #     _i = element.action
+    #     return And(SubsetEq(_D, Detectors), InSet(_i, Set(zero, one)))
+
+    # @prover
+    # def unfold(self, **defaults_config):
+    #     '''
+    #     From self = [s in States], and knowing or assuming self
+    #     to be True, deduce and return
+        
+    #         [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}],
+        
+    #     and from self = [State(D, i) in States], and knowing or
+    #     assuming self to be True, deduce and return
+
+    #         [D ⊆ Detectors AND i in {0,1}]
+    #     '''
+    #     element = self.element
+
+    #     if not isinstance(element, State):
+    #         from . import states_membership_unfolding
+    #         return states_membership_unfolding.instantiate(
+    #                 {s:element})
+
+    #     from . import states_membership_tuple_unfolding
+    #     _D_sub = element.syndrome
+    #     _i_sub = element.action
+    #     return states_membership_tuple_unfolding.instantiate(
+    #             {D:_D_sub, i:_i_sub})
+
+    # @prover
+    # def conclude(self, **defaults_config):
+    #     '''
+    #     From self = [s in States], and knowing or assuming:
+
+    #         [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}]
+
+    #     to be True, deduce and return self.
+        
+    #     And from self = [State(D, i) in States], and knowing or
+    #     assuming
+
+    #         [D ⊆ Detectors AND i in {0,1}]
+
+    #     to be True, deduce and return self.
+
+    #     '''
+    #     element = self.element
+
+    #     if not isinstance(element, State):
+    #         from . import states_membership_folding
+    #         return states_membership_folding.instantiate(
+    #                 {s:element})
+
+    #     from . import states_membership_tuple_folding
+    #     _D_sub = element.syndrome
+    #     _i_sub = element.action
+    #     return states_membership_tuple_folding.instantiate(
+    #             {D:_D_sub, i:_i_sub})
+
+
 class State(Function):
     '''
     State(syndrome, action, logical_obs) represents the augmented
