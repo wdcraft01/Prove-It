@@ -1003,8 +1003,30 @@ class ObservableSetsMembership(SetMembership):
 
         to be True, deduce and return self.
 
+        Also check some special cases: if s is an ObservableSet(e, l),
+        for some error e, then by definition s will be in the set of
+        ObservableSets. (That's what ObservableSet(e, l) means.)
+
         '''
         element = self.element
+        domain  = self.domain
+
+        # Check some special cases first
+        if isinstance(element, ObservableSet):
+            from . import Errors
+            if InSet(element.operands[0], Errors).proven():
+                from . import obs_set_of_error_in_obs_sets
+                _e_sub = element.operands[0]
+                return obs_set_of_error_in_obs_sets.instantiate({e:_e_sub})
+
+            from . import Faults
+
+            if (isinstance(element.operands[0], Set)
+                and element.operands[0].operands.is_single()
+                and InSet(element.operands[0].operands[0], Faults).readily_provable()):
+                from . import obs_set_of_fault_in_obs_sets
+                _f_sub = element.operands[0].operands[0]
+                return obs_set_of_fault_in_obs_sets.instantiate({f:_f_sub})
 
         from . import observable_sets_membership_folding
         return observable_sets_membership_folding.instantiate(
