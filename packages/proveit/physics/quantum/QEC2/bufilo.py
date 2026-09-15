@@ -1012,6 +1012,8 @@ class ObservableSetsMembership(SetMembership):
         domain  = self.domain
 
         # Check some special cases first
+
+        # elem is an ObservableSet
         if isinstance(element, ObservableSet):
             from . import Errors
             if InSet(element.operands[0], Errors).proven():
@@ -1027,6 +1029,24 @@ class ObservableSetsMembership(SetMembership):
                 from . import obs_set_of_fault_in_obs_sets
                 _f_sub = element.operands[0].operands[0]
                 return obs_set_of_fault_in_obs_sets.instantiate({f:_f_sub})
+
+        # elem is a syndrome output from CheckFunction
+        if isinstance(element, CheckFunction):
+            from . import Errors
+            if InSet(element.operand, Errors).proven():
+                from . import error_syndrome_in_obs_sets
+                _e_sub = element.operand
+                return error_syndrome_in_obs_sets.instantiate({e:_e_sub})
+
+            from . import Faults
+
+            if (isinstance(element.operand, Set)
+                and element.operand.operands.is_single()
+                and InSet(element.operand.operands[0], Faults).readily_provable()):
+                from . import fault_syndrome_in_obs_sets
+                _f_sub = element.operand.operands[0]
+                return fault_syndrome_in_obs_sets.instantiate({f:_f_sub})
+
 
         from . import observable_sets_membership_folding
         return observable_sets_membership_folding.instantiate(
