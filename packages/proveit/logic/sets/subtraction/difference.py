@@ -33,23 +33,30 @@ class Difference(Operation):
 
           (1) A - ∅ = A
           (2) ∅ - A = ∅
+          (3) Disjoint(A, B) => [A - B = A]
 
         '''
         from proveit.logic      import Equals
-        from proveit.logic.sets import EmptySet
+        from proveit.logic.sets import Disjoint, EmptySet
 
         _op1 = self.operands[0]
         _op2 = self.operands[1]
 
         if _op1 == EmptySet:
-            from proveit.logic.sets.subtraction import empty_minus_any
+            from . import empty_minus_any
             _A_sub = _op2
             return empty_minus_any.instantiate({A:_A_sub})
 
         if _op2 == EmptySet:
-            from proveit.logic.sets.subtraction import any_minus_empty
+            from . import any_minus_empty
             _A_sub = _op1
             return any_minus_empty.instantiate({A:_A_sub})
+
+        if Disjoint(_op1, _op2).proven():
+            from . import any_minus_disjoint
+            _A_sub = _op1
+            _B_sub = _op2
+            return any_minus_disjoint.instantiate({A:_A_sub, B:_B_sub})
 
         # Default is no simplification.
         return Equals(self, self).prove()
