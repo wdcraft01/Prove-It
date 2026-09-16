@@ -1,10 +1,13 @@
-from proveit import Literal, Operation, TransRelUpdater, USE_DEFAULTS
+from proveit import (equality_prover, Literal, Operation,
+                     TransRelUpdater, USE_DEFAULTS)
 from proveit import x, A, B
 
 
 class Difference(Operation):
     # operator of the Difference operation
-    _operator_ = Literal(string_format='-', theory=__file__)
+    _operator_ = Literal(string_format='\\',
+                         latex_format=r'\setminus',
+                         theory=__file__)
 
     def __init__(self, A, B, *, styles=None):
         Operation.__init__(self, Difference._operator_, [A, B],
@@ -17,6 +20,46 @@ class Difference(Operation):
     def nonmembership_object(self, element):
         from .difference_membership import DifferenceNonmembership
         return DifferenceNonmembership(element, self)
+
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        Returns a proven simplification equation for this Difference
+        expression assuming the operands have been simplified.
+
+        As of 9/11/2026, the only cases actively considered for
+        simplification are:
+
+          (1) A - ∅ = A
+          (2) ∅ - A = ∅
+          (3) Disjoint(A, B) => [A - B = A]
+
+        '''
+        from proveit.logic      import Equals
+        from proveit.logic.sets import Disjoint, EmptySet
+
+        _op1 = self.operands[0]
+        _op2 = self.operands[1]
+
+        if _op1 == EmptySet:
+            from . import empty_minus_any
+            _A_sub = _op2
+            return empty_minus_any.instantiate({A:_A_sub})
+
+        if _op2 == EmptySet:
+            from . import any_minus_empty
+            _A_sub = _op1
+            return any_minus_empty.instantiate({A:_A_sub})
+
+        if Disjoint(_op1, _op2).proven():
+            from . import any_minus_disjoint
+            _A_sub = _op1
+            _B_sub = _op2
+            return any_minus_disjoint.instantiate({A:_A_sub, B:_B_sub})
+
+        # Default is no simplification.
+        return Equals(self, self).prove()
 
     '''
     In some of the Difference methods below, we adopt the "factor"

@@ -14,7 +14,8 @@ class WalksOfMembership(SetMembership):
     '''
     Defines methods that apply to membership in the set
     of (possibly a-b) walks in the simple finite graph G, denoted
-    WalksOf(G) or possibly WalksOf(G, a -> b).
+    WalksOf(G), WalksOf(G, a -> ), WalksOf(G, -> b), or
+    WalksOf(G, a -> b).
     See related membership classes further below for Trails and Paths.
     '''
 
@@ -32,23 +33,41 @@ class WalksOfMembership(SetMembership):
               (2) Every pair v_{i}, v_{i+1} of vertices are adjacent in
                   graph G (for i in {1, 2, ..., n-1}).
 
-        From self = [W in WalksOf(G, ends=(a,b))], deduce and return
-        the equality above with the additional constraints that:
+        From self = [W in WalksOf(G, begin=a, end=b)], deduce and
+        return the equality above with the additional constraints that:
 
               (3) v1 = a
               (4) vn = b
+
+        Similarly adjusted for cases where just 'begin' or just 'end'
+        is specified.
         '''
 
         _W_sub = self.element
         _G_sub = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import walks_of_graph_with_ends_membership_def
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
             return walks_of_graph_with_ends_membership_def.instantiate(
                     {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if _has_begin:
+            from . import walks_of_graph_with_begin_membership_def
+            _a_sub = self.domain.begin
+            return walks_of_graph_with_begin_membership_def.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
+
+        if _has_end:
+            from . import walks_of_graph_with_end_membership_def
+            _b_sub = self.domain.end
+            return walks_of_graph_with_end_membership_def.instantiate(
+                    {G:_G_sub, W:_W_sub, b:_b_sub}, auto_simplify=False)
 
         from . import walks_of_graph_membership_def
         return walks_of_graph_membership_def.instantiate(
@@ -66,23 +85,41 @@ class WalksOfMembership(SetMembership):
               (2) Every pair v_{i}, v_{i+1} of vertices are adjacent in
                   graph G (for i in {1, 2, ..., n-1}).
 
-        From self = [W in WalksOf(G, ends=(a,b))], deduce and return
+        From self = [W in WalksOf(G, begin=a, end=b)], deduce and return
         the equality above with the additional "such that" constraints:
 
               (3) v1 = a
               (4) vn = b
+
+        Similarly adjusted for cases where just 'begin' or just 'end'
+        is specified.
         '''
 
         _W_sub = self.element
         _G_sub = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import walks_of_graph_membership_with_ends_exists_def
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
             return walks_of_graph_membership_with_ends_exists_def.instantiate(
                     {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if _has_begin:
+            from . import walks_of_graph_membership_with_begin_exists_def
+            _a_sub = self.domain.begin
+            return walks_of_graph_membership_with_begin_exists_def.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
+
+        if _has_end:
+            from . import walks_of_graph_membership_with_end_exists_def
+            _b_sub = self.domain.end
+            return walks_of_graph_membership_with_end_exists_def.instantiate(
+                    {G:_G_sub, W:_W_sub, b:_b_sub}, auto_simplify=False)
 
         from . import walks_of_graph_membership_exists_def
         return walks_of_graph_membership_exists_def.instantiate(
@@ -105,18 +142,36 @@ class WalksOfMembership(SetMembership):
 
               (3) v1 = a
               (4) vn = b
+
+        Similarly adjusted for cases where just 'begin' or just 'end'
+        is specified.
         '''
 
         _W_sub = self.element
         _G_sub = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import walks_of_graph_with_ends_membership_unfolding
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
             return walks_of_graph_with_ends_membership_unfolding.instantiate(
                     {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if _has_begin:
+            from . import walks_of_graph_with_begin_membership_unfolding
+            _a_sub = self.domain.begin
+            return walks_of_graph_with_begin_membership_unfolding.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
+
+        if _has_end:
+            from . import walks_of_graph_with_end_membership_unfolding
+            _b_sub = self.domain.end
+            return walks_of_graph_with_end_membership_unfolding.instantiate(
+                    {G:_G_sub, W:_W_sub, b:_b_sub}, auto_simplify=False)
 
         from . import walks_of_graph_membership_unfolding
         return walks_of_graph_membership_unfolding.instantiate(
@@ -134,26 +189,42 @@ class WalksOfMembership(SetMembership):
             (2) Every pair v_{i}, v_{i+1} of vertices are adjacent in
                 graph G (for i in {1, 2, ..., n-1}).
         
-        From self = [W in WalksOf(G, ends=(a,b))], and knowing or
+        From self = [W in WalksOf(G, begin=a, end=b)], and knowing or
         assuming self, deduce and return the claim above along with
         the additional conclusions that:
 
             (3) v1 = a
             (4) vn = b
 
+        Similarly adjusted for cases where just 'begin' or just 'end'
+        is specified.
         '''
 
         _W_sub = self.element
         _G_sub = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import walks_of_graph_membership_with_ends_exists_unfolding
-            return (walks_of_graph_membership_with_ends_exists_unfolding.
-                    instantiate(
-                            {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
-                            auto_simplify=False))
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
+            return walks_of_graph_membership_with_ends_exists_unfolding.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
+                    auto_simplify=False)
+
+        if _has_begin:
+            from . import walks_of_graph_membership_with_begin_exists_unfolding
+            _a_sub = self.domain.begin
+            return walks_of_graph_membership_with_begin_exists_unfolding.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
+
+        if _has_end:
+            from . import walks_of_graph_membership_with_end_exists_unfolding
+            _b_sub = self.domain.end
+            return walks_of_graph_membership_with_end_exists_unfolding.instantiate(
+                    {G:_G_sub, W:_W_sub, b:_b_sub}, auto_simplify=False)
 
         from . import walks_of_graph_membership_exists_unfolding
         return walks_of_graph_membership_exists_unfolding.instantiate(
@@ -180,18 +251,36 @@ class WalksOfMembership(SetMembership):
             (4) vn = b
 
         derive and return self.
+
+        Similarly adjusted for cases where just 'begin' or just 'end'
+        is specified.
         '''
 
         _W_sub = self.element
         _G_sub = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import walks_of_graph_with_ends_membership_folding
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
             return walks_of_graph_with_ends_membership_folding.instantiate(
                     {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if _has_begin:
+            from . import walks_of_graph_with_begin_membership_folding
+            _a_sub = self.domain.begin
+            return walks_of_graph_with_begin_membership_folding.instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
+
+        if _has_end:
+            from . import walks_of_graph_with_end_membership_folding
+            _b_sub = self.domain.end
+            return walks_of_graph_with_end_membership_folding.instantiate(
+                    {G:_G_sub, W:_W_sub, b:_b_sub}, auto_simplify=False)
 
         from . import walks_of_graph_membership_folding
         return walks_of_graph_membership_folding.instantiate(
@@ -211,7 +300,7 @@ class WalksOfMembership(SetMembership):
         
         derive and return self.
 
-        Called on self = [W in WalksOf(G, ends=(a,b))], and
+        Called on self = [W in WalksOf(G, begin=a, end=b)], and
         knowing or assuming the information specified above for
         WalksOf(G) plus knowing or assuming the additional info that:
 
@@ -219,22 +308,63 @@ class WalksOfMembership(SetMembership):
             (4) vn = b
 
         derive and return self.
+
+        Similarly adjusted for cases where just 'begin' or just 'end'
+        is specified.
         '''
 
         _W_sub = self.element
         _G_sub = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import walks_of_graph_membership_with_ends_exists_folding
-            return walks_of_graph_membership_with_ends_exists_folding.instantiate(
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
+            return (
+                walks_of_graph_membership_with_ends_exists_folding.
+                instantiate(
                     {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+            )
+
+        if _has_begin:
+            from . import walks_of_graph_membership_with_begin_exists_folding
+            _a_sub = self.domain.begin
+            return (
+                walks_of_graph_membership_with_begin_exists_folding.
+                instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
+            )
+
+        if _has_end:
+            from . import walks_of_graph_membership_with_end_exists_folding
+            _b_sub = self.domain.end
+            return (
+                walks_of_graph_membership_with_end_exists_folding.
+                instantiate(
+                    {G:_G_sub, W:_W_sub, b:_b_sub}, auto_simplify=False)
+            )
 
         from . import walks_of_graph_membership_exists_folding
         return walks_of_graph_membership_exists_folding.instantiate(
                     {G:_G_sub, W:_W_sub}, auto_simplify=False)
+
+        # OLD #
+
+        # if hasattr(self.domain, 'ends'):
+        #     _a_sub = self.domain.ends[0]
+        #     _b_sub = self.domain.ends[1]
+        #     from . import walks_of_graph_membership_with_ends_exists_folding
+        #     return walks_of_graph_membership_with_ends_exists_folding.instantiate(
+        #             {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
+        #             auto_simplify=False)
+
+        # from . import walks_of_graph_membership_exists_folding
+        # return walks_of_graph_membership_exists_folding.instantiate(
+        #             {G:_G_sub, W:_W_sub}, auto_simplify=False)
 
 
 class WalksMembership(SetMembership):
@@ -708,25 +838,43 @@ class PathsOfMembership(SetMembership):
               (1) Distinct(W) (i.e. elements or vertices of walk W
                   are distinct)
 
-        From self = [P in PathsOf(G, ends=(a,b))], deduce and return
+        From self = [P in PathsOf(G, begin=a, end=b)], deduce and return
         the equality:
 
-            [P in PathsOf(G, ends=(a,b))]
-            = P in {W}_{W in WalksOf(G, ends=(a,b))} such that:
+            [P in PathsOf(G, begin=a, end=b)]
+            = P in {W}_{W in WalksOf(G, begin=a, end=b)} such that:
                (1) Distinct(W) (i.e. elements or vertices of walk W
                    are distinct)
+
+        Similarly adjusted for cases where just 'begin' or just 'end'
+        is specified.
         '''
 
         _P_sub = self.element
         _G_sub = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import paths_of_graph_with_ends_membership_def
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
             return paths_of_graph_with_ends_membership_def.instantiate(
                     {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if _has_begin:
+            from . import paths_of_graph_with_begin_membership_def
+            _a_sub = self.domain.begin
+            return paths_of_graph_with_begin_membership_def.instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub}, auto_simplify=False)
+
+        if _has_end:
+            from . import paths_of_graph_with_end_membership_def
+            _b_sub = self.domain.end
+            return paths_of_graph_with_end_membership_def.instantiate(
+                    {G:_G_sub, P:_P_sub, b:_b_sub}, auto_simplify=False)
 
         from . import paths_of_graph_membership_def
         return paths_of_graph_membership_def.instantiate(
@@ -734,34 +882,70 @@ class PathsOfMembership(SetMembership):
 
     def as_defined(self):
         '''
-        From self = [P in Paths(G)], return the expression (NOT a
+        From self = [P in PathsOf(G)], return the expression (NOT a
         judgment):
             P in {W}_{W in WalksOf(G)} such that:
             (1) Distinct(W) (i.e. elements or vertices of walk W
                 are distinct)
 
-        and from self = [P in Paths(G, ends=(a,b))], return the
+        and from self = [P in PathsOf(G, begin=a, end=b)], return the
         expression (NOT a judgment):
 
-            P in {W}_{W in WalksOf(G, ends=(a,b))} such that:
+            P in {W}_{W in WalksOf(G, begin=a, end=b)} such that:
                (1) Distinct(W) (i.e. elements or vertices of walk W
                    are distinct)
+
+        Similarly adjusted for cases where just 'begin' or just 'end'
+        is specified.
         '''
         from proveit.graphs import WalksOf
         element = self.element
         _G      = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a = self.domain.ends[0]
-            _b = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
+            from . import paths_of_graph_with_ends_membership_def
+            _a = self.domain.begin
+            _b = self.domain.end
             return InSet(element,
-                         SetOfAll(W, W,
-                                  conditions = [Distinct(W)],
-                                  domain = WalksOf(_G, ends=(_a, _b))))
+                   SetOfAll(W, W,
+                            conditions = [Distinct(W)],
+                            domain = WalksOf(_G, begin=_a, end=_b)))
+
+        if _has_begin:
+            _a = self.domain.begin
+            return InSet(element,
+                   SetOfAll(W, W,
+                            conditions = [Distinct(W)],
+                            domain = WalksOf(_G, begin=_a)))
+
+        if _has_end:
+            _b = self.domain.end
+            return InSet(element,
+                   SetOfAll(W, W,
+                            conditions = [Distinct(W)],
+                            domain = WalksOf(_G, end=_b)))
+
         return InSet(element,
                SetOfAll(W, W,
-               conditions = [Distinct(W)],
-               domain = WalksOf(_G)))
+                        conditions = [Distinct(W)],
+                        domain = WalksOf(_G)))
+
+        # OLD #
+
+        # if hasattr(self.domain, 'ends'):
+        #     _a = self.domain.ends[0]
+        #     _b = self.domain.ends[1]
+        #     return InSet(element,
+        #                  SetOfAll(W, W,
+        #                           conditions = [Distinct(W)],
+        #                           domain = WalksOf(_G, ends=(_a, _b))))
+        # return InSet(element,
+        #        SetOfAll(W, W,
+        #        conditions = [Distinct(W)],
+        #        domain = WalksOf(_G)))
 
     @prover
     def unfold(self, **defaults_config):
@@ -784,13 +968,28 @@ class PathsOfMembership(SetMembership):
         _P_sub = self.element
         _G_sub = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import paths_of_graph_with_ends_membership_unfolding
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
             return paths_of_graph_with_ends_membership_unfolding.instantiate(
                     {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if _has_begin:
+            from . import paths_of_graph_with_begin_membership_unfolding
+            _a_sub = self.domain.begin
+            return paths_of_graph_with_begin_membership_unfolding.instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub}, auto_simplify=False)
+
+        if _has_end:
+            from . import paths_of_graph_with_end_membership_unfolding
+            _b_sub = self.domain.end
+            return paths_of_graph_with_end_membership_unfolding.instantiate(
+                    {G:_G_sub, P:_P_sub, b:_b_sub}, auto_simplify=False)
 
         from . import paths_of_graph_membership_unfolding
         return paths_of_graph_membership_unfolding.instantiate(
@@ -821,13 +1020,28 @@ class PathsOfMembership(SetMembership):
         _P_sub = self.element
         _G_sub = self.domain.graph
 
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import paths_of_graph_with_ends_membership_folding
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
             return paths_of_graph_with_ends_membership_folding.instantiate(
                     {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if _has_begin:
+            from . import paths_of_graph_with_begin_membership_folding
+            _a_sub = self.domain.begin
+            return paths_of_graph_with_begin_membership_folding.instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub}, auto_simplify=False)
+
+        if _has_end:
+            from . import paths_of_graph_with_end_membership_folding
+            _b_sub = self.domain.end
+            return paths_of_graph_with_end_membership_folding.instantiate(
+                    {G:_G_sub, P:_P_sub, b:_b_sub}, auto_simplify=False)
 
         from . import paths_of_graph_membership_folding
         return paths_of_graph_membership_folding.instantiate(
@@ -838,14 +1052,29 @@ class PathsOfMembership(SetMembership):
 
         _P_sub = self.element
         _G_sub = self.domain.graph
-        
-        if hasattr(self.domain, 'ends'):
-            _a_sub = self.domain.ends[0]
-            _b_sub = self.domain.ends[1]
+
+        _has_begin = hasattr(self.domain, 'begin')
+        _has_end   = hasattr(self.domain, 'end')
+
+        if (_has_begin and _has_end):
             from . import paths_of_graph_with_ends_membership_is_bool
+            _a_sub = self.domain.begin
+            _b_sub = self.domain.end
             return paths_of_graph_with_ends_membership_is_bool.instantiate(
                     {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if _has_begin:
+            from . import paths_of_graph_with_begin_membership_is_bool
+            _a_sub = self.domain.begin
+            return paths_of_graph_with_begin_membership_is_bool.instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub}, auto_simplify=False)
+
+        if _has_end:
+            from . import paths_of_graph_with_end_membership_is_bool
+            _b_sub = self.domain.end
+            return paths_of_graph_with_end_membership_is_bool.instantiate(
+                    {G:_G_sub, P:_P_sub, b:_b_sub}, auto_simplify=False)
 
         from . import paths_of_graph_membership_is_bool
         return paths_of_graph_membership_is_bool.instantiate(

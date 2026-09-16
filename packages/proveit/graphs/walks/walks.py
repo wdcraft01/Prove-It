@@ -70,6 +70,9 @@ class WalksOf(Operation):
 
     NOTE: WalksOf(G) is intended to eventually replace the original
           Walks(k, G) class.
+
+    Updated 20260908 to use WalksOf(G, [begin=a], [end=b]) signature
+    instead. 
     '''
 
     # the literal operator of the WalksOf operation
@@ -77,7 +80,7 @@ class WalksOf(Operation):
                          latex_format=r'\textrm{WalksOf}',
                          theory=__file__)
 
-    def __init__(self, graph, *, ends: tuple | None = None,
+    def __init__(self, graph, *, begin=None, end=None,
                  styles=None):
         '''
         Initialize a representation of the WalksOf(G) (the set of all
@@ -86,8 +89,12 @@ class WalksOf(Operation):
         '''
 
         items = [("graph", graph)]
-        if ends is not None:
-            items.append(("ends", ends))
+        # if ends is not None:
+        #     items.append(("ends", ends))
+        if begin is not None:
+            items.append(("begin", begin))
+        if end is not None:
+            items.append(("end", end))
 
         operands = NamedExprs(*items)
 
@@ -96,11 +103,20 @@ class WalksOf(Operation):
     def string(self, **kwargs):
         string_str = 'WalksOf('
         string_str += self.graph.string(**kwargs)
-        if hasattr(self, 'ends'):
-            begin = self.ends[0]
-            end   = self.ends[1]
-            string_str += (
-                    f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+        # if hasattr(self, 'ends'):
+        #     begin = self.ends[0]
+        #     end   = self.ends[1]
+        #     string_str += (
+        #             f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+
+        if (hasattr(self, 'begin') or hasattr(self, 'end')):
+            string_str += ", "
+        if hasattr(self, 'begin'):
+            string_str += f"{self.begin.string(**kwargs)} "
+        if (hasattr(self, 'begin') or hasattr(self, 'end')):
+            string_str += "->"
+        if hasattr(self, 'end'):
+            string_str += f" {self.end.string(**kwargs)}"
         string_str += r')'
         return string_str
 
@@ -108,11 +124,20 @@ class WalksOf(Operation):
         latex_str = r'\textrm{WalksOf}('
         # If operands is a list (from the axiom path)
         latex_str += self.graph.latex(**kwargs)
-        if hasattr(self, 'ends'):
-            begin = self.ends[0]
-            end   = self.ends[1]
-            latex_str += (
-                f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}")
+        # if hasattr(self, 'ends'):
+        #     begin = self.ends[0]
+        #     end   = self.ends[1]
+        #     latex_str += (
+        #         f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}")
+        if (hasattr(self, 'begin') or hasattr(self, 'end')):
+            latex_str += r', '
+        if hasattr(self, 'begin'):
+            latex_str += f"{self.begin.latex(**kwargs)}"
+        if (hasattr(self, 'begin') or hasattr(self, 'end')):
+            latex_str += r" \to"
+        if hasattr(self, 'end'):
+            latex_str += f" {self.end.latex(**kwargs)}"
+
         latex_str += r')'
         return latex_str
 
@@ -405,6 +430,9 @@ class PathsOf(Operation):
 
     NOTE: PathsOf(G) is intended to eventually replace the original
           Paths(k, G) class.
+
+    Updated 20260908 to use PathsOf(G, [begin=a], [end=b]) signature
+    instead. 
     '''
 
     # the literal operator of the PathsOf operation
@@ -412,8 +440,26 @@ class PathsOf(Operation):
                          latex_format=r'\textrm{PathsOf}',
                          theory=__file__)
 
-    def __init__(self, graph, *, ends: tuple | None = None,
-                 styles=None):
+    # def __init__(self, graph, *, ends: tuple | None = None,
+    #              styles=None):
+    #     '''
+    #     Initialize a representation of PathsOf(G) (the set of all
+    #     paths in graph G) or a representation of PathsOf(G, a->b) (the
+    #     set of all a-b paths in graph G).
+    #     '''
+
+    #     items = [("graph", graph)]
+    #     if ends is not None:
+    #         items.append(("ends", ends))
+
+    #     operands = NamedExprs(*items)
+
+    #     super().__init__(self._operator_, operands=operands, styles=styles)
+
+    # working 20260908 re: BUFILO HERD project
+    # def __init__(self, graph, *, ends: tuple | None = None,
+    #              styles=None):
+    def __init__(self, graph, *, begin=None, end=None, styles=None):
         '''
         Initialize a representation of PathsOf(G) (the set of all
         paths in graph G) or a representation of PathsOf(G, a->b) (the
@@ -421,8 +467,12 @@ class PathsOf(Operation):
         '''
 
         items = [("graph", graph)]
-        if ends is not None:
-            items.append(("ends", ends))
+        # if ends is not None:
+        #     items.append(("ends", ends))
+        if begin is not None:
+            items.append(("begin", begin))
+        if end is not None:
+            items.append(("end", end))
 
         operands = NamedExprs(*items)
 
@@ -431,11 +481,20 @@ class PathsOf(Operation):
     def string(self, **kwargs):
         string_str = 'PathsOf('
         string_str += self.graph.string(**kwargs)
-        if hasattr(self, 'ends'):
-            begin = self.ends[0]
-            end   = self.ends[1]
-            string_str += (
-                    f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+        # if hasattr(self, 'ends'):
+        #     begin = self.ends[0]
+        #     end   = self.ends[1]
+        #     string_str += (
+        #             f", {begin.string(**kwargs)} -> {end.string(**kwargs)}")
+
+        if (hasattr(self, 'begin') or hasattr(self, 'end')):
+            string_str += f", "
+        if hasattr(self, 'begin'):
+            string_str += f"{self.begin.string(**kwargs)} "
+        if (hasattr(self, 'begin') or hasattr(self, 'end')):
+            string_str += "->"
+        if hasattr(self, 'end'):
+            string_str += f" {self.end.string(**kwargs)}"
         string_str += r')'
         return string_str
 
@@ -443,11 +502,21 @@ class PathsOf(Operation):
         latex_str = r'\textrm{PathsOf}('
         # If operands is a list (from the axiom path)
         latex_str += self.graph.latex(**kwargs)
-        if hasattr(self, 'ends'):
-            begin = self.ends[0]
-            end   = self.ends[1]
-            latex_str += (
-                f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}")
+        # if hasattr(self, 'ends'):
+        #     begin = self.ends[0]
+        #     end   = self.ends[1]
+        #     latex_str += (
+        #         f", {begin.latex(**kwargs)} \\to {end.latex(**kwargs)}")
+
+        if (hasattr(self, 'begin') or hasattr(self, 'end')):
+            latex_str += r', '
+        if hasattr(self, 'begin'):
+            latex_str += f"{self.begin.latex(**kwargs)}"
+        if (hasattr(self, 'begin') or hasattr(self, 'end')):
+            latex_str += r" \to"
+        if hasattr(self, 'end'):
+            latex_str += f" {self.end.latex(**kwargs)}"
+
         latex_str += r')'
         return latex_str
 

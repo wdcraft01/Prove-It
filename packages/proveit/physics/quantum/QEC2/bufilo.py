@@ -1,19 +1,22 @@
 from proveit import (
-        f, n, s, A, B, G, equality_prover, Function, Literal,
-        NamedExprs, Operation, relation_prover, TransRelUpdater)
-from proveit.logic import InSet, SetMembership, SetNonmembership
-from proveit.logic.sets import Disjoint
+        b, e, f, i, l, n, s, A, B, D, G, equality_prover,
+        Function, Literal, NamedExprs, Operation, prover,
+        relation_prover, TransRelUpdater)
+from proveit.logic import (
+        And, Equals, InSet, SetMembership,
+        SetNonmembership)
+from proveit.logic.sets import Disjoint, Set
 from proveit.numbers import Complex, Integer, Natural, Real
 
 
 class BufiloSetsLiteral(Literal):
     '''
-    BufiloSetsLiteral() (formatted as BUF in outputs) represents
+    BufiloSetsLiteral() (formatted as BUFS in outputs) represents
     the set of possible BUFILOs (standing for Bad Undetectable
     Fault-Induced Logical Operator) across a surface code. A BUFILO
     is itself a set of faults, the combination of which produce the
     equivalent of a logical operator L. The sets of interest can
-    eventually be parameterized to specify a specific logical operator
+    eventually be parameterized to specify a logical operator
     L, the logical operator L_{perp} with which it anti-commutes,
     and/or the specific QEC system of interest.
 
@@ -27,10 +30,94 @@ class BufiloSetsLiteral(Literal):
                          latex_format=r'\textsc{bufs}',
                          styles=styles)
 
+    def membership_object(self, element):
+        from . import BufiloSetsMembership
+        return BufiloSetsMembership(element, self)
+
+
+class BufiloSetsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    BUFILOs.
+
+    UNDER CONSTRUCTION, with the code below borrowed from the
+    logic/sets/Union class and serving as a placeholder.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From [b in BUFS], deduce and return the equality
+
+            [b in BUFS] = 
+            [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+        where H is the CheckFunction and A is the ActionFunction.
+        '''
+
+        from . import bufs_membership_def
+        _b_sub = self.element
+        return bufs_membership_def.instantiate(
+                {b: _b_sub}, auto_simplify=False)
+
+    def as_defined(self):
+        '''
+        From [b in BUFS], return the expression (NOT a Judgment):
+
+            [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+        where H is the CheckFunction and A is the ActionFunction.
+        '''
+        from proveit.logic import And, Equals
+        from proveit.logic.sets import EmptySet
+        from proveit.numbers import one
+        from . import _ell, ActionFunction, CheckFunction, Errors
+        element = self.element
+        return And(InSet(element, Errors),
+                   Equals(CheckFunction(element), EmptySet),
+                   Equals(ActionFunction(_ell, element), one))
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From [b in BUFS], deduce and return the Judgment:
+
+            [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+        where H is the CheckFunction and A is the ActionFunction.
+        '''
+        from . import bufs_membership_unfolding
+        _b_sub = self.element
+        return bufs_membership_unfolding.instantiate(
+            {b: _b_sub}, auto_simplify=False)
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From [b in BUFS], and knowing or assuming that 
+
+            [b in ERRS AND H(b)=EmptySet AND A_{l}(b)=1]
+
+        where H is the CheckFunction and A is the ActionFunction,
+        derive and return self (as a Judgment).
+        '''
+        from . import bufs_membership_folding
+        _b_sub = self.element
+        return bufs_membership_folding.instantiate({b: _b_sub})
+
 
 class IrreducibleBufiloSetsLiteral(Literal):
     '''
-    IrreducibleBufiloSetsLiteral() (formatted as iBUF in outputs)
+    IrreducibleBufiloSetsLiteral() (formatted as iBUFS in outputs)
     represents the set of possible irreducible BUFILOs (standing for
     Bad Undetectable Fault-Induced Logical Operator) across a surface
     code. A BUFILO is itself a set of faults, the combination of which
@@ -52,6 +139,10 @@ class IrreducibleBufiloSetsLiteral(Literal):
                          latex_format=r'i\textsc{bufs}',
                          styles=styles)
 
+    def membership_object(self, element):
+        from . import IrreducibleBufiloSetsMembership
+        return IrreducibleBufiloSetsMembership(element, self)
+
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
         '''
@@ -66,6 +157,86 @@ class IrreducibleBufiloSetsLiteral(Literal):
 
         from . import irreducible_bufs_def
         return irreducible_bufs_def
+
+
+class IrreducibleBufiloSetsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    irreducible BUFILOs, iBUFS.
+
+    UNDER CONSTRUCTION, with the code below borrowed from the
+    logic/sets/Union class and serving as a placeholder.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From [b in iBUFS], deduce and return the equality
+
+            [b in iBUFS] = 
+            [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
+
+        where the BufiloSets BUFS class is defined above.
+        '''
+
+        from . import irreducible_bufs_membership_def
+        _b_sub = self.element
+        return irreducible_bufs_membership_def.instantiate(
+                {b: _b_sub}, auto_simplify=False)
+
+    def as_defined(self):
+        '''
+        From [b in iBUFS], return the expression (NOT a Judgment):
+
+            [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
+
+        where the BufiloSets BUFS class is defined above.
+        '''
+        from proveit.logic import And, NotExists
+        from proveit.logic.sets import SubsetProper
+        # from proveit.numbers import one
+        from . import b_prime, BufiloSets
+        element = self.element
+        return And(InSet(element, BufiloSets),
+                   NotExists(b_prime, SubsetProper(b_prime, element),
+                             domain=BufiloSets))
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From [b in iBUFS], deduce and return the Judgment:
+
+            [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
+
+        where the BufiloSets BUFS class is defined above.
+        '''
+        from . import irreducible_bufs_membership_unfolding
+        _b_sub = self.element
+        return irreducible_bufs_membership_unfolding.instantiate(
+            {b: _b_sub}, auto_simplify=False)
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [b in iBUFS], and knowing or assuming that 
+
+            [b in BUFS AND NotExists(b' in BUFS [b' subset b])]
+
+        where the BufiloSets BUFS class is defined above, derive and
+        return self (as a Judgment).
+        '''
+        from . import irreducible_bufs_membership_folding
+        _b_sub = self.element
+        return irreducible_bufs_membership_folding.instantiate({b: _b_sub})
 
 
 class BufiloSequencesLiteral(Literal):
@@ -280,6 +451,63 @@ class FaultsLiteral(Literal):
             latex_format=r'\textsc{faults}',
             styles=styles)
 
+    def membership_object(self, element):
+        from . import FaultsMembership
+        return FaultsMembership(element, self)
+
+
+class FaultsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set Faults of all
+    faults.
+
+    UNDER CONSTRUCTION.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [f in FAULTS], deduce and return ... what?
+        '''
+        raise NotImplementedError(
+            "Sorry! FaultsMembership.definition() not yet implemented.")
+
+    def as_defined(self):
+        '''
+        From self = [f in FAULTS], deduce and return ... what?
+        '''
+        raise NotImplementedError(
+            "Sorry! FaultsMembership.definition() not yet implemented.")
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [f in FAULTS], deduce and return ... what?
+        '''
+        raise NotImplementedError(
+            "Sorry! FaultsMembership.definition() not yet implemented.")
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [f in FAULTS], and knowing or assuming that 
+
+            [f in e, for some error e in ERRS]
+
+        derive and return self.
+        '''
+        raise NotImplementedError(
+            "Sorry! FaultsMembership.definition() not yet implemented.")
+
 
 class ErrorsLiteral(Literal):
     '''
@@ -302,6 +530,110 @@ class ErrorsLiteral(Literal):
             latex_format=r'\textsc{errs}',
             styles=styles)
 
+    def membership_object(self, element):
+        from . import ErrorsMembership
+        return ErrorsMembership(element, self)
+
+
+class ErrorsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    errors, Errors. An error e is simply a set of faults.
+
+    UNDER CONSTRUCTION, with the code below borrowed from the
+    logic/sets/Union class and serving as a placeholder.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [e in ERRS], deduce and return the equality
+
+            [e in ERRS] = 
+            [Exists_{n in Natural} Exists_{f1, ..., fn in FAULTS}
+                (e = {f1, ..., fn})]
+
+        where FAULTS is the set of all faults.
+        '''
+
+        from . import errors_membership_def
+        _e_sub = self.element
+        return errors_membership_def.instantiate(
+                {e: _e_sub}, auto_simplify=False)
+
+    def as_defined(self):
+        '''
+        From self = [e in ERRS], return the expression (NOT a Judgment):
+
+            [Exists_{n in Natural} Exists_{f1, ..., fn in FAULTS}
+                (e = {f1, ..., fn})]
+
+        where FAULTS is the set of all faults.
+        '''
+        from proveit.logic import Exists
+        from . import f_one_to_n, Faults
+        element = self.element
+        return Exists(n, Exists((f_one_to_n),
+               Equals(element, Set(f_one_to_n)),
+               domain=Faults), domain=Natural)
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [e in ERRS], deduce and return the Judgment:
+
+            [Exists_{n in Natural} Exists_{f1, ..., fn in FAULTS}
+                (e = {f1, ..., fn})]
+
+        where FAULTS is the set of all faults.
+        '''
+        from . import errors_membership_unfolding
+        _e_sub = self.element
+        return errors_membership_unfolding.instantiate(
+            {e: _e_sub}, auto_simplify=False)
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [e in ERRS], and knowing or assuming that 
+
+            [Exists_{n in Natural} Exists_{f1, ..., fn in FAULTS}
+                (e = {f1, ..., fn})]
+
+        where FAULTS is the set of all faults, derive and return
+        self.
+
+        OR, from self = [{f1,...,fn} in ERRS], and knowing or assuming
+        that
+
+            f1, ..., fn in FAULTS,
+
+        derive and return self.
+        '''
+        element = self.element
+
+        if isinstance(element, Set):
+            # try the following, thinking we have a set of Faults
+            from . import fault_set_is_error
+            _f_sub = element.operands
+            _n_sub = _f_sub.num_elements()
+            return fault_set_is_error.instantiate(
+                    {n:_n_sub, f:_f_sub})
+
+        # Else we have something else more general
+        from . import errors_membership_folding
+        return errors_membership_folding.instantiate({e: element})
+
+
 
 class SyndromesLiteral(Literal):
     '''
@@ -317,6 +649,89 @@ class SyndromesLiteral(Literal):
             self, string_format='Syndromes', 
             latex_format=r'\mathcal{S}',
             styles=styles)
+
+    def membership_object(self, element):
+        from . import SyndromesMembership
+        return SyndromesMembership(element, self)
+
+
+class SyndromesMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    Syndromes, where a Syndrome is a subset of the set of Detectors.
+
+    UNDER CONSTRUCTION
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     TBA.
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [s in Syndromes], deduce and return
+        
+            [s in Syndromes] = [s ⊆ Detectors]
+        '''
+        element = self.element
+
+        from . import syndromes_membership_def
+        return syndromes_membership_def.instantiate(
+                {s:element})
+
+    def as_defined(self):
+        '''
+        From self = [s in Syndromes], construct and return the
+        expression (NOT a Judgment):
+        
+            [s ⊆ Detectors]
+        '''
+        element = self.element
+
+        from . import Detectors
+        from proveit.logic.sets import SubsetEq
+
+        return SubsetEq(element, Detectors)
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [s in Syndromes], deduce and return
+        
+            |- [s ⊆ Detectors]
+        '''
+        element = self.element
+
+        from . import syndromes_membership_unfolding
+        return syndromes_membership_unfolding.instantiate(
+                {s:element})
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [s in Syndromes], and knowing or assuming that:
+        
+            [s ⊆ Detectors]
+
+        deduce and return self.
+        '''
+        element = self.element
+
+        if isinstance(element, CheckFunction):
+            try:
+                return element.deduce_in_syndromes()
+            except Exception:
+                pass
+
+        from . import syndromes_membership_folding
+        return syndromes_membership_folding.instantiate(
+                {s:element})
 
 
 class DetectorsLiteral(Literal):
@@ -357,18 +772,13 @@ class StatesLiteral(Literal):
         from . import StatesMembership
         return StatesMembership(element, self)
 
-    def nonmembership_object(self, element):
-        from . import StatesNonmembership
-        return StatesNonmembership(element, self)
-
 
 class StatesMembership(SetMembership):
     '''
     Defines methods that apply to membership in the set of all
-    augmented syndrome states.
+    States, which is the set of all augmented syndrome states.
 
-    UNDER CONSTRUCTION, with the code below borrowed from the
-    logic/sets/Union class and serving as a placeholder.
+    UNDER CONSTRUCTION
     '''
 
     def __init__(self, element, domain):
@@ -380,60 +790,267 @@ class StatesMembership(SetMembership):
     #     '''
     #     yield self.unfold
 
-    # @equality_prover('defined', 'define')
-    # def definition(self, **defaults_config):
-    #     '''
-    #     Deduce and return 
-    #         [element in (A union B ...)] = 
-    #         [(element in A) or (element in B) ...]
-    #     where self = (A union B ...).
-    #     '''
-    #     from . import union_def
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return union_def.instantiate(
-    #             {m: _m, x: element, A: _A}, auto_simplify=False)
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [s in States], deduce and return
+        
+            [s in States] = 
+            [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}]
+        
+        and from self = [State(D, i) in States], deduce and return
 
-    # def as_defined(self):
-    #     '''
-    #     From self=[elem in (A U B U ...)], return
-    #     [(element in A) or (element in B) or ...].
-    #     '''
-    #     from proveit.logic import Or, InSet
-    #     element = self.element
-    #     return Or(*self.domain.operands.map_elements(
-    #             lambda subset : InSet(element, subset)))
+            [State(D, i) in States] = 
+            [D ⊆ Detectors AND i in {0,1}]
+        '''
+        element = self.element
 
-    # @prover
-    # def unfold(self, **defaults_config):
-    #     '''
-    #     From [element in (A union B ...)], derive and return
-    #     [(element in A) or (element in B) ...],
-    #     where self represents [element in (A union B ...)].
-    #     '''
-    #     from . import membership_unfolding
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return membership_unfolding.instantiate(
-    #         {m: _m, x: element, A: _A}, auto_simplify=False)
+        if not isinstance(element, State):
+            from . import states_membership_def
+            return states_membership_def.instantiate(
+                    {s:element})
 
-    # @prover
-    # def conclude(self, **defaults_config):
+        from . import states_membership_tuple_def
+        _D_sub = element.syndrome
+        _i_sub = element.action
+        return states_membership_tuple_def.instantiate(
+                {D:_D_sub, i:_i_sub})
+
+    def as_defined(self):
+        '''
+        From self = [s in States], construct and return the expression
+        (NOT a Judgment):
+        
+            [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}]
+        
+        and from self = [State(D, i) in States], construct and return
+        the expression (NOT a Judgment):
+
+            [D ⊆ Detectors AND i in {0,1}]
+        '''
+        element = self.element
+
+        from . import Detectors, StateAction, StateSyndrome
+        from proveit.logic.sets import SubsetEq
+        from proveit.numbers import zero, one
+
+        if not isinstance(element, State):
+            # The state is generic
+            return And(SubsetEq(StateSyndrome(element), Detectors),
+                       InSet(StateAction(element), Set(zero, one)))
+
+        # The state is of the form State(D, i)
+        _D = element.syndrome
+        _i = element.action
+        return And(SubsetEq(_D, Detectors), InSet(_i, Set(zero, one)))
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [s in States], and knowing or assuming self
+        to be True, deduce and return
+        
+            [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}],
+        
+        and from self = [State(D, i) in States], and knowing or
+        assuming self to be True, deduce and return
+
+            [D ⊆ Detectors AND i in {0,1}]
+        '''
+        element = self.element
+
+        if not isinstance(element, State):
+            from . import states_membership_unfolding
+            return states_membership_unfolding.instantiate(
+                    {s:element})
+
+        from . import states_membership_tuple_unfolding
+        _D_sub = element.syndrome
+        _i_sub = element.action
+        return states_membership_tuple_unfolding.instantiate(
+                {D:_D_sub, i:_i_sub})
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [s in States], and knowing or assuming:
+
+            [SYN(s) ⊆ Detectors AND ACT(s) in {0,1}]
+
+        to be True, deduce and return self.
+        
+        And from self = [State(D, i) in States], and knowing or
+        assuming
+
+            [D ⊆ Detectors AND i in {0,1}]
+
+        to be True, deduce and return self.
+
+        '''
+        element = self.element
+
+        if not isinstance(element, State):
+            from . import states_membership_folding
+            return states_membership_folding.instantiate(
+                    {s:element})
+
+        from . import states_membership_tuple_folding
+        _D_sub = element.syndrome
+        _i_sub = element.action
+        return states_membership_tuple_folding.instantiate(
+                {D:_D_sub, i:_i_sub})
+
+
+class ObservableSetsLiteral(Literal):
+    '''
+    ObservableSetsLiteral() (formatted as ObsSets_{l} in outputs)
+    represents the set of all possible subsets of the set of applicable
+    observables (detectors and the logical observable l).
+
+    ObservableSets then consists of observable sets, each of which is
+    given by:
+
+        s = H(e),       if A_{l}(e) = 0
+            H(e) U {l}, if A_{l}(e) = 1
+
+    for some error e (itself a set of fault), check matrix (or check
+    function) H, and action matrix (or action function) A_{l}.
+
+    Elements of ObservableSets serve as nodes in the BUFILO-generating
+    graph.
+
+    Note: this class is intended to replace the States class.
+
+    '''
+
+    # the literal string for representing the set of ObservableSets
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='ObsSets', 
+            latex_format=r'\textsc{ObsSets}_{\ell}',
+            styles=styles)
+
+    def membership_object(self, element):
+        from . import StatesMembership
+        return ObservableSetsMembership(element, self)
+
+
+class ObservableSetsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set of all
+    ObservableSets.
+
+    UNDER CONSTRUCTION
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
     #     '''
-    #     Called on self = [elem in (A U B U ...)], and knowing or
-    #     assuming [[elem in A] OR [elem in B] OR ...], derive and
-    #     return self.
+    #     TBA.
     #     '''
-    #     from . import membership_folding
-    #     element = self.element
-    #     operands = self.domain.operands
-    #     _A = operands
-    #     _m = _A.num_elements()
-    #     return membership_folding.instantiate({m: _m, x: element, A: _A})
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [s in ObservableSets], deduce and return
+        
+            [s in ObservableSets] = [s ⊆ Detectors U {l}]
+        '''
+        element = self.element
+
+        from . import observable_sets_membership_def
+        return observable_sets_membership_def.instantiate(
+                {s:element})
+
+    def as_defined(self):
+        '''
+        From self = [s in ObservableSets], construct and return the
+        expression (NOT a Judgment):
+        
+            [s ⊆ Detectors U {l}]
+        '''
+        element = self.element
+
+        from . import _ell, Detectors
+        from proveit.logic.sets import SubsetEq, Union
+
+        return SubsetEq(element, Union(Detectors, Set(_ell)))
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [s in ObservableSets], and knowing or assuming self
+        to be True, deduce and return
+        
+            [s ⊆ Detectors U {l}]
+
+        '''
+        element = self.element
+
+        from . import observable_sets_membership_unfolding
+        return observable_sets_membership_unfolding.instantiate(
+                {s:element})
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [s in ObservableSets], and knowing or assuming:
+
+            [s ⊆ Detectors U {l}]
+
+        to be True, deduce and return self.
+
+        Also check some special cases: if s is an ObservableSet(e, l),
+        for some error e, then by definition s will be in the set of
+        ObservableSets. (That's what ObservableSet(e, l) means.)
+
+        '''
+        element = self.element
+        domain  = self.domain
+
+        # Check some special cases first
+
+        # elem is an ObservableSet
+        if isinstance(element, ObservableSet):
+            from . import Errors
+            if InSet(element.operands[0], Errors).proven():
+                from . import obs_set_of_error_in_obs_sets
+                _e_sub = element.operands[0]
+                return obs_set_of_error_in_obs_sets.instantiate({e:_e_sub})
+
+            from . import Faults
+
+            if (isinstance(element.operands[0], Set)
+                and element.operands[0].operands.is_single()
+                and InSet(element.operands[0].operands[0], Faults).readily_provable()):
+                from . import obs_set_of_fault_in_obs_sets
+                _f_sub = element.operands[0].operands[0]
+                return obs_set_of_fault_in_obs_sets.instantiate({f:_f_sub})
+
+        # elem is a syndrome output from CheckFunction
+        if isinstance(element, CheckFunction):
+            from . import Errors
+            if InSet(element.operand, Errors).proven():
+                from . import error_syndrome_in_obs_sets
+                _e_sub = element.operand
+                return error_syndrome_in_obs_sets.instantiate({e:_e_sub})
+
+            from . import Faults
+
+            if (isinstance(element.operand, Set)
+                and element.operand.operands.is_single()
+                and InSet(element.operand.operands[0], Faults).readily_provable()):
+                from . import fault_syndrome_in_obs_sets
+                _f_sub = element.operand.operands[0]
+                return fault_syndrome_in_obs_sets.instantiate({f:_f_sub})
+
+
+        from . import observable_sets_membership_folding
+        return observable_sets_membership_folding.instantiate(
+                {s:element})
 
 
 class State(Function):
@@ -493,6 +1110,54 @@ class State(Function):
         if hasattr(self, 'logical_observable'):
             latex_str += r'_{' + self.logical_observable.latex() + r'}'
         return latex_str
+
+
+class ObservableSet(Function):
+    '''
+    ObservableSet(e, l), appearing as Obs_{l}(e) in outputs, represents
+    the set of observables associated with error e, given by:
+
+        Obs_{l}(e) = [H(e)       if A_{l}(e) = 0],
+                     [H(e) U {l} if A_{l}(e) = 1]
+    '''
+
+    # Literal operator for the ObservableSet function,
+    # but see further below for actual string and latex forms.
+    _operator_ = Literal(
+            string_format='Obs_{l}',
+            latex_format=r'\textsc{Obs}_{\ell}',
+            theory=__file__)
+
+    def __init__(self, e, l, *, styles=None):
+        '''
+        Create/represent ObservableSet(e, l), the set of observables
+        associated with error e with respect to logical operator l.
+        '''
+        super().__init__(
+                self._operator_, (e, l), styles=styles)
+
+    def string(self, **kwargs):
+        return ('Obs_{' + self.operands[1].string()
+                + '}(' + self.operands[0].string() + ')')
+
+    def latex(self, **kwargs):
+        return (r'\textsc{Obs}_{' + self.operands[1].latex()
+                + r'}(' + self.operands[0].latex() + r')')
+
+    
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [ObservableSet(e, l)], deduce and return
+        
+            [ObservableSet(e, l)] = H(e) U {l | A_{l}(e) = 1}
+
+        '''
+        _e_sub = self.operands[0]
+        _l_sub = self.operands[1]
+
+        from . import observable_set_def
+        return observable_set_def.instantiate({l:_l_sub, e:_e_sub})
 
 
 class ErrorState(Function):
@@ -556,6 +1221,34 @@ class StateSyndrome(Function):
         super().__init__(
                 StateSyndrome._operator_, s, styles=styles)
 
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        Returns a proven simplification equation for this StateSyndrome
+        expression assuming the operands have been simplified.
+        
+        From self = StateSyndrome((D, i)), deduce and return the
+        equality:
+
+            SYN((D, i)) = D
+
+        '''
+        if isinstance(self.operand, State):
+
+            from . import state_syndrome_def
+
+            _state = self.operand
+            _D_sub = _state.syndrome
+            _i_sub = _state.action
+
+            return state_syndrome_def.instantiate(
+                    {D:_D_sub, i:_i_sub})
+
+
+        # Default is no simplification.
+        return Equals(self, self).prove()
+
 
 class StateAction(Function):
     '''
@@ -584,6 +1277,34 @@ class StateAction(Function):
         '''
         super().__init__(
                 StateAction._operator_, s, styles=styles)
+
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        Returns a proven simplification equation for this StateAction
+        expression assuming the operands have been simplified.
+        
+        From self = StateAction((D, i)), deduce and return the
+        equality:
+
+            ACT((D, i)) = i
+
+        '''
+        if isinstance(self.operand, State):
+
+            from . import state_action_def
+
+            _state = self.operand
+            _D_sub = _state.syndrome
+            _i_sub = _state.action
+
+            return state_action_def.instantiate(
+                    {D:_D_sub, i:_i_sub})
+
+
+        # Default is no simplification.
+        return Equals(self, self).prove()
 
 
 class AllStatesGraphLiteral(Literal):
@@ -615,6 +1336,48 @@ class AllStatesGraphLiteral(Literal):
             styles=styles)
 
 
+class BufiloGeneratingGraphLiteral(Literal):
+    '''
+    BufiloGeneratingGraphLiteral() (formatted as G_{l,v}^{BUF} in
+    outputs), for logical operator l and choice function v,
+    represents the BUFILO-generating graph G = (V, E), where the
+    set V of vertices is the set ObsSets_{l} of all possible
+    observable sets, and the set E of (directed) edges is
+    the set of all ordered pairs (s, s'), where:
+
+      * s, s' in ObsSets_{l};
+      * v(s) ∈ (s - s')
+
+    BufiloGeneratingGraph is then defined in the QEC2 common
+    notebook as
+
+        BufiloGeneratingGraph = BufiloGeneratingGraphLiteral().
+    '''
+
+    # the literal string for representing the AllStatesGraphLiteral
+    def __init__(self, *, styles=None):
+        Literal.__init__(
+            self, string_format='G_{l v}', 
+            latex_format=r'G_{\ell v}^{\textsc{buf}}',
+            styles=styles)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self = [BufiloGeneratingGraph], deduce and return
+        
+            [BufiloGeneratingGraph] = Graph(V, E),
+
+        where:
+
+            V = ObservableSets;
+            E = {(s, s') | s,s' ∈ ObservableSets ⋀ v(s) = (s - s')}
+
+        '''
+        from . import buf_gen_graph_def
+        return buf_gen_graph_def
+
+
 class CheckFunction(Function):
     '''
     CheckFunction(e) is a function version of the 'check matrix',
@@ -636,6 +1399,16 @@ class CheckFunction(Function):
         '''
         super().__init__(
                 CheckFunction._operator_, e, styles=styles)
+
+    @relation_prover
+    def deduce_in_syndromes(self, **defaults_config):
+        '''
+        Deduce that this CheckFunction(e) operation is an element
+        of the set of Syndromes.
+        '''
+        from . import check_fxn_of_e_is_syndrome
+        _e_sub = self.operand
+        return check_fxn_of_e_is_syndrome.instantiate({e:_e_sub})
 
 
 class ActionFunction(Function):
@@ -669,6 +1442,16 @@ class ActionFunction(Function):
         return (r'A_{' + self.operands[0].latex()
                 + r'}(' + self.operands[1].latex() + r')')
 
+    @relation_prover
+    def deduce_in_bit_set(self, **defaults_config):
+        '''
+        Deduce that this ActionFunction(e) operation is an element
+        of the two-element bit set {0, 1}.
+        '''
+        from . import action_fxn_of_e_is_0_or_1
+        _e_sub = self.operands[1]
+        return action_fxn_of_e_is_0_or_1.instantiate({e:_e_sub})
+
 
 class EdgeFaults(Function):
     '''
@@ -678,13 +1461,19 @@ class EdgeFaults(Function):
     If s = (D, j) and s' = (D', j'), then we have:
 
       [f in EdgeFaults(s, s')] =
-      [D ∆ (H({f})) = D']
+      [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
 
-    where H is our check matrix function.
+    where:
+
+      H is our check matrix function, CheckFunction;
+      A is our action matrix function, ActionFunction;
+      ∆ denotes the set-theoretic symmetric difference;
+      ⊕ denotes mod-2 addition
+
     We use the class name 'EdgeFaults' because we envision the faults
     as taking state s to state s' in the AllStatesGraph, the vertices
     of which are the States and edge transitions from state to state
-    represent a choice of syndrome component to eliminate.
+    represent a choice of syndrome component(s) to eliminate.
     '''
 
     # The literal operator for the EdgeFaults function.
@@ -693,13 +1482,48 @@ class EdgeFaults(Function):
             latex_format=r'\textrm{EdgeFaults}',
             theory=__file__)
 
-    def __init__(self, s, t, *, styles=None):
+    def __init__(self, *operands, styles=None):
         '''
-        Create/represent EdgeFaults(s, t), the set of faults each of
-        which takes state s to state t.
+        Create/represent EdgeFaults(e) or EdgeFaults(s, t), the set
+        of faults each of which takes state s to state t (via edge e,
+        which then implicitly determines state s and state t).
         '''
+        if len(operands) == 2:
+            # the operands consist of an edge e and a graph G
+            self.edge = operands[0]
+            self.graph = operands[1]
+        elif len(operands) == 3:
+            # the operands consist of two nodes s, t (defining an edge),
+            # followed by a graph G
+            from proveit import ExprTuple
+            self.edge = ExprTuple(operands[0], operands[1])
+            self.graph = operands[2]
+        else:
+            # wrong number of operands supplied
+            raise ValueError(
+                f"Usage: EdgeFaults(e, G) or EdgeFaults(s, t, G), "
+                f"using two or three operands, where the operands consist "
+                f"of either: (1) a single edge 'e' and a graph 'G' "
+                f"containing the supplied edge, OR (2) two adjacent nodes "
+                f"'s' and 't' and the graph 'G' containing those nodes. "
+                f"Instead, the supplied operands were: {operands}.")
+
         super().__init__(
-                self._operator_, (s, t), styles=styles)
+                self._operator_, (self.edge, self.graph), styles=styles)
+
+    def string(self, **kwargs):
+        return ('F_{edge, ' + self.graph.string()
+                + '}(' + self.edge.string() + ')')
+
+    def latex(self, **kwargs):
+        from proveit import ExprTuple
+        if not isinstance(self.edge, ExprTuple):
+            return (r'\mathcal{F}_{' + self.graph.latex()
+                    + r'}^{\text{edge}}(' + self.edge.latex() + r')')
+        return (r'\mathcal{F}_{' + self.graph.latex()
+                    + r'}^{\text{edge}}('
+                    + self.edge[0].latex() + ', '
+                    + self.edge[1].latex() + r')')
 
     def membership_object(self, element):
         from . import EdgeFaultsMembership
@@ -709,59 +1533,8 @@ class EdgeFaults(Function):
 class EdgeFaultsMembership(SetMembership):
     '''
     Defines methods that apply to membership in the set
-    EdgeFaults(s, s'), the set of faults that each take state s
-    to state s'.
-
-    UNDER CONSTRUCTION. See the logic/sets/Union class for related
-    example code.
-    '''
-
-    def __init__(self, element, domain):
-        SetMembership.__init__(self, element, domain)
-
-
-class Realizations(Function):
-    '''
-    Realizations(p, G), for some path p = (p1, p2, ..., pn) in a graph
-    G, where p1, p2, ..., pn are all augmented syndrome states, is the
-    set of sequences of faults, each sequence (f1, f2, ..., fm)
-    corresponding to the path p, in the sense that the sequence of
-    faults "produces" the sequence of state vertices p2, ..., pn,
-    beginning at p1, by having f_{i} take state p_{i} to state p_{i+1}.
-    This is somewhat difficult to describe. An element of
-    Realizations(p, G) is a sequence of faults that "produces" the
-    the sequence p2, ..., pn of states beginning at state p1. There
-    might be more than one such fault sequence that can produce the
-    same sequence of states.
-    '''
-
-    # The literal operator for the Realizations function.
-    _operator_ = Literal(
-            string_format='Realizations',
-            latex_format=r'\textrm{Realizations}',
-            theory=__file__)
-
-    def __init__(self, p, G, *, styles=None):
-        '''
-        Create/represent Realizations(p, G), the set of fault sequences
-        each of which produce the vertex sequence p = (p1,...,pn) in
-        graph G.
-        '''
-        self.graph = G
-        self.path = p
-        super().__init__(
-                self._operator_, (p, G), styles=styles)
-
-    def membership_object(self, element):
-        from . import RealizationsMembership
-        return RealizationsMembership(element, self)
-
-
-class RealizationsMembership(SetMembership):
-    '''
-    Defines methods that apply to membership in the set
-    Realizations(p, G), the set of fault sequences corresponding
-    to the path p in graph G.
+    EdgeFaults(e, G) or EdgeFaults(s, s', G), the set of faults
+    that each take state s to state s' (or along edge e).
 
     UNDER CONSTRUCTION. See the logic/sets/Union class for related
     example code.
@@ -772,26 +1545,499 @@ class RealizationsMembership(SetMembership):
 
     # def side_effects(self, judgment):
     #     '''
-    #     Unfold the enumerated set membership as a side-effect.
+    #     TBA.
     #     '''
     #     yield self.unfold
 
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
         '''
-        Deduce and return 
+        From self = [f in EdgeFaults(s, s', G)], deduce and return the
+        equality
 
-          [(f1, f2, ..., f_{n-1}) in Realizations(s1, s2, ..., sn)] = 
-          Forall_{i in {1..n-1}}[f_i in EdgeFaults(s_{i}, s_{i+1})]
+          [f in EdgeFaults(s, s', G)] =
+          [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
 
-        Obviously this only works if the element is a fault sequence
-        and the Realizations operand is an explicit sequence of graph
-        nodes (or equal to such a sequence).
+        where:
+
+          s, s' = (D, j), (D', j')
+          H is our check matrix function, CheckFunction;
+          A is our action matrix function, ActionFunction;
+          ∆ denotes the set-theoretic symmetric difference;
+          ⊕ denotes mod-2 addition.
+
+        If the edge (s, s') is specified abstractly simply as 'e',
+        with no specified end-nodes, then the definition() method
+        fails.
         '''
+        from proveit import ExprTuple
+        if not isinstance(self.domain.edge, ExprTuple):
+            raise NotImplementedError(
+                f"EdgeFaultsMembership.definition() method implemented "
+                f"only for cases where the edge has explicit "
+                f"end-nodes specified, which is not the case for "
+                f"the supplied edge: {self.domain.edge}. ")
+        from . import edge_faults_membership_def, s_prime
+        _f_sub = self.element
+        _s_sub = self.domain.edge[0]
+        _s_prime_sub = self.domain.edge[1]
+        
+        return edge_faults_membership_def.instantiate(
+                {f:_f_sub, s:_s_sub, s_prime:_s_prime_sub},
+                auto_simplify=False)
+
+    def as_defined(self):
+        '''
+        From self = [f in EdgeFaults(s, s')], return the expression
+        (NOT a judgment):
+
+          [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
+
+        where:
+
+          s, s' = (D, j), (D', j')
+          H is our check matrix function, CheckFunction;
+          A is our action matrix function, ActionFunction;
+          ∆ denotes the set-theoretic symmetric difference;
+          ⊕ denotes mod-2 addition.
+
+        If the edge (s, s') is specified abstractly simply as 'e',
+        with no specified end-nodes, then the as_defined() method
+        fails.
+        '''
+        from proveit import ExprTuple
+        from proveit.logic import And, Equals
+        from proveit.logic.sets import Set, SymmetricDifference
+        from proveit.numbers import two, Add, Mod
+        from . import (
+            _ell, ActionFunction, f_one_to_n, Faults, StateAction, StateSyndrome)
+
+        if not isinstance(self.domain.edge, ExprTuple):
+            raise NotImplementedError(
+                f"EdgeFaultsMembership.as_defined() method implemented "
+                f"only for cases where the edge has explicit "
+                f"end-nodes specified, which is not the case for "
+                f"the supplied edge: {self.domain.edge}. ")
+
+        element = self.element
+        _s = self.domain.edge[0]
+        _s_prime = self.domain.edge[1]
+
+        return And(
+            Equals(StateSyndrome(_s_prime),
+                   SymmetricDifference(StateSyndrome(_s),
+                                       StateSyndrome(Set(element)))),
+            Equals(StateAction(_s_prime),
+                   Mod(Add(StateAction(_s),
+                           ActionFunction(_ell, Set(element))), two)))
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self = [f in EdgeFaults(s, s')], deduce and return the
+        Judgment
+
+          [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
+
+        where:
+
+          s, s' = (D, j), (D', j')
+          H is our check matrix function, CheckFunction;
+          A is our action matrix function, ActionFunction;
+          ∆ denotes the set-theoretic symmetric difference;
+          ⊕ denotes mod-2 addition.
+
+        If the edge (s, s') is specified abstractly simply as 'e',
+        with no specified end-nodes, then the unfold() method
+        fails.
+        '''
+        from proveit import ExprTuple
+        from . import edge_faults_membership_unfolding, s_prime
+
+        if not isinstance(self.domain.edge, ExprTuple):
+            raise NotImplementedError(
+                f"EdgeFaultsMembership.as_defined() method implemented "
+                f"only for cases where the edge has explicit "
+                f"end-nodes specified, which is not the case for "
+                f"the supplied edge: {self.domain.edge}. ")
+
+        _f_sub       = self.element
+        _s_sub       = self.domain.edge[0]
+        _s_prime_sub = self.domain.edge[1]
+        _G_sub       = self.domain.graph
+
+        return edge_faults_membership_unfolding.instantiate(
+            {G:_G_sub, f:_f_sub, s:_s_sub, s_prime:_s_prime_sub},
+            auto_simplify=False)
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self = [f in EdgeFaults(s, s')], and knowing or assuming
+        that 
+
+            [D' = D ∆ (H({f}))  AND j' = j ⊕ A_{l}({f})]
+
+        where:
+
+          s, s' = (D, j), (D', j')
+          H is our check matrix function, CheckFunction;
+          A is our action matrix function, ActionFunction;
+          ∆ denotes the set-theoretic symmetric difference;
+          ⊕ denotes mod-2 addition,
+
+        derive and return self.
+
+        If the edge (s, s') is specified abstractly simply as 'e',
+        with no specified end-nodes, then the conclude() method
+        fails.
+
+        '''
+        from proveit import ExprTuple
+        from . import edge_faults_membership_folding, s_prime
+
+        if not isinstance(self.domain.edge, ExprTuple):
+            raise NotImplementedError(
+                f"EdgeFaultsMembership.as_defined() method implemented "
+                f"only for cases where the edge has explicit "
+                f"end-nodes specified, which is not the case for "
+                f"the supplied edge: {self.domain.edge}. ")
+
+        _f_sub       = self.element
+        _s_sub       = self.domain.edge[0]
+        _s_prime_sub = self.domain.edge[1]
+        _G_sub       = self.domain.graph
+        return edge_faults_membership_folding.instantiate(
+            {G:_G_sub, f: _f_sub, s:_s_sub, s_prime:_s_prime_sub})
+
+
+class Realizations(Function):
+    '''
+    Realizations(E, G), for some sequence E = (e1, e2, ..., en) of
+    edges e1, e2, ..., en in graph G, where the edges are
+    conceptualized as edges between augmented syndrome states, is the
+    set of fault sequences of the form (f1, f2, ..., fn), each of
+    which corresponds to the sequence (e1, e2, ..., en) of edges,
+    in the sense that fault f_{i} takes state s_{i} to state s_{j}
+    along edge e_{i}.
+    This is somewhat difficult to describe. An element of
+    Realizations(E, G) is a sequence of faults that correspond to
+    "traveling" along the sequence of edges (although the edges here
+    are not required to form an actual path in graph G). As implied,
+    there might be more than one such fault sequence that corresponds
+    to the same sequence of edges in G.
+    '''
+
+    # The literal operator for the Realizations function.
+    _operator_ = Literal(
+            string_format='Realizations',
+            latex_format=r'\textrm{Realizations}',
+            theory=__file__)
+
+    def __init__(self, E, G, *, styles=None):
+        '''
+        Create/represent Realizations(p, G), the set of fault
+        sequences each sequence corresponding to the edge sequence
+        E = (e1,...,en) in graph G.
+        '''
+        self.graph = G
+        self.edges = E
+        super().__init__(
+                self._operator_, (E, G), styles=styles)
+
+    def membership_object(self, element):
+        from . import RealizationsMembership
+        return RealizationsMembership(element, self)
+
+
+class RealizationsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set
+    Realizations(E, G), the set of fault sequences corresponding
+    to the edge sequence E = (e1, e1, ..., en) in graph G.
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     Unfold the set membership as a side-effect?
+    #     '''
+    #     yield self.unfold
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        Deduce and return the equality: 
+
+        [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G] = 
+        f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+        the RHS being equivalent to:
+
+            Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)]
+
+        This only works if the element is a fault sequence
+        and the Realizations operand is an explicit sequence of graph
+        edges, with the number of faults equal to the number of edges.
+        Otherwise the definition method fails.
+        '''
+
         from . import realizations_membership_def
-        element = self.element               # a fault sequence
-        _s_sub  = self.domain.operands[0]    # a node sequence (path)
-        _n_sub  = _s_sub.num_elements()      # num elems in node seq
+        element = self.element               # a fault sequence, f
+        _e_sub  = self.domain.operands[0]    # an edge sequence
+        _n_sub  = element.num_elements()     # num elems in node seq
         _G_sub  = self.domain.operands[1]    # the graph context
         return realizations_membership_def.instantiate(
-                {G:_G_sub, n:_n_sub, s:_s_sub, f:element})
+                {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
+
+    def as_defined(self):
+        '''
+        From self as:
+
+          [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G],
+
+        return the expression (NOT a judgment):
+
+          f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+        with that being equivalent to:
+
+            Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)]
+
+        This only works if the element is a fault sequence and the
+        Realizations operand is an explicit sequence of graph
+        edges, with the number of faults equal to the number of edges.
+        Otherwise the as_defined() method fails.
+        '''
+        raise NotImplementedError(
+            f"Sorry, RealizationsMembership.as_defined() is not yet "
+            f"implemented.")
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        From self:
+
+          [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G]
+
+        deduce and return the Judgment:
+
+          f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+        with that being equivalent to:
+
+            Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)]
+
+        This only works if the element is a fault sequence
+        and the Realizations operand is an explicit sequence of graph
+        edges, with the number of faults equal to the number of edges.
+        Otherwise the definition method fails.
+        '''
+
+        from . import realizations_membership_unfolding
+        element = self.element               # a fault sequence, f
+        _e_sub  = self.domain.operands[0]    # an edge sequence
+        _n_sub  = element.num_elements()     # num elems in fault seq
+        _G_sub  = self.domain.operands[1]    # the graph context
+        return realizations_membership_unfolding.instantiate(
+                {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        From self
+
+          [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G],
+
+        and knowing or assuming that
+
+          f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+        with that being equivalent to:
+
+          Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)],
+
+        deduce and return self.
+
+        This only works if the element is a fault sequence
+        and the Realizations operand is an explicit sequence of graph
+        edges, with the number of faults equal to the number of edges.
+        Otherwise the definition method fails.
+        '''
+
+        from . import realizations_membership_folding
+        element = self.element               # a fault sequence, f
+        _e_sub  = self.domain.operands[0]    # an edge sequence
+        _n_sub  = element.num_elements()     # num elems in fault seq
+        _G_sub  = self.domain.operands[1]    # the graph context
+        return realizations_membership_folding.instantiate(
+                {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
+
+
+class RealizationSets(Function):
+    '''
+    RealizationSets(E, G), for some sequence E = (e1, e2, ..., en) of
+    edges e1, e2, ..., en in graph G, is the
+    set of fault sets of the form {f1, f2, ..., fn}, each of
+    which corresponds to the set {e1, e2, ..., en} of edges,
+    in the sense that fault f_{i} takes state s_{i} to state s_{j}
+    along edge e_{i}.
+    This is somewhat difficult to describe. An element of
+    RealizationSets(E, G) is a set of faults that correspond to
+    "traveling" along the sequence of edges (although the edges here
+    are not required to form an actual path in graph G). As implied,
+    there might be more than one such fault set that corresponds
+    to the same sequence of edges in G.
+    '''
+
+    # The literal operator for the Realizations function.
+    _operator_ = Literal(
+            string_format='RealizationSets',
+            latex_format=r'\textrm{RealizationSets}',
+            theory=__file__)
+
+    def __init__(self, E, G, *, styles=None):
+        '''
+        Create/represent RealizationSets(E, G), the set of fault
+        sets each set corresponding to the edge sequence
+        E = (e1,...,en) in graph G.
+        '''
+        self.graph = G
+        self.edges = E
+        super().__init__(
+                self._operator_, (E, G), styles=styles)
+
+    def membership_object(self, element):
+        from . import RealizationSetsMembership
+        return RealizationSetsMembership(element, self)
+
+
+class RealizationSetsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set
+    RealizationSets(E, G), the set of fault sets corresponding
+    to the edge sequence E = (e1, e1, ..., en) in graph G.
+
+    UNDER CONSTRUCTION. 
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     Unfold the set membership as a side-effect?
+    #     '''
+    #     yield self.unfold
+
+    # @equality_prover('defined', 'define')
+    # def definition(self, **defaults_config):
+    #     '''
+    #     Deduce and return the equality: 
+
+    #     [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G] = 
+    #     f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+    #     the RHS being equivalent to:
+
+    #         Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)]
+
+    #     This only works if the element is a fault sequence
+    #     and the Realizations operand is an explicit sequence of graph
+    #     edges, with the number of faults equal to the number of edges.
+    #     Otherwise the definition method fails.
+    #     '''
+
+    #     from . import realizations_membership_def
+    #     element = self.element               # a fault sequence, f
+    #     _e_sub  = self.domain.operands[0]    # an edge sequence
+    #     _n_sub  = element.num_elements()     # num elems in node seq
+    #     _G_sub  = self.domain.operands[1]    # the graph context
+    #     return realizations_membership_def.instantiate(
+    #             {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
+
+    # def as_defined(self):
+    #     '''
+    #     From self as:
+
+    #       [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G],
+
+    #     return the expression (NOT a judgment):
+
+    #       f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+    #     with that being equivalent to:
+
+    #         Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)]
+
+    #     This only works if the element is a fault sequence and the
+    #     Realizations operand is an explicit sequence of graph
+    #     edges, with the number of faults equal to the number of edges.
+    #     Otherwise the as_defined() method fails.
+    #     '''
+    #     raise NotImplementedError(
+    #         f"Sorry, RealizationsMembership.as_defined() is not yet "
+    #         f"implemented.")
+
+    # @prover
+    # def unfold(self, **defaults_config):
+    #     '''
+    #     From self:
+
+    #       [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G]
+
+    #     deduce and return the Judgment:
+
+    #       f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+    #     with that being equivalent to:
+
+    #         Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)]
+
+    #     This only works if the element is a fault sequence
+    #     and the Realizations operand is an explicit sequence of graph
+    #     edges, with the number of faults equal to the number of edges.
+    #     Otherwise the definition method fails.
+    #     '''
+
+    #     from . import realizations_membership_unfolding
+    #     element = self.element               # a fault sequence, f
+    #     _e_sub  = self.domain.operands[0]    # an edge sequence
+    #     _n_sub  = element.num_elements()     # num elems in fault seq
+    #     _G_sub  = self.domain.operands[1]    # the graph context
+    #     return realizations_membership_unfolding.instantiate(
+    #             {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
+
+    # @prover
+    # def conclude(self, **defaults_config):
+    #     '''
+    #     From self
+
+    #       [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G],
+
+    #     and knowing or assuming that
+
+    #       f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+    #     with that being equivalent to:
+
+    #       Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)],
+
+    #     deduce and return self.
+
+    #     This only works if the element is a fault sequence
+    #     and the Realizations operand is an explicit sequence of graph
+    #     edges, with the number of faults equal to the number of edges.
+    #     Otherwise the definition method fails.
+    #     '''
+
+    #     from . import realizations_membership_folding
+    #     element = self.element               # a fault sequence, f
+    #     _e_sub  = self.domain.operands[0]    # an edge sequence
+    #     _n_sub  = element.num_elements()     # num elems in fault seq
+    #     _G_sub  = self.domain.operands[1]    # the graph context
+    #     return realizations_membership_folding.instantiate(
+    #             {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
+        
