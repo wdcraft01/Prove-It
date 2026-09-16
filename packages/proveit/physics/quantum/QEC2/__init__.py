@@ -7,7 +7,7 @@ from .bufilo import (
         FaultsMembership, IrreducibleBufiloSetsLiteral,
         IrreducibleBufiloSetsMembership,MalignantSetsLiteral,
         ObservableSet, ObservableSetsLiteral, Realizations,
-        RealizationsMembership,
+        RealizationSets, RealizationsMembership, RealizationSetsMembership,
         State, StateAction, StatesLiteral, StatesMembership,
         StateSyndrome, SyndromesLiteral, SyndromesMembership, Weight)
 

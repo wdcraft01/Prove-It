@@ -1874,4 +1874,170 @@ class RealizationsMembership(SetMembership):
         _G_sub  = self.domain.operands[1]    # the graph context
         return realizations_membership_folding.instantiate(
                 {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
+
+
+class RealizationSets(Function):
+    '''
+    RealizationSets(E, G), for some sequence E = (e1, e2, ..., en) of
+    edges e1, e2, ..., en in graph G, is the
+    set of fault sets of the form {f1, f2, ..., fn}, each of
+    which corresponds to the set {e1, e2, ..., en} of edges,
+    in the sense that fault f_{i} takes state s_{i} to state s_{j}
+    along edge e_{i}.
+    This is somewhat difficult to describe. An element of
+    RealizationSets(E, G) is a set of faults that correspond to
+    "traveling" along the sequence of edges (although the edges here
+    are not required to form an actual path in graph G). As implied,
+    there might be more than one such fault set that corresponds
+    to the same sequence of edges in G.
+    '''
+
+    # The literal operator for the Realizations function.
+    _operator_ = Literal(
+            string_format='RealizationSets',
+            latex_format=r'\textrm{RealizationSets}',
+            theory=__file__)
+
+    def __init__(self, E, G, *, styles=None):
+        '''
+        Create/represent RealizationSets(E, G), the set of fault
+        sets each set corresponding to the edge sequence
+        E = (e1,...,en) in graph G.
+        '''
+        self.graph = G
+        self.edges = E
+        super().__init__(
+                self._operator_, (E, G), styles=styles)
+
+    def membership_object(self, element):
+        from . import RealizationSetsMembership
+        return RealizationSetsMembership(element, self)
+
+
+class RealizationSetsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in the set
+    RealizationSets(E, G), the set of fault sets corresponding
+    to the edge sequence E = (e1, e1, ..., en) in graph G.
+
+    UNDER CONSTRUCTION. 
+    '''
+
+    def __init__(self, element, domain):
+        SetMembership.__init__(self, element, domain)
+
+    # def side_effects(self, judgment):
+    #     '''
+    #     Unfold the set membership as a side-effect?
+    #     '''
+    #     yield self.unfold
+
+    # @equality_prover('defined', 'define')
+    # def definition(self, **defaults_config):
+    #     '''
+    #     Deduce and return the equality: 
+
+    #     [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G] = 
+    #     f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+    #     the RHS being equivalent to:
+
+    #         Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)]
+
+    #     This only works if the element is a fault sequence
+    #     and the Realizations operand is an explicit sequence of graph
+    #     edges, with the number of faults equal to the number of edges.
+    #     Otherwise the definition method fails.
+    #     '''
+
+    #     from . import realizations_membership_def
+    #     element = self.element               # a fault sequence, f
+    #     _e_sub  = self.domain.operands[0]    # an edge sequence
+    #     _n_sub  = element.num_elements()     # num elems in node seq
+    #     _G_sub  = self.domain.operands[1]    # the graph context
+    #     return realizations_membership_def.instantiate(
+    #             {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
+
+    # def as_defined(self):
+    #     '''
+    #     From self as:
+
+    #       [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G],
+
+    #     return the expression (NOT a judgment):
+
+    #       f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+    #     with that being equivalent to:
+
+    #         Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)]
+
+    #     This only works if the element is a fault sequence and the
+    #     Realizations operand is an explicit sequence of graph
+    #     edges, with the number of faults equal to the number of edges.
+    #     Otherwise the as_defined() method fails.
+    #     '''
+    #     raise NotImplementedError(
+    #         f"Sorry, RealizationsMembership.as_defined() is not yet "
+    #         f"implemented.")
+
+    # @prover
+    # def unfold(self, **defaults_config):
+    #     '''
+    #     From self:
+
+    #       [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G]
+
+    #     deduce and return the Judgment:
+
+    #       f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+    #     with that being equivalent to:
+
+    #         Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)]
+
+    #     This only works if the element is a fault sequence
+    #     and the Realizations operand is an explicit sequence of graph
+    #     edges, with the number of faults equal to the number of edges.
+    #     Otherwise the definition method fails.
+    #     '''
+
+    #     from . import realizations_membership_unfolding
+    #     element = self.element               # a fault sequence, f
+    #     _e_sub  = self.domain.operands[0]    # an edge sequence
+    #     _n_sub  = element.num_elements()     # num elems in fault seq
+    #     _G_sub  = self.domain.operands[1]    # the graph context
+    #     return realizations_membership_unfolding.instantiate(
+    #             {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
+
+    # @prover
+    # def conclude(self, **defaults_config):
+    #     '''
+    #     From self
+
+    #       [(f1, f2, ..., f_n) in Realizations((e1, e2, ..., en), G],
+
+    #     and knowing or assuming that
+
+    #       f1 in EdgeFaults(e1, G) AND ... AND f_n in EdgeFaults(e_n, G),
+
+    #     with that being equivalent to:
+
+    #       Forall_{i in {1..n}}[f_i in EdgeFaults(e_i, G)],
+
+    #     deduce and return self.
+
+    #     This only works if the element is a fault sequence
+    #     and the Realizations operand is an explicit sequence of graph
+    #     edges, with the number of faults equal to the number of edges.
+    #     Otherwise the definition method fails.
+    #     '''
+
+    #     from . import realizations_membership_folding
+    #     element = self.element               # a fault sequence, f
+    #     _e_sub  = self.domain.operands[0]    # an edge sequence
+    #     _n_sub  = element.num_elements()     # num elems in fault seq
+    #     _G_sub  = self.domain.operands[1]    # the graph context
+    #     return realizations_membership_folding.instantiate(
+    #             {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
         
