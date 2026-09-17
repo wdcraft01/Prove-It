@@ -254,15 +254,27 @@ class WalksOfMembership(SetMembership):
 
         Similarly adjusted for cases where just 'begin' or just 'end'
         is specified.
+
+        Called on self = [(v) in WalksOf(G)], and knowing or assuming
+        that v in Vertices(G), derive and return self.
         '''
+
+        from proveit import ExprTuple
 
         _W_sub = self.element
         _G_sub = self.domain.graph
 
+        _single_vertex = (isinstance(_W_sub, ExprTuple)
+                          and _W_sub.is_single())
         _has_begin = hasattr(self.domain, 'begin')
         _has_end   = hasattr(self.domain, 'end')
 
         if (_has_begin and _has_end):
+            if _single_vertex:
+                from . import vertex_is_walk_with_ends
+                _v_sub = _W_sub[0]
+                return vertex_is_walk_with_ends.instantiate(
+                    {G:_G_sub, v:_v_sub})
             from . import walks_of_graph_with_ends_membership_folding
             _a_sub = self.domain.begin
             _b_sub = self.domain.end
@@ -271,17 +283,33 @@ class WalksOfMembership(SetMembership):
                     auto_simplify=False)
 
         if _has_begin:
+            if _single_vertex:
+                from . import vertex_is_walk_with_begin
+                _v_sub = _W_sub[0]
+                return vertex_is_walk_with_begin.instantiate(
+                    {G:_G_sub, v:_v_sub})
             from . import walks_of_graph_with_begin_membership_folding
             _a_sub = self.domain.begin
             return walks_of_graph_with_begin_membership_folding.instantiate(
                     {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
 
         if _has_end:
+            if _single_vertex:
+                from . import vertex_is_walk_with_end
+                _v_sub = _W_sub[0]
+                return vertex_is_walk_with_end.instantiate(
+                    {G:_G_sub, v:_v_sub})
             from . import walks_of_graph_with_end_membership_folding
             _b_sub = self.domain.end
             return walks_of_graph_with_end_membership_folding.instantiate(
                     {G:_G_sub, W:_W_sub, b:_b_sub}, auto_simplify=False)
 
+        # neither end specified
+        if _single_vertex:
+                from . import vertex_is_walk
+                _v_sub = _W_sub[0]
+                return vertex_is_walk.instantiate(
+                    {G:_G_sub, v:_v_sub})
         from . import walks_of_graph_membership_folding
         return walks_of_graph_membership_folding.instantiate(
                     {G:_G_sub, W:_W_sub}, auto_simplify=False)
