@@ -1745,6 +1745,16 @@ class Realizations(Function):
         super().__init__(
                 self._operator_, (E, G), styles=styles)
 
+    def string(self, **kwargs):
+        return ('Realizations{' + self.graph.string()
+                + '}(' + self.edges.string() + ')')
+
+    def latex(self, **kwargs):
+        from proveit import ExprTuple
+        return (r'\textrm{Realizations}_{' + self.graph.latex()
+                    + r'}('
+                    + self.edges.latex() + r')')
+
     def membership_object(self, element):
         from . import RealizationsMembership
         return RealizationsMembership(element, self)
