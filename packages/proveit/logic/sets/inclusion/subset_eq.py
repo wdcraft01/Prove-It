@@ -76,6 +76,13 @@ class SubsetEq(InclusionRelation):
         from proveit.logic import Equals, SetOfAll, SetEquiv
         from . import subset_eq_via_equality
 
+        # SubsetEq(EmptySet, A) for all A
+        from proveit.logic.sets import EmptySet
+        if self.operands[0] == EmptySet:
+            from proveit.logic.sets import empty_set_subseteq_any
+            _A_sub = self.operands[1]
+            return empty_set_subseteq_any.instantiate({A:_A_sub})
+
         # Equal sets include each other.
         if Equals(*self.operands.entries).readily_provable() and (
                 subset_eq_via_equality.is_usable()):
