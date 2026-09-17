@@ -884,7 +884,7 @@ class EdgeSequenceOf(Operation):
 
             2. 2-vertex case: EdgeSequenceOf((u, v), G) = ((u, v))
 
-            1. General case:
+            3. General case:
                 EdgeSequenceOf((v1,v2,...,vn), G)
                 = ((v1,v2),(v2,v3),...,(v_{n-1}, vn))
 
