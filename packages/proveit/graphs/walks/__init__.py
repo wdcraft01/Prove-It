@@ -1,6 +1,6 @@
 from .walks import (BeginVertex, BeginningVertex, Circuits,
         ClosedTrails, ClosedWalk, ClosedWalks, Cycles, EdgeSequence,
-        EdgeSet, EndVertex, EndingVertex, EndVertices,
+        EdgeSequenceOf, EdgeSet, EndVertex, EndingVertex, EndVertices,
         EulerianCircuits, EulerianTrails, IsPath, IsWalk,
         Paths, PathsOf, Trails, TrailsOf, WalkLength, Walks, WalksOf)
 

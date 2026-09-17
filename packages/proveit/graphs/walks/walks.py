@@ -1,5 +1,5 @@
-from proveit import ( equality_prover, ExprTuple, Function, Literal,
-                      NamedExprs, Operation )
+from proveit import ( n, u, v, G, equality_prover, ExprTuple,
+                      Function, Literal, NamedExprs, Operation )
 from proveit.graphs import Size
 
 class Walks(Function):
@@ -781,6 +781,152 @@ class EdgeSequence(Function):
         self.walk = W
         Function.__init__(
                 self, EdgeSequence._operator_, W, styles=styles)
+
+
+class EdgeSequenceOf(Operation):
+    '''
+    Given a walk W in Walks(G) consisting of vertex sequence S
+    in graph G, EdgeSequenceOf(W, G) represents the sequence of
+    edges traveled along the walk in G, which for a simple graph
+    is completely determined by the vertex sequence S. The number of
+    edges in EdgeSequenceOf(W, G) is the length of the walk W,
+    represented with WalkLength(W).
+
+    This is intended to replace the more ambiguously named
+    EdgeSequence() defined previously.
+
+    Temporarily we approach this in a very naive way, using a
+    simplification/evaluation that simply converts the sequence
+    of vertices to a sequence of edges, without checking that the
+    vertices are actually adjacent in some graph context.
+    '''
+
+    # the literal operator of the EdgeSequence operation
+    _operator_ = Literal(string_format='EdgeSeqOf',
+                         latex_format=r'\mathrm{EdgeSeqOf}',
+                         theory=__file__)
+
+    # def __init__(self, W, *, styles=None):
+    #     '''
+    #     Given a walk W = Walk(S, G) in graph G, represent the
+    #     sequence of edges traveled during the walk.
+    #     '''
+    #     # self.walk = W
+        
+    #     super().__init__(self._operator_, W, styles=styles)
+
+    # def __init__(self, graph, *, begin=None, end=None, styles=None):
+    #     '''
+    #     Initialize a representation of PathsOf(G) (the set of all
+    #     paths in graph G) or a representation of PathsOf(G, a->b) (the
+    #     set of all a-b paths in graph G).
+    #     '''
+
+    #     items = [("graph", graph)]
+    #     # if ends is not None:
+    #     #     items.append(("ends", ends))
+    #     if begin is not None:
+    #         items.append(("begin", begin))
+    #     if end is not None:
+    #         items.append(("end", end))
+
+    #     operands = NamedExprs(*items)
+
+    #     super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def __init__(self, walk, graph, *, styles=None):
+        '''
+        Given a walk W = Walk(S, G) in graph G, represent the
+        sequence of edges traveled during the walk.
+        '''
+        # self.walk = W
+
+        # (1) Build the list of (keyword, expression) pairs
+        items = [
+            ("walk", walk), ("graph", graph)
+        ]
+                
+        # (2) Initialize NamedExprs with the list of tuples
+        operands = NamedExprs(*items)
+        
+        # (4) Call Operation's init
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    def string(self, **kwargs):
+        string_str = 'EdgeSeqOf('
+        string_str += self.walk.string(**kwargs)
+        string_str += ', '
+        string_str += self.graph.string(**kwargs)
+        string_str += ')'
+        return string_str
+
+    def latex(self, **kwargs):
+        latex_str = r'\textrm{EdgeSeqOf}('
+        latex_str += self.walk.latex(**kwargs)
+        latex_str += r', '
+        latex_str += self.graph.latex(**kwargs)
+        latex_str += r')'
+        return latex_str
+
+    @equality_prover('shallow_simplified', 'shallow_simplify')
+    def shallow_simplification(self, *, must_evaluate=False,
+                               **defaults_config):
+        '''
+        Returns a proven simplification equation for this
+        EdgeSequenceOf(W, G) expression assuming the operands have
+        been simplified.
+
+        For a known (or assumed) walk W = (v1, v2, ..., vn) in a
+        graph G, simplification currently deduces and returns a
+        simplification equation for three cases:
+
+            1. Trivial case: EdgeSequenceOf((v), G) = ()
+
+            2. 2-vertex case: EdgeSequenceOf((u, v), G) = ((u, v))
+
+            3. General case:
+                EdgeSequenceOf((v1,v2,...,vn), G)
+                = ((v1,v2),(v2,v3),...,(v_{n-1}, vn))
+
+        '''
+
+        if isinstance(self.walk, ExprTuple):
+            _G_sub = self.graph
+            if self.walk.is_single():
+                # we have a trivial 1-vertex walk
+                from . import edge_sequence_of_trivial_def
+                _v_sub = self.walk[0]
+                return edge_sequence_of_trivial_def.instantiate(
+                    {G:_G_sub, v:_v_sub})
+
+            if self.walk.is_double():
+                # we have a single-edge, 2-vertex walk
+                from . import edge_sequence_of_two_def
+                _u_sub = self.walk[0]
+                _v_sub = self.walk[1]
+                return edge_sequence_of_two_def.instantiate(
+                    {G:_G_sub, u:_u_sub, v:_v_sub})
+
+            # else, we have an explicit listing of multiple vertices
+            from . import edge_sequence_of_def
+            _v_sub = self.walk
+            _n_sub = _v_sub.num_elements()
+            return edge_sequence_of_def.instantiate(
+                    {G:_G_sub, n:_n_sub, v:_v_sub})
+        
+        # Default is no simplification.
+        from proveit.logic import Equals
+        return Equals(self, self).prove()
+
+    # @classmethod
+    # def extract_init_arg_value(cls, arg_name, operator, operands):
+    #     # The base Operation.__init__ already maps keys to attributes 
+    #     # via getattr/setattr, but for reconstruction (remaking exprs), 
+    #     # we check the NamedExprs specifically.
+    #     print(f"(1) HERE!")
+    #     if isinstance(operands, NamedExprs):
+    #         return operands.get(arg_name, None)
+    #     return None
 
 
 class EdgeSet(Function):
