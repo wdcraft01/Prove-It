@@ -1,6 +1,6 @@
 from proveit import (
         m, n, x, A, B, C, S, equality_prover, Judgment,
-        Lambda, Literal, relation_prover)
+        Lambda, Literal, prover, relation_prover)
 from proveit.logic import Exists, NotEquals
 from proveit.logic.irreducible_value import IrreducibleValue
 from proveit.logic.sets import InSet
@@ -25,6 +25,16 @@ class EmptySetLiteral(Literal, IrreducibleValue):
     def nonmembership_object(self, element):
         from .empty_set_membership import EmptySetNonmembership
         return EmptySetNonmembership(element, self)
+
+    @prover
+    def deduce_cardinality(self, **defaults_config):
+        '''
+        Deduce and return that |∅| = 0.
+        The deduce_cardinalty() method is called from the
+        Cardinality.computation() method.
+        '''
+        from proveit.logic.sets import card_empty_set
+        return card_empty_set
 
     def not_equals_side_effects(self, judgment):
         '''
