@@ -1919,6 +1919,16 @@ class RealizationSets(Function):
         super().__init__(
                 self._operator_, (E, G), styles=styles)
 
+    def string(self, **kwargs):
+        return ('RealizationSets{' + self.graph.string()
+                + '}(' + self.edges.string() + ')')
+
+    def latex(self, **kwargs):
+        from proveit import ExprTuple
+        return (r'\textrm{RealizationSets}_{' + self.graph.latex()
+                    + r'}('
+                    + self.edges.latex() + r')')
+
     def membership_object(self, element):
         from . import RealizationSetsMembership
         return RealizationSetsMembership(element, self)
