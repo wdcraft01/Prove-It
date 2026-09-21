@@ -91,7 +91,50 @@ class Exists(OperationOverInstances):
         '''
         yield self.deduce_not_exists  # derive the NotExists form.
 
-    def choose(self, *skolem_constants, print_message=True):
+    # Exists.choose() temporarily updated/modified (see further below).
+    # Original choose() method kept here temporarily for easy future
+    # reference.
+
+    # def choose(self, *skolem_constants, print_message=True):
+    #     '''
+    #     From the existential expression
+    #     self = exists_{x_1,...,x_n | Q(x_1,...,x_n)} P(x_1,...,x_n),
+    #     generate Skolem constants a_1,...,a_n in correspondence with
+    #     the instance params x_1,...,x_n. The process will:
+    #     (1) add Q(a_1,...,a_n) and P(a_1,...,a_n) to the default
+    #         assumptions;
+    #     (2) register the Skolem constants a_1,...,a_n in the
+    #         skolem_consts_to_existential dictionary so they can be
+    #         eliminated later using the eliminate() method;
+    #     (3) return the newly-generated assumptions Q(a_1,...,a_n) and
+    #         P(a_1,...,a_n)
+    #     '''
+    #     # Register this particular collection of Skolem constants
+    #     # in the dictionary as a key linking them to this Exists object
+    #     Exists.skolem_consts_to_existential[skolem_constants] = self
+
+    #     # build the Skolemized versions of the conditions Q and the
+    #     # instance expression P
+    #     repl_dict = {param: skolem_const for param, skolem_const
+    #                  in zip(self.instance_params, skolem_constants)}
+    #     P_skolem = self.instance_expr.basic_replaced(repl_dict)
+    #     Q_skolem = self.conditions.basic_replaced(repl_dict)
+
+    #     # Update the default assumptions with the Skolem versions
+    #     # of the conditions and instance expression
+    #     defaults.assumptions = (*defaults.assumptions, *Q_skolem.entries, P_skolem)
+    #     if print_message:
+    #         print(
+    #             "Creating Skolem 'constant(s)': {0}.\n"
+    #             "Call the Judgment.eliminate{0} to complete the "
+    #             "Skolemization\n(when the 'constant(s)' are no longer needed).\n"
+    #             "Adding to defaults.assumptions:". format(
+    #                 skolem_constants, *Q_skolem.entries))
+
+    #     return ExprTuple(*Q_skolem.entries, P_skolem)
+
+    def choose(self, *skolem_constants, replacement_map=None,
+               conditions_map=None, print_message=True):
         '''
         From the existential expression
         self = exists_{x_1,...,x_n | Q(x_1,...,x_n)} P(x_1,...,x_n),
@@ -105,20 +148,111 @@ class Exists(OperationOverInstances):
         (3) return the newly-generated assumptions Q(a_1,...,a_n) and
             P(a_1,...,a_n)
         '''
-        # Register this particular collection of Skolem constants
-        # in the dictionary as a key linking them to this Exists object
-        Exists.skolem_consts_to_existential[skolem_constants] = self
+        # Special case: replacement_map provided.
+        # An explicit replacement map can allow us to properly
+        # skolemize an ExprRange by specifying the replacement for
+        # the underlying instance_params variable
+        if replacement_map is not None:
+            skolem_constants = []
+            for key, value in replacement_map.items():
+                skolem_constants.append(value)
+            # Register this particular collection of Skolem constants
+            # in the dictionary as a key linking them to this Exists object
+            Exists.skolem_consts_to_existential[*skolem_constants] = self
+
+        else:
+            # Register this particular collection of Skolem constants
+            # in the dictionary as a key linking them to this Exists object
+            Exists.skolem_consts_to_existential[skolem_constants] = self
 
         # build the Skolemized versions of the conditions Q and the
         # instance expression P
-        repl_dict = {param: skolem_const for param, skolem_const
-                     in zip(self.instance_params, skolem_constants)}
+
+        from proveit import ExprRange, Variable
+        from proveit.numbers import zero
+
+        _empty_conditions = self.conditions.num_elements() == zero
+
+        if replacement_map is not None:
+            repl_dict = replacement_map
+        else:
+            repl_dict = {param: skolem_const for param, skolem_const
+                         in zip(self.instance_params, skolem_constants)}
+
+        # If the Exists has conditions, and we are trying to Skolemize
+        # an ExprRange, we have limited options, so we check the
+        # situation and give some feedback for problem cases.
+        if not _empty_conditions:
+            for key, value in repl_dict.items():
+                if isinstance(key, ExprRange):
+                    if isinstance(value, ExprRange):
+                        raise ValueError(
+                            "You appear to be attempting to Skolemize "
+                            f"the ExprRange {key} while the Exists has "
+                            "conditions. To do this, call choose(x), "
+                            "where x is the Variable (rather than an "
+                            "ExprRange) you want to substitute."
+                            )
+                    elif (isinstance(value, (tuple, ExprTuple)) and
+                           not isinstance(value[0], ExprRange) and
+                           conditions_map is None):
+                        raise ValueError(
+                            "You appear to be attempting to Skolemize "
+                            f"the ExprRange {key} with a concrete tuple "
+                            "while the Exists has conditions. "
+                            "This is tricky. "
+                            "To do this, you need to include the "
+                            "conditions_map argument to supply a dictionary "
+                            "mapping the Exists.conditions to the desired "
+                            "conditions. For example, in Skolemizing the "
+                            "ExprRange a1,...,a3, with the conditions "
+                            "that a1 in Z, ..., a3 in Z, include "
+                            "conditions_map = {(a1 in Z .. a3 in Z): "
+                            "b in Z, c in Z, d in Z}. The key in the map "
+                            "could be constructed by simply calling "
+                            "my_expr.conditions, where my_expr is your "
+                            "Exists expression."
+                            ""
+                            )
+        
+        '''
+        Update repl_dict as need for several ExprRange cases:
+        (1) ExprRange:ExprRange to
+            ExprTuple(ExprRange):ExprTuple(ExprRange);
+        (2) ExprRange:ExprTuple to 
+            ExprTuple(ExprRange):ExprTuple;
+        (3) ExprRange:tuple to ExprTuple(ExprRange):ExprTuple;
+        (4) ExprRange:Variable to Variable:Variable
+        '''
+        clean_repl_dict = {}
+        for idx, (key, value) in enumerate(repl_dict.items()):
+            if isinstance(key, ExprRange):
+                if isinstance(value, ExprRange):
+                    clean_repl_dict[ExprTuple(key)] = ExprTuple(value)
+                elif isinstance(value, ExprTuple):
+                    clean_repl_dict[ExprTuple(key)] = value
+                elif isinstance(value, tuple):
+                    clean_repl_dict[ExprTuple(key)] = ExprTuple(*value)
+                elif isinstance(value, Variable):
+                    key_var = self.all_instance_vars()[idx]
+                    clean_repl_dict[key_var] = value
+            else:
+                clean_repl_dict[key] = value # i.e. no changes
+
+        repl_dict = clean_repl_dict
+
+        if conditions_map is None:
+            conditions_map = repl_dict
+
         P_skolem = self.instance_expr.basic_replaced(repl_dict)
-        Q_skolem = self.conditions.basic_replaced(repl_dict)
+        Q_skolem = self.conditions.basic_replaced(conditions_map)
+        if not isinstance(Q_skolem, ExprTuple):
+            Q_skolem = ExprTuple(Q_skolem)
 
         # Update the default assumptions with the Skolem versions
         # of the conditions and instance expression
-        defaults.assumptions = (*defaults.assumptions, *Q_skolem.entries, P_skolem)
+        defaults.assumptions = (
+                *defaults.assumptions, *Q_skolem.entries, P_skolem)
         if print_message:
             print(
                 "Creating Skolem 'constant(s)': {0}.\n"
