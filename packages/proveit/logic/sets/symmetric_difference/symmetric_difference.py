@@ -1,6 +1,7 @@
 from proveit import (
-        equality_prover, Literal, Operation, USE_DEFAULTS,
-        relation_prover, SimplificationDirectives, TransRelUpdater)
+        equality_prover, Judgment, Literal, Operation, prover,
+        USE_DEFAULTS, relation_prover, SimplificationDirectives,
+        TransRelUpdater)
 from proveit import l, m, n, x, A, B, C, S, X
 from proveit.abstract_algebra.generic_methods import (
         apply_association_thm, apply_commutation_thm,
@@ -415,5 +416,51 @@ class SymmetricDifference(Operation):
         '''
         from . import disassociation
         return apply_disassociation_thm(self, idx, disassociation)
+
+    def equality_side_effects(self, judgment):
+        '''
+        Called from Equals.side_effects(), equality_side_effects()
+        looks for the following special case(s):
+
+          * A ∆ B = ∅ (returning A = B)
+
+        '''
+        from proveit.logic import Equals
+        from proveit.logic.sets import EmptySet
+        from proveit.numbers import Neg
+        if not isinstance(judgment, Judgment):
+            raise ValueError("Expecting 'judgment' to be a Judgment.")
+        if not isinstance(judgment.expr, Equals):
+            raise ValueError("Expecting the judgment to be an equality.")
+        sym_diff = judgment.lhs
+        if not isinstance(sym_diff, SymmetricDifference):
+            raise ValueError(
+                "In SymmetricDifference.equality_side_effects(), "
+                "expecting lhs of judgment to be of a "
+                "SymmetricDifference expression, but obtained: "
+                f"{sym_diff} .")
+
+        if judgment.rhs == EmptySet:
+            if sym_diff.operands.is_double():
+                # we have A ∆ B = EmptySet, so deduce A = B
+                yield (lambda : self.empty_sym_diff_unfold())
+
+    @prover
+    def empty_sym_diff_unfold(self, **defaults_config):
+        '''
+        From A ∆ B = ∅, derive and return A = B.
+        '''
+        from proveit.logic.sets.symmetric_difference import (
+                empty_sym_diff_imp_set_equality)
+        if not self.operands.is_double():
+            raise NotImplementedError(
+                "SymmetricDifference.empty_sym_diff_unfold() method "
+                "implemented only for a SymmetricDifference with "
+                "exactly two operands, but received the expression: "
+                f"{self}.")
+        _A_sub = self.operands[0]
+        _B_sub = self.operands[1]
+        return empty_sym_diff_imp_set_equality.instantiate(
+                {A:_A_sub, B:_B_sub}, auto_simplify=False)
 
             
