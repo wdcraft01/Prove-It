@@ -203,19 +203,22 @@ class EmptySetLiteral(Literal, IrreducibleValue):
 
           * [Intersect(A-B, B-A) = EmptySet]
           * [Intersect(A-B, AnB) = EmptySet]
+          *             [(A ∆ B) = EmptySet], for A = B
 
         which often arise in SymmetricDifference expressions and
         related expressions, which themselves arise in several QEC
         contexts.
         '''
-        from proveit.logic.sets import Intersect, Difference
+        from proveit.logic import Equals
+        from proveit.logic.sets import (
+                Difference, Intersect, SymmetricDifference)
 
         if (isinstance(other, Intersect)
             and other.operands.is_double()):
 
             set_0, set_1 = other.operands[0], other.operands[1]
 
-            # Check for Disjoint(A-B, B-A)
+            # Check for Intersect(A-B, B-A)
             if (isinstance(set_0, Difference)
                 and isinstance(set_1, Difference)):
 
@@ -230,7 +233,7 @@ class EmptySetLiteral(Literal, IrreducibleValue):
                             {A:_A_sub, B:_B_sub}).derive_reversed()
                     return inst
 
-            # Check for Disjoint(A-B, A n B)
+            # Check for Intersect(A-B, A n B)
             # and its commuted variations
             is_diff_0 = isinstance(set_0, Difference)
             is_diff_1 = isinstance(set_1, Difference)
@@ -239,8 +242,8 @@ class EmptySetLiteral(Literal, IrreducibleValue):
 
             diff_expr, int_expr = None, None
 
-            # Track if original expr is Disjoint(Intersect, Diff)
-            # instead of Disjoint(Diff, Intersect)
+            # Track if original expr is Intersect(Intersect, Diff)
+            # instead of Intersect(Diff, Intersect)
             outer_intersect_is_reversed = False
 
             if is_diff_0 and is_intersect_1:
@@ -250,7 +253,7 @@ class EmptySetLiteral(Literal, IrreducibleValue):
                 outer_intersect_is_reversed = True
 
             if diff_expr and int_expr:
-                # We found something of the form Disjoint(A-B, AnB)
+                # We found something of the form Intersect(A-B, AnB)
                 _A_sub = diff_expr.operands[0]
                 _B_sub = diff_expr.operands[1]
 
@@ -283,6 +286,18 @@ class EmptySetLiteral(Literal, IrreducibleValue):
                         inst = (inst.inner_expr().lhs.operands[inner_int_idx].
                                 commute(0,1))
                     return inst.derive_reversed()
+
+        if (isinstance(other, SymmetricDifference)
+            and other.operands.is_double()):
+
+            set_0, set_1 = other.operands[0], other.operands[1]
+            if Equals(set_0, set_1).readily_provable():
+                from proveit.logic.sets.symmetric_difference import (
+                        set_equality_impl_empty_sym_diff)
+                _A_sub = set_0
+                _B_sub = set_1
+                return set_equality_impl_empty_sym_diff.instantiate(
+                        {A:_A_sub, B:_B_sub}).derive_reversed()
 
         raise NotImplementedError(
                 f"Cannot conclude {self} using EmptySet.deduce_equal(). "
