@@ -1,3 +1,4 @@
+from typing import Literal as TypeLiteral
 from proveit import (a, b, i, k, u, v, C, G, P, S, T, W,
         equality_prover, Function, NamedExprs, prover, relation_prover)
 from proveit.logic import (And, Equals, Forall, InSet, SetMembership,
@@ -74,7 +75,8 @@ class WalksOfMembership(SetMembership):
                     {G:_G_sub, W:_W_sub}, auto_simplify=False)
 
     @equality_prover('existential_defined', 'existential_define')
-    def existential_definition(self, **defaults_config):
+    def existential_definition(
+                self, idx: TypeLiteral[0,1] = 1, **defaults_config):
         '''
         From self = [W in WalksOf(G)], deduce and return the equality:
         
@@ -93,6 +95,10 @@ class WalksOfMembership(SetMembership):
 
         Similarly adjusted for cases where just 'begin' or just 'end'
         is specified.
+
+        If idx = 0 is specified, the vertices are indexed from
+        0 to n instead of from 1 to n (but only for the "begin"
+        case right now).
         '''
 
         _W_sub = self.element
@@ -110,10 +116,23 @@ class WalksOfMembership(SetMembership):
                     auto_simplify=False)
 
         if _has_begin:
-            from . import walks_of_graph_membership_with_begin_exists_def
-            _a_sub = self.domain.begin
-            return walks_of_graph_membership_with_begin_exists_def.instantiate(
-                    {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
+            if idx == 1:
+                from . import walks_of_graph_membership_with_begin_exists_def
+                _a_sub = self.domain.begin
+                return walks_of_graph_membership_with_begin_exists_def.instantiate(
+                        {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
+
+            elif idx == 0:
+                from . import walks_of_membership_with_begin_exists_def_idx_0
+                _a_sub = self.domain.begin
+                return (walks_of_membership_with_begin_exists_def_idx_0.
+                       instantiate(
+                        {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False))
+
+            else:
+                raise ValueError(
+                    "In calling WalksOfMembership.existential_definition(), "
+                    f"idx = {idx} instead of 0 or 1.")
 
         if _has_end:
             from . import walks_of_graph_membership_with_end_exists_def
@@ -178,7 +197,7 @@ class WalksOfMembership(SetMembership):
                     {G:_G_sub, W:_W_sub}, auto_simplify=False)
 
     @prover
-    def existential_unfold(self, **defaults_config):
+    def existential_unfold(self, idx: TypeLiteral[0,1] = 1, **defaults_config):
         '''
         From self = [W in WalksOf(G)], and knowing or assuming self,
         derive and return the claim that:
@@ -198,6 +217,10 @@ class WalksOfMembership(SetMembership):
 
         Similarly adjusted for cases where just 'begin' or just 'end'
         is specified.
+
+        If idx = 0 is specified, the vertices are indexed from
+        0 to n instead of from 1 to n (but only for the "begin"
+        case right now).
         '''
 
         _W_sub = self.element
@@ -215,10 +238,18 @@ class WalksOfMembership(SetMembership):
                     auto_simplify=False)
 
         if _has_begin:
-            from . import walks_of_graph_membership_with_begin_exists_unfolding
-            _a_sub = self.domain.begin
-            return walks_of_graph_membership_with_begin_exists_unfolding.instantiate(
+            if idx == 1:
+                from . import walks_of_graph_membership_with_begin_exists_unfolding
+                _a_sub = self.domain.begin
+                return walks_of_graph_membership_with_begin_exists_unfolding.instantiate(
                     {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False)
+            elif idx == 0:
+                from . import (
+                    walks_of_membership_with_begin_exists_unfolding_idx_0)
+                _a_sub = self.domain.begin
+                return (walks_of_membership_with_begin_exists_unfolding_idx_0.
+                    instantiate(
+                    {G:_G_sub, W:_W_sub, a:_a_sub}, auto_simplify=False))
 
         if _has_end:
             from . import walks_of_graph_membership_with_end_exists_unfolding
