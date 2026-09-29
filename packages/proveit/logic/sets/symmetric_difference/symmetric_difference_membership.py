@@ -68,6 +68,23 @@ class SymmetricDifferenceMembership(SetMembership):
                 {n: _n_sub, x: element, A: _A_sub}, auto_simplify=False)
 
     @prover
+    def existential_unfold(self, **defaults_config):
+        '''
+        From self = [elem in (A1 ∆ A2 ∆ ... ∆ An)], and knowing or
+        assuming self to be True, derive and return:
+
+          Exists_{i in {1..n}}[elem in A_{i}].
+
+        '''
+        from . import membership_existential_unfolding
+        element = self.element
+        operands = self.domain.operands
+        _A_sub = operands
+        _n_sub = _A_sub.num_elements()
+        return membership_existential_unfolding.instantiate(
+                {n: _n_sub, x: element, A: _A_sub}, auto_simplify=False)
+
+    @prover
     def conclude(self, **defaults_config):
         '''
         Called on self = [elem in (A1 ∆ A2 ∆ ... ∆ An)], and knowing or
