@@ -1358,7 +1358,7 @@ class BufiloGeneratingGraphLiteral(Literal):
     def __init__(self, *, styles=None):
         Literal.__init__(
             self, string_format='G_{l v}', 
-            latex_format=r'G_{\ell v}^{\textsc{buf}}',
+            latex_format=r'G_{\ell \nu}^{\textsc{buf}}',
             styles=styles)
 
     @equality_prover('defined', 'define')
