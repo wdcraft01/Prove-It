@@ -10,7 +10,8 @@ from .equivalence import SetEquiv, SetNotEquiv
 from .unification import Union, UnionAll
 from .intersection import Intersect, IntersectAll
 from .subtraction import Difference
-from .symmetric_difference import SymmetricDifference
+from .symmetric_difference import (SymmetricDifference,
+                                   SymmetricDifferenceAll)
 from .comprehension import SetOfAll
 from .power_set import PowerSet
 from .cartesian_products import CartProd, CartExp

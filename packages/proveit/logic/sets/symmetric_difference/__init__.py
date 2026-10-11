@@ -1,4 +1,5 @@
 from .symmetric_difference import SymmetricDifference
+from .symmetric_difference_all import SymmetricDifferenceAll
 # from .union_all import UnionAll
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
