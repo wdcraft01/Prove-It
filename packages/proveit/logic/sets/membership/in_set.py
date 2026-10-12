@@ -119,7 +119,6 @@ class InSet(Relation):
         Future development might also call this method from the InSet.
         side_effects() method itself.
         '''
-
         from . import InSet
         from proveit.logic import Exists
         if not isinstance(judgment, Judgment):
@@ -139,6 +138,9 @@ class InSet(Relation):
                     "InSet instance_expr, but got judgment: "
                     f"{judgment}.")
         if not judgment.expr.instance_params.is_single():
+            return
+        if (judgment.expr.instance_params[0] != self.element):
+            # We need something of the form Exists(x, x in A)
             return
 
         from proveit import A
