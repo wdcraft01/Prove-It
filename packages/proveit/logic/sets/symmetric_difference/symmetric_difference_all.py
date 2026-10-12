@@ -1,6 +1,6 @@
 from proveit import (
-        equality_prover, ExprTuple, Lambda, Literal, Operation,
-        OperationOverInstances, single_or_composite_expression,
+        A, S, equality_prover, ExprTuple, Function, Lambda, Literal,
+        Operation, OperationOverInstances, single_or_composite_expression,
         TransRelUpdater, USE_DEFAULTS)
 from proveit import i, x, y, f, A, P, Q, S
 
@@ -68,70 +68,79 @@ class SymmetricDifferenceAll(OperationOverInstances):
     def shallow_simplification(self, *, must_evaluate=False,
                                **defaults_config):
         '''
-        Returns a proven simplification equation for this UnionAll
-        expression assuming the operands have been simplified,
-        according to the simplification directives as follows:
+        Returns a proven simplification equation for this
+        SymmetricDifferenceAll expression, assuming the operands have
+        been simplified, according to the simplification directives
+        as follows:
 
-        * Reduce to the EmptySet any UnionAll with EmptySet as the
-          index domain.
-
-        * Reduce to the EmptySet any UnionAll with EmptySet as the
-          instance expression.
-
-        * Reduce to constant A and UnionAll with constant A as the
-          instance expression.
+        * If the index set is empty, so is the symmetric difference
+          expression.
 
         '''
+        from proveit.logic import Equals
+        from proveit.logic.sets import EmptySet
 
-        # from proveit.logic import Equals
-        # from proveit.logic.sets import EmptySet
+        # Index set is empty
+        if hasattr(self, 'domain'):
+            if Equals(self.domain, EmptySet).readily_provable():
+                from . import sym_diff_all_def_base
+                if isinstance(self.instance_element, Function):
+                    _A_sub = self.instance_element.operator
+                else:
+                    _A_sub = self.instance_element
+                _S_sub = self.domain
+                return sym_diff_all_def_base.instantiate(
+                        {A:_A_sub, S:_S_sub}).derive_consequent()
 
-        # # UnionAll with empty indexing domain: always the empty set
-        # if (self.domain == EmptySet):
-        #     from . import union_all_empty_domain
-        #     _f_sub = Lambda(self.instance_param, self.instance_expr)
-        #     _i_relabel = self.instance_param
-        #     _inst = union_all_empty_domain.instantiate(
-        #             {f:_f_sub}, auto_simplify=False)
-        #     _inst_relabeled = _inst.inner_expr().lhs.operand.relabeled(
-        #             {i:_i_relabel})
-        #     return _inst_relabeled
+        # # Empty SymmetricDifference, ∆()
+        # if self.operands.num_entries() == 0:
+        #     from . import empty_sym_diff_eval
+        #     # SymmetricDifference() = EmptySet
+        #     return empty_sym_diff_eval
 
-        # # UnionAll of EmptySet is the EmptySet
-        # if (self.instance_expr == EmptySet):
-        #     from . import union_all_of_empty
-        #     _S_sub = self.domain
-        #     _i_relabel = self.instance_param
-        #     _inst = union_all_of_empty.instantiate(
-        #             {S:_S_sub}, auto_simplify=False)
-        #     _inst_relabeled = _inst.inner_expr().lhs.operand.relabeled(
-        #             {i:_i_relabel})
-        #     return _inst_relabeled
-
-        # # UnionAll of a constant A over non-empty domain is just A
-        # from proveit import free_vars
-        # from proveit.logic import NotEquals
-        # _instance_expr_vars = free_vars(self.instance_expr)
-        # _const_instance_expr = (
-        #     len(_instance_expr_vars.intersection([self.instance_param])) == 0)
-        # if (_const_instance_expr and
-        #     NotEquals(self.domain, EmptySet).readily_provable()):
-        #     from . import union_all_constant
-        #     _A_sub = self.instance_expr
-        #     _S_sub = self.domain
-        #     _i_relabel = self.instance_param
-        #     _inst = union_all_constant.instantiate(
-        #             {A:_A_sub, S:_S_sub}, auto_simplify=False)
-        #     _inst_relabeled = _inst.inner_expr().lhs.operand.relabeled(
-        #             {i:_i_relabel})
-        #     return _inst_relabeled
+        # # Unary SymmetricDifference, ∆(A)
+        # if self.operands.is_single():
+        #     # ∆(A) = A
+        #     from . import unary_sym_diff_reduction
+        #     _A_sub = self.operands[0]
+        #     return unary_sym_diff_reduction.instantiate({A:_A_sub})
 
         expr = self
-        # for convenience in updating our equation, beginning with
+        # for convenience in updating our equation, begining with
         # self = self
         eq = TransRelUpdater(self)
 
-        # # OTHER stuff to be developed here.
+        # Ungroup the expression (disassociate nested ∆s)
+        # if SymmetricDifference._simplification_directives_.ungroup:
+        #     idx = 0
+        #     length = expr.operands.num_entries() - 1
+        #     while idx < length:
+        #         # loop through all operands
+        #         if isinstance(expr.operands[idx], SymmetricDifference):
+        #             # if it is grouped, ungroup it
+        #             expr = eq.update(expr.disassociation(
+        #                         idx, preserve_all=True))
+        #         else:
+        #             idx += 1
+        #         length = expr.operands.num_entries()
 
-        # otherwise ...
+        # Likeness of operands is simply equality of operands ---
+        # i.e., two operands are "alike" if they are equal
+        # likeness_key_fn = lambda operand : operand
+
+        # Combine like operands: A ∆ A = EmptySet
+        # expr = eq.update(sorting_and_combining_like_operands(
+        #         expr, order_key_fn=lambda likeness_key : 0,
+        #         likeness_key_fn=likeness_key_fn,
+        #         preserve_likeness_keys=True, auto_simplify=True))
+
+        # if isinstance(expr, SymmetricDifference):
+        #     # Remove any remaining EmptySets
+        #     expr = eq.update(expr.empty_set_eliminations())
+
+        # if not isinstance(expr, SymmetricDifference):
+        #     # Simplified to something other than a SymmetricDifference.
+        #     # We're done here.
+        #     return eq.relation
+
         return eq.relation # Might simply be self = self.
