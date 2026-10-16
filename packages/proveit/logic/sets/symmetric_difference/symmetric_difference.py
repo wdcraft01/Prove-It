@@ -50,16 +50,23 @@ class SymmetricDifference(Operation):
                 SymmetricDifferenceNonmembership)
         return SymmetricDifferenceNonmembership(element, self)
 
-    # @relation_prover
-    # def deduce_superset_eq_relation(self, superset, **defaults_config):
-    #     # Check for special case of a union subset
-    #     # A_1 union ... union ... A_m \subseteq S
-    #     from . import union_inclusion
-    #     _A = self.operands
-    #     _m = _A.num_elements()
-    #     _S = superset
-    #     return union_inclusion.instantiate(
-    #                 {A:_A, m:_m, S:_S})
+    @relation_prover
+    def deduce_superset_eq_relation(self, superset, **defaults_config):
+        '''
+        Deduce and return that this SymmetricDifference is a
+        subseteq of the proposed superset,
+
+           (A_1 ∆ ... ∆ A_m) subseteq S
+
+        knowing or assuming that A1 subseteq S, ..., Am subseteq S.
+        '''
+
+        from . import sym_diff_inclusion
+        _A = self.operands
+        _m = _A.num_elements()
+        _S = superset
+        return sym_diff_inclusion.instantiate(
+                    {A:_A, m:_m, S:_S})
 
     @equality_prover('shallow_simplified', 'shallow_simplify')
     def shallow_simplification(self, *, must_evaluate=False,
