@@ -40,7 +40,7 @@ class IsDigraph(ClassMembership):
         '''
         yield self.derive_is_graph
         yield self.derive_size_in_natural
-        # yield self.unfold
+        yield self.unfold
 
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
