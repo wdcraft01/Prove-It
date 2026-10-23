@@ -1,5 +1,5 @@
 from proveit import (
-        b, e, f, i, l, n, s, A, B, D, G, equality_prover,
+        b, e, f, i, l, n, s, t, A, B, D, G, equality_prover,
         Function, Literal, NamedExprs, Operation, prover,
         relation_prover, TransRelUpdater)
 from proveit.logic import (
@@ -311,7 +311,7 @@ class Weight(Function):
         '''
         Function.__init__(
                 self, Weight._operator_, e, styles=styles)
-
+    
     @equality_prover('shallow_simplified', 'shallow_simplify')
     def shallow_simplification(self, *, must_evaluate=False,
                                **defaults_config):
@@ -2060,4 +2060,179 @@ class RealizationSetsMembership(SetMembership):
     #     _G_sub  = self.domain.operands[1]    # the graph context
     #     return realizations_membership_folding.instantiate(
     #             {G:_G_sub, n:_n_sub, e:_e_sub, f:element})
-        
+
+
+# ===========================================================================
+
+class IsSubsequence(Function):
+    '''
+    IsSubsequence(sub_seq, full_seq)
+    Represents the proposition that sequence sub_seq is a subsequence of full_seq.
+    '''
+    _operator_ = Literal(
+        string_format='IsSubsequence',
+        latex_format=r'\text{IsSubsequence}',
+        theory=__file__)
+
+    def __init__(self, sub_seq, full_seq, *, styles=None):
+        super().__init__(self._operator_, (sub_seq, full_seq), styles=styles)
+
+
+class SubRealizations(Function):
+    '''
+    SubRealizations(G, s, t, w_subset, w_rem)
+    
+    Renders in LaTeX as:
+      \text{SubRealizations}_{G}(s \to t, w_{\text{subset}}, w_{\text{rem}})
+
+    Represents the set of all fault subsequence realizations of the edges of
+    paths from node s to node t in graph G where the total weight of the fault
+    subsequence is w_subset and the total weight of the path is <= w_rem.
+    '''
+    _operator_ = Literal(
+        string_format='SubRealizations',
+        latex_format=r'\textrm{SubRealizations}',
+        theory=__file__)
+
+    def __init__(self, G, s, t, w_subset, w_rem, *, styles=None):
+        self.graph = G
+        self.start_node = s
+        self.end_node = t
+        self.w_subset = w_subset
+        self.w_rem = w_rem
+        super().__init__(
+            self._operator_, 
+            (G, s, t, w_subset, w_rem), 
+            styles=styles
+        )
+
+    def string(self, **kwargs):
+        return (f"SubRealizations_{self.graph.string()}("
+                f"{self.start_node.string()} -> {self.end_node.string()}, "
+                f"{self.w_subset.string()}, {self.w_rem.string()})")
+
+    def latex(self, **kwargs):
+        return (r'\textrm{SubRealizations}_{' + self.graph.latex() + r'}('
+                + self.start_node.latex() + r' \to ' + self.end_node.latex() + r', '
+                + self.w_subset.latex() + r', ' + self.w_rem.latex() + r')')
+
+    def membership_object(self, element):
+        return SubRealizationsMembership(element, self)
+
+
+from proveit import Variable
+w_s = Variable("w_s", r"w_{\text{subset}}", fence_when_forced=True)
+w_r = Variable("w_r", r"w_{\text{rem}}", fence_when_forced=True)
+f_seq = Variable("f_seq", r"\vec{f}", fence_when_forced=True)
+
+class SubRealizationsMembership(SetMembership):
+    '''
+    Defines methods that apply to membership in SubRealizations.
+    '''
+    def __init__(self, element, domain):
+        super().__init__(element, domain)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        Deduce and return the membership equality from bounded_subpath_realizations_def.
+        '''
+        from . import sub_realizations_membership_def
+        _G_sub = self.domain.graph
+        _s_sub = self.domain.start_node
+        _t_sub = self.domain.end_node
+        _ws_sub = self.domain.w_subset
+        _wr_sub = self.domain.w_rem
+        return sub_realizations_membership_def.instantiate(
+            {G: _G_sub, s: _s_sub, t: _t_sub, w_s: _ws_sub, w_r: _wr_sub, f_seq: self.element},
+            auto_simplify=False)
+
+
+class SubRealizationsCount(Function):
+    '''
+    SubRealizationsCount(s, w_subset, w_rem, G)
+    Appearing as N_G(s, w_subset, w_rem) in LaTeX outputs.
+    
+    Cardinality function:
+      N_G(s, w_subset, w_rem) = Card(SubRealizations(G, s, END, w_subset, w_rem))
+    '''
+    _operator_ = Literal(
+        string_format='N_G',
+        latex_format=r'N_{G}',
+        theory=__file__)
+
+    def __init__(self, s, w_subset, w_rem, G=None, *, styles=None):
+        from . import BufiloGeneratingGraph
+        self.graph = BufiloGeneratingGraph if G is None else G
+        self.source = s
+        self.w_subset = w_subset
+        self.w_rem = w_rem
+        operands = (s, w_subset, w_rem) if G is None else (s, w_subset, w_rem, G)
+        super().__init__(self._operator_, operands, styles=styles)
+
+    def string(self, **kwargs):
+        return f"N_{self.graph.string()}({self.source.string()}, {self.w_subset.string()}, {self.w_rem.string()})"
+
+    def latex(self, **kwargs):
+        return (r'N_{' + self.graph.latex() + r'}('
+                + self.source.latex() + r', '
+                + self.w_subset.latex() + r', '
+                + self.w_rem.latex() + r')')
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        Deduce N_G(s, w_s, w_r) = Card(SubRealizations(G, s, END, w_s, w_r))
+        '''
+        from . import sub_realizations_count_def
+        return sub_realizations_count_def.instantiate(
+            {s: self.source, w_s: self.w_subset, w_r: self.w_rem, G: self.graph},
+            auto_simplify=False)
+
+
+class PathExtEdges(Function):
+    '''
+    PathExtEdges(s, w_rem, G)
+    Appearing as \mathcal{E}_G(s, w_rem) in LaTeX outputs.
+    
+    Set of edges (u, v) in G that lie on an s-to-END path of weight w_rem.
+    '''
+    _operator_ = Literal(
+        string_format='E_G',
+        latex_format=r'\mathcal{E}_{G}',
+        theory=__file__)
+
+    def __init__(self, s, w_rem, G=None, *, styles=None):
+        from . import BufiloGeneratingGraph
+        self.graph = BufiloGeneratingGraph if G is None else G
+        self.source = s
+        self.w_rem = w_rem
+        operands = (s, w_rem) if G is None else (s, w_rem, G)
+        super().__init__(self._operator_, operands, styles=styles)
+
+    def latex(self, **kwargs):
+        return (r'\mathcal{E}_{' + self.graph.latex() + r'}('
+                + self.source.latex() + r', ' + self.w_rem.latex() + r')')
+
+
+class GraphDistance(Function):
+    '''
+    GraphDistance(u, v, G), appearing as d_G(u, v) in LaTeX outputs,
+    the shortest path distance from u to v in G with respect to edge weights.
+    '''
+    _operator_ = Literal(
+        string_format='d',
+        latex_format=r'd',
+        theory=__file__)
+
+    def __init__(self, u, v, G=None, *, styles=None):
+        from . import BufiloGeneratingGraph
+        self.graph = BufiloGeneratingGraph if G is None else G
+        self.u = u
+        self.v = v
+        operands = (u, v) if G is None else (u, v, G)
+        super().__init__(self._operator_, operands, styles=styles)
+
+    def latex(self, **kwargs):
+        return (r'd_{' + self.graph.latex() + r'}('
+                + self.u.latex() + r', ' + self.v.latex() + r')')

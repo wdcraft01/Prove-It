@@ -9,7 +9,8 @@ from .bufilo import (
         ObservableSet, ObservableSetsLiteral, Realizations,
         RealizationSets, RealizationsMembership, RealizationSetsMembership,
         State, StateAction, StatesLiteral, StatesMembership,
-        StateSyndrome, SyndromesLiteral, SyndromesMembership, Weight)
+        StateSyndrome, SyndromesLiteral, SyndromesMembership, Weight,
+        IsSubsequence, SubRealizations, SubRealizationsMembership, SubRealizationsCount, PathExtEdges, GraphDistance)
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
 #  Make additions above, or add to sys.modules[__name__].__dict__ below.
