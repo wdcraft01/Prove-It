@@ -23,6 +23,8 @@ from .walks import (BeginVertex, BeginningVertex, Circuits,
           EdgeSequenceOf, EdgeSet, EndVertex, EndingVertex, EndVertices,
           EulerianCircuits, EulerianTrails, IsPath, IsWalk,
           Paths, PathsOf, Trails, TrailsOf, WalkLength, Walks, WalksOf)
+from .digraphs import Digraph, IsDigraph
+from .undirected_graphs import IsUndirectedGraph, UndirectedGraph
 
 
 # KEEP THE FOLLOWING IN __init__.py FOR THEORY PACKAGES.
