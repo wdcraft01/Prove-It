@@ -165,10 +165,6 @@ class AdjacentVertices(Function):
                 f"Graph {self.graph} not readily provable to be "
                 f"either a digraph or an undirected graph. ")
 
-    # _readily_provable():
-    # IsDigraph(G).readily_probable AND (u,v) in Edges(G).readily_provable()
-    # OR the other type of graph
-
     @prover
     def unfold(self, **defaults_config):
         '''
@@ -226,6 +222,17 @@ class AdjacentVertices(Function):
                 f"Graph {self.graph} not readily provable to be "
                 f"either a digraph or an undirected graph. ")
 
+    def _readily_provable(self, **kwargs):
+        from proveit.graphs import Edges, IsDigraph, IsUndirectedGraph
+        _G = self.graph
+        _u, _v = self.vertices
+        digraph_result = (IsDigraph(_G).readily_provable(**kwargs) and
+                InSet((_u, _v), Edges(_G)).readily_provable(**kwargs))
+        undigraph_result = (
+                IsUndirectedGraph(_G).readily_provable(**kwargs) and
+                (InSet(Set(_u, _v), Edges(_G)).
+                    readily_provable(**kwargs)))
+        return (digraph_result or undigraph_result)
 
 # See further below for most recent dev attempt using an Operation
 # approach
