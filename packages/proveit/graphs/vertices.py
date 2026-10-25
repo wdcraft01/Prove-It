@@ -1,5 +1,6 @@
 from proveit import (u, v, G, equality_prover, Expression, ExprTuple,
-                     Function, Literal, Operation)
+                     Function, Literal, Operation, prover,
+                     UnsatisfiedPrerequisites)
 
 class Vertices(Function):
     '''
@@ -109,16 +110,129 @@ class AdjacentVertices(Function):
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
         '''
-        From self = AdjacentVertices(u, v, G), deduce and return the
-        equality: AdjacentVertices(u, v, G) = {u, v} in Edges(G).
-        '''
-        from . import adjacent_vertices_def
-        _u_sub = self.operands[0]
-        _v_sub = self.operands[1]
-        _G_sub = self.operands[2]
-        return adjacent_vertices_def.instantiate(
-            {u:_u_sub, v:_v_sub, G:_G_sub}, auto_simplify=False)
+        From self = AdjacentVertices(u, v, G), deduce and return one
+        of the following equalities, depending on G being either an
+        undirected graph or a digraph:
 
+          * For G an undirected graph:
+            AdjacentVertices(u, v, G) = {u, v} in Edges(G)
+
+          * For G a digraph:
+            AdjacentVertices(u, v, G) = (u, v) in Edges(G)
+
+        '''
+        from proveit.graphs import IsDigraph, IsUndirectedGraph
+        if IsDigraph(self.graph).readily_provable():
+            from .digraphs import adjacent_vertices_digraph_def
+            _G_sub = self.graph
+            _u_sub, _v_sub = self.vertices
+            return adjacent_vertices_digraph_def.instantiate(
+                    {G:_G_sub, u:_u_sub, v:_v_sub})
+        if IsUndirectedGraph(self.graph).readily_provable():
+            from .undirected_graphs import (
+                    adjacent_vertices_undirected_graph_def)
+            _G_sub = self.graph
+            _u_sub, _v_sub = self.vertices
+            return (adjacent_vertices_undirected_graph_def.
+                    instantiate({G:_G_sub, u:_u_sub, v:_v_sub}))
+        raise UnsatisfiedPrerequisites(
+                f"Graph {self.graph} not readily provable to be "
+                f"either a digraph or an undirected graph. ")
+
+    def as_defined(self, assumptions):
+        '''
+        From self = AdjacentVertices(u, v, G), return one of the
+        following Expressions (not Judgments), depending on the
+        graph G being a digraph vs. an undirected graph:
+
+          * {u, v} in Edges(G) (for G an undirected graph)
+          * (u, v) in Edges(G) (for G a digraph)
+
+        '''
+        from proveit.logic import InSet
+        from proveit.logic.sets import Set
+        from proveit.graphs import Edges
+        _G_sub = self.graph
+        _u_sub, _v_sub = self.vertices
+        from proveit.graphs import IsDigraph, IsUndirectedGraph
+        if IsDigraph(self.graph).readily_provable(
+                assumptions=assumptions):
+            return InSet((_u_sub, _v_sub), Edges(_G_sub))
+        if IsUndirectedGraph(self.graph).readily_provable(
+                assumptions=assumptions):
+            return InSet(Set(_u_sub, _v_sub), Edges(_G_sub))
+        raise UnsatisfiedPrerequisites(
+                f"Graph {self.graph} not readily provable to be "
+                f"either a digraph or an undirected graph. ")
+
+    @prover
+    def unfold(self, **defaults_config):
+        '''
+        Called on self = AdjacentVertices(u, v, G), and knowing or
+        assuming self, and that u, v are both in Vertices(G), derive
+        and return one of the following:
+
+          * {u, v} in Edges(G) (when G is an undirected graph)
+          * (u, v) in Edges(G) (when G is a digraph)
+        '''
+        from proveit.graphs import IsDigraph, IsUndirectedGraph
+        if IsDigraph(self.graph).readily_provable():
+            from .digraphs import adjacent_vertices_digraph_unfolding
+            _G_sub = self.graph
+            _u_sub, _v_sub = self.vertices
+            return adjacent_vertices_digraph_unfolding.instantiate(
+                    {G:_G_sub, u:_u_sub, v:_v_sub})
+        if IsUndirectedGraph(self.graph).readily_provable():
+            from .undirected_graphs import (
+                    adjacent_vertices_undirected_graph_unfolding)
+            _G_sub = self.graph
+            _u_sub, _v_sub = self.vertices
+            return (adjacent_vertices_undirected_graph_unfolding.
+                    instantiate({G:_G_sub, u:_u_sub, v:_v_sub}))
+        raise UnsatisfiedPrerequisites(
+                f"Graph {self.graph} not readily provable to be "
+                f"either a digraph or an undirected graph. ")
+
+    @prover
+    def conclude(self, **defaults_config):
+        '''
+        Called on self = AdjacentVertices(u, v, G), and knowing or
+        assuming that either:
+
+             * G is an undirected graph and {u, v} in Edges(G)
+          OR * G is a digraph and (u, v) in Edges(G)
+
+        derive and return self.
+        '''
+        from proveit.graphs import IsDigraph, IsUndirectedGraph
+        if IsDigraph(self.graph).readily_provable():
+            from .digraphs import adjacent_vertices_digraph_folding
+            _G_sub = self.graph
+            _u_sub, _v_sub = self.vertices
+            return adjacent_vertices_digraph_folding.instantiate(
+                    {G:_G_sub, u:_u_sub, v:_v_sub})
+        if IsUndirectedGraph(self.graph).readily_provable():
+            from .undirected_graphs import (
+                    adjacent_vertices_undirected_graph_folding)
+            _G_sub = self.graph
+            _u_sub, _v_sub = self.vertices
+            return (adjacent_vertices_undirected_graph_folding.
+                    instantiate({G:_G_sub, u:_u_sub, v:_v_sub}))
+        raise UnsatisfiedPrerequisites(
+                f"Graph {self.graph} not readily provable to be "
+                f"either a digraph or an undirected graph. ")
+
+    def _readily_provable(self, **kwargs):
+        from proveit.graphs import Edges, IsDigraph, IsUndirectedGraph
+        _G = self.graph
+        _u, _v = self.vertices
+        digraph_result = (IsDigraph(_G).readily_provable(**kwargs) and
+                InSet((_u, _v), Edges(_G)).readily_provable(**kwargs))
+        undigraph_result = (
+                IsUndirectedGraph(_G).readily_provable(**kwargs) and
+                (InSet(Set(_u, _v), Edges(_G)).
+                    readily_provable(**kwargs)))
+        return (digraph_result or undigraph_result)
 
 # See further below for most recent dev attempt using an Operation
 # approach
