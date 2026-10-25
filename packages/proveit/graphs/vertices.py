@@ -223,6 +223,8 @@ class AdjacentVertices(Function):
                 f"either a digraph or an undirected graph. ")
 
     def _readily_provable(self, **kwargs):
+        from proveit.logic import InSet
+        from proveit.logic.sets import Set
         from proveit.graphs import Edges, IsDigraph, IsUndirectedGraph
         _G = self.graph
         _u, _v = self.vertices
