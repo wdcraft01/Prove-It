@@ -1,4 +1,4 @@
-from proveit import ( n, u, v, G, equality_prover, ExprTuple,
+from proveit import ( n, u, v, G, W, equality_prover, ExprTuple,
                       Function, Literal, NamedExprs, Operation )
 from proveit.graphs import Size
 
@@ -706,34 +706,76 @@ class Cycles(Function):
 
 class WalkLength(Function):
     '''
-    WalkLength(W), denoted ||W||, represents the length of walk W
-    (where W could be a walk or one of the special cases of a
-    trail, path, circuit, etc., all of which area also walks),
+    WalkLength(W, G), denoted ||W||, represents the length of walk W
+    in graph G (where W could be a walk or one of the special cases
+    of a trail, path, circuit, etc., all of which are also walks),
     equivalent to the number of edges crossed during the walk
     (including multiplicities). For example, given a walk
-    W in Walks(5, G) in graph G with vertex sequence
-        S = (a, b, c, b, d, e),
-    we have WalkLength(W) = ||W|| = 5. Notice that ||W|| is always
-    equal to len(S) - 1, where len(S) is the length of sequence S.
+    W = (a, b, c, d, e) in WalksOf(G), we have:
+
+        WalkLength(W, G) = ||W||_{G} = 5.
+
+    Notice that ||W|| is always equal to len(S) - 1, where
+    len(S) is the length of sequence S.
     '''
 
     # literal operator of the WalkLength operation.
     _operator_ = Literal(string_format='Len', theory=__file__)
 
-    def __init__(self, W, *, styles=None):
+    def __init__(self, W, G, *, styles=None):
         '''
-        Represent WalkLength(W), the length of walk W, equivalent
-        to the number of edges traveled during walk W.
+        Represent WalkLength(W, G), the length of walk W in graph G,
+        equivalent to the number of edges traveled during walk W.
         '''
-        self.walk = W
+        self.walk  = W
+        self.graph = G
         Function.__init__(
-                self, WalkLength._operator_, W, styles=styles)
+                self, WalkLength._operator_, (W, G), styles=styles)
 
     def string(self, **kwargs):
-        return '||' + self.operand.string() + '||'
+        return (
+                '||' + self.operands[0].string() + '||_{' +
+                self.operands[1].string() + '}')
 
     def latex(self, **kwargs):
-        return r'\left\|' + self.operand.latex() + r'\right\|'
+        return (r'\left\|' + self.operands[0].latex() +
+                    r'\right\|_{' + self.operands[1].latex() + r'}')
+
+    @equality_prover('computed', 'compute')
+    def computation(self, **defaults_config):
+        '''
+        Compute the value of this WalkLength expression, returning
+        the equality between self and the expression for its computed
+        value. Examples:
+
+            ||(a, b, c)|| = 2
+            ||(x_1, ..., x_n, y)|| = n
+            ||(f(i), ..., f(j), x_1, ..., x_n)|| = (j-i) + (n-1)
+            ||x|| = ||x||
+
+        In the last case, the 'x' represents an unknown tuple,
+        so there is not anything we can do to compute it.
+        This computation() method depends on the Len.computation()
+        method, where Len(e) represent the length of an ExprTuple e.
+        '''
+
+        _walk = self.walk
+        _graph = self.graph
+        if not isinstance(_walk, ExprTuple):
+            # Don't know how to compute the length if the walk is
+            # not a tuple. For example, it could be a variable that
+            # represent a tuple.  So just return the self equality.
+            from proveit.logic import Equals
+            return Equals(self, self).conclude_via_reflexivity()
+
+        from proveit.graphs.walks import walk_length_def
+        _G_sub = _graph
+        _W_sub = _walk
+        # First: compute the walk length as Len(W) - 1
+        walk_length_eq = (
+                walk_length_def.instantiate({G:_G_sub, W:_W_sub}))
+        # Then: compute the Len(W) component and return
+        return walk_length_eq.inner_expr().rhs.operands[0].compute()
 
 
 class ClosedWalk(Function):
@@ -984,8 +1026,10 @@ class EndVertices(Function):
         '''
         From self = [EndVertices(W)], deduce and return
         the equality:
-            [EndVertices(W)]
-             = {BeginningVertex(W) = EndingVertex(W)}
+
+            EndVertices(W) = {W(0), W(k)}
+
+        where k is the number of edges in the walk W.
         '''
         from . import endvertices_def
         from proveit import k, G, W
