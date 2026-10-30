@@ -1,5 +1,5 @@
 from typing import Literal as TypeLiteral
-from proveit import (a, b, i, k, u, v, C, G, P, S, T, W,
+from proveit import (a, b, i, k, l, u, v, C, G, P, S, T, W,
         equality_prover, Function, NamedExprs, prover, relation_prover)
 from proveit.logic import (And, Equals, Forall, InSet, SetMembership,
             SetNonmembership)
@@ -104,8 +104,9 @@ class WalksOfMembership(SetMembership):
         _W_sub = self.element
         _G_sub = self.domain.graph
 
-        _has_begin = hasattr(self.domain, 'begin')
-        _has_end   = hasattr(self.domain, 'end')
+        _has_begin  = hasattr(self.domain, 'begin')
+        _has_end    = hasattr(self.domain, 'end')
+        _has_length = hasattr(self.domain, 'length')
 
         if (_has_begin and _has_end):
             from . import walks_of_graph_membership_with_ends_exists_def
@@ -114,6 +115,32 @@ class WalksOfMembership(SetMembership):
             return walks_of_graph_membership_with_ends_exists_def.instantiate(
                     {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if (_has_begin and _has_length):
+            _a_sub = self.domain.begin
+            _l_sub = self.domain.length
+            if idx == 1:
+                from . import (
+                    walks_of_graph_membership_with_begin_and_len_exists_def)
+                return (
+                    walks_of_graph_membership_with_begin_and_len_exists_def.
+                    instantiate(
+                        {G:_G_sub, W:_W_sub, a:_a_sub, l:_l_sub},
+                        auto_simplify=False))
+
+            elif idx == 0:
+                from . import (
+                    walks_of_membership_with_begin_and_len_exists_def_idx_0)
+                return (
+                    walks_of_membership_with_begin_and_len_exists_def_idx_0.
+                    instantiate(
+                        {G:_G_sub, W:_W_sub, a:_a_sub, l:_l_sub},
+                        auto_simplify=False))
+
+            else:
+                raise ValueError(
+                    "In calling WalksOfMembership.existential_definition(), "
+                    f"idx = {idx} instead of 0 or 1.")
 
         if _has_begin:
             if idx == 1:
@@ -226,8 +253,9 @@ class WalksOfMembership(SetMembership):
         _W_sub = self.element
         _G_sub = self.domain.graph
 
-        _has_begin = hasattr(self.domain, 'begin')
-        _has_end   = hasattr(self.domain, 'end')
+        _has_begin  = hasattr(self.domain, 'begin')
+        _has_end    = hasattr(self.domain, 'end')
+        _has_length = hasattr(self.domain, 'length')
 
         if (_has_begin and _has_end):
             from . import walks_of_graph_membership_with_ends_exists_unfolding
@@ -236,6 +264,32 @@ class WalksOfMembership(SetMembership):
             return walks_of_graph_membership_with_ends_exists_unfolding.instantiate(
                     {G:_G_sub, W:_W_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if (_has_begin and _has_length):
+            _a_sub = self.domain.begin
+            _l_sub = self.domain.length
+            if idx == 1:
+                from . import (
+                    walks_of_graph_membership_with_begin_and_len_exists_unfolding)
+                return (
+                    walks_of_graph_membership_with_begin_and_len_exists_unfolding.
+                    instantiate(
+                        {G:_G_sub, W:_W_sub, a:_a_sub, l:_l_sub},
+                        auto_simplify=False))
+
+            elif idx == 0:
+                from . import (
+                    walks_of_membership_with_begin_and_len_exists_unfolding_idx_0)
+                return (
+                    walks_of_membership_with_begin_and_len_exists_unfolding_idx_0.
+                    instantiate(
+                        {G:_G_sub, W:_W_sub, a:_a_sub, l:_l_sub},
+                        auto_simplify=False))
+
+            else:
+                raise ValueError(
+                    "In calling WalksOfMembership.existential_definition(), "
+                    f"idx = {idx} instead of 0 or 1.")
 
         if _has_begin:
             if idx == 1:
@@ -1027,8 +1081,9 @@ class PathsOfMembership(SetMembership):
         _P_sub = self.element
         _G_sub = self.domain.graph
 
-        _has_begin = hasattr(self.domain, 'begin')
-        _has_end   = hasattr(self.domain, 'end')
+        _has_begin  = hasattr(self.domain, 'begin')
+        _has_end    = hasattr(self.domain, 'end')
+        _has_length = hasattr(self.domain, 'length')
 
         if (_has_begin and _has_end):
             from . import paths_of_graph_with_ends_membership_unfolding
@@ -1037,6 +1092,17 @@ class PathsOfMembership(SetMembership):
             return paths_of_graph_with_ends_membership_unfolding.instantiate(
                     {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if (_has_begin and _has_length):
+            from . import (
+                paths_of_graph_with_begin_and_len_membership_unfolding)
+            _a_sub = self.domain.begin
+            _l_sub = self.domain.length
+            return (
+                paths_of_graph_with_begin_and_len_membership_unfolding.
+                    instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub, l:_l_sub},
+                    auto_simplify=False))
 
         if _has_begin:
             from . import paths_of_graph_with_begin_membership_unfolding
