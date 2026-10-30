@@ -73,6 +73,9 @@ class WalksOf(Operation):
 
     Updated 20260908 to use WalksOf(G, [begin=a], [end=b]) signature
     instead. 
+
+    Updated 20261029 to use WalksOf(G, [begin=a], [end=b], [length=c])
+    signature instead.
     '''
 
     # the literal operator of the WalksOf operation
@@ -80,12 +83,14 @@ class WalksOf(Operation):
                          latex_format=r'\textrm{WalksOf}',
                          theory=__file__)
 
-    def __init__(self, graph, *, begin=None, end=None,
+    def __init__(self, graph, *, begin=None, end=None, length=None,
                  styles=None):
         '''
         Initialize a representation of the WalksOf(G) (the set of all
-        walks in graph G) or a representation of WalksOf(G, a->b) (the
-        set of all a-b walks in graph G).
+        walks in graph G) or one of its variations, such as
+        WalksOf(G, a->b) (the set of all a-b walks in graph G) or
+        WalksOf(G, a->, k) (the set of all walks in G beginning at
+        vertex a and having length k), etc.
         '''
 
         items = [("graph", graph)]
@@ -95,10 +100,14 @@ class WalksOf(Operation):
             items.append(("begin", begin))
         if end is not None:
             items.append(("end", end))
+        if length is not None:
+            items.append(("length", length))
 
         operands = NamedExprs(*items)
 
-        super().__init__(self._operator_, operands=operands, styles=styles)
+        super().__init__(self._operator_,
+                         operands=operands,
+                         styles=styles)
 
     def string(self, **kwargs):
         string_str = 'WalksOf('
@@ -117,6 +126,8 @@ class WalksOf(Operation):
             string_str += "->"
         if hasattr(self, 'end'):
             string_str += f" {self.end.string(**kwargs)}"
+        if hasattr(self, 'length'):
+            string_str += f", len {self.length.string(**kwargs)}"
         string_str += r')'
         return string_str
 
@@ -137,6 +148,9 @@ class WalksOf(Operation):
             latex_str += r" \to"
         if hasattr(self, 'end'):
             latex_str += f" {self.end.latex(**kwargs)}"
+        if hasattr(self, 'length'):
+            latex_str += (r", \textrm{len } "
+                         + f" {self.length.latex(**kwargs)}")
 
         latex_str += r')'
         return latex_str
@@ -289,10 +303,10 @@ class Trails(Function):
 
 class TrailsOf(Operation):
     '''
-    TrailsOf(G, [length=k], [begin=u], [end=v]) represents the set of
-    trails in graph G. Optional constraints can restrict membership
-    to walks of a specific length k, and/or to walks with specific
-    begin/end vertices u and v.
+    TrailsOf(G, [begin=u], [end=v], [length=k])
+    represents the set of trails in graph G. Optional constraints
+    can restrict membership to walks of a specific length k, and/or
+    to walks with specific begin/end vertices u and v.
 
     A trail T in graph G is a special case of a walk: a walk in which
     no edge is repeated (see the WalksOf class defined above for
@@ -307,25 +321,25 @@ class TrailsOf(Operation):
                          latex_format=r'\textrm{TrailsOf}',
                          theory=__file__)
 
-    def __init__(self, graph, length=None, begin=None, end=None,
-                 *, styles=None):
+    def __init__(self, graph, *, begin=None, end=None, length=None,
+                 styles=None):
 
         items = [("graph", graph)]
-        if length is not None:
-            items.append(("length", length))
         if begin is not None:
             items.append(("begin", begin))
         if end is not None:
             items.append(("end", end))
+        if length is not None:
+            items.append(("length", length))
 
         operands = NamedExprs(*items)
 
-        super().__init__(self._operator_, operands=operands, styles=styles)
+        super().__init__(self._operator_,
+                         operands=operands,
+                         styles=styles)
 
     def string(self, **kwargs):
         string_str = 'TrailsOf(' + self.graph.string(**kwargs)
-        if hasattr(self, 'length'):
-            string_str += ', ' + self.length.string(**kwargs)
         begin = getattr(self, 'begin', None)
         end = getattr(self, 'end', None)
         if begin and end:
@@ -335,13 +349,14 @@ class TrailsOf(Operation):
             string_str += f", {self.begin.string(**kwargs)} ->"
         elif end:
             string_str += f", -> {self.end.string(**kwargs)}"
+        if hasattr(self, 'length'):
+            string_str += ', len ' + self.length.string(**kwargs)
         string_str += r')'
         return string_str
 
     def latex(self, **kwargs):
         latex_str = r'\textrm{TrailsOf}(' + self.graph.latex(**kwargs)
-        if hasattr(self, 'length'):
-            latex_str += r', ' + self.length.latex(**kwargs)
+        
         begin = getattr(self, 'begin', None)
         end = getattr(self, 'end', None)
         if begin and end:
@@ -350,6 +365,8 @@ class TrailsOf(Operation):
             latex_str += f", {self.begin.latex(**kwargs)} \\to"
         elif end:
             latex_str += f", \\to {self.end.latex(**kwargs)}"
+        if hasattr(self, 'length'):
+            latex_str += r', \textrm{len }' + self.length.latex(**kwargs)
         latex_str += r')'
         return latex_str
 
@@ -421,18 +438,15 @@ class Paths(Function):
 
 class PathsOf(Operation):
     '''
-    PathsOf(G, [ends=(a, b)]) represents the set of paths in graph G.
-    Optional 'ends' constraint can restrict membership to a-b paths,
-    that is, paths with endvertices {a, b}.
-    Generally, a path W in a simple undirected graph G is a walk in
+    PathsOf(G, [begin=a], [end=b], [length=k]) represents the set
+    of paths in graph G, with optional begin, end, and length
+    constraints.
+    Generally, a path P in a simple undirected graph G is a walk in
     which no vertex (and thus no edge) is repeated. See the WalksOf()
     class above for a description of a walk in a graph G.
 
     NOTE: PathsOf(G) is intended to eventually replace the original
           Paths(k, G) class.
-
-    Updated 20260908 to use PathsOf(G, [begin=a], [end=b]) signature
-    instead. 
     '''
 
     # the literal operator of the PathsOf operation
@@ -459,7 +473,8 @@ class PathsOf(Operation):
     # working 20260908 re: BUFILO HERD project
     # def __init__(self, graph, *, ends: tuple | None = None,
     #              styles=None):
-    def __init__(self, graph, *, begin=None, end=None, styles=None):
+    def __init__(self, graph, *, begin=None, end=None, length=None,
+                 styles=None):
         '''
         Initialize a representation of PathsOf(G) (the set of all
         paths in graph G) or a representation of PathsOf(G, a->b) (the
@@ -473,10 +488,14 @@ class PathsOf(Operation):
             items.append(("begin", begin))
         if end is not None:
             items.append(("end", end))
+        if length is not None:
+            items.append(("length", length))
 
         operands = NamedExprs(*items)
 
-        super().__init__(self._operator_, operands=operands, styles=styles)
+        super().__init__(self._operator_,
+                         operands=operands,
+                         styles=styles)
 
     def string(self, **kwargs):
         string_str = 'PathsOf('
@@ -495,6 +514,8 @@ class PathsOf(Operation):
             string_str += "->"
         if hasattr(self, 'end'):
             string_str += f" {self.end.string(**kwargs)}"
+        if hasattr(self, 'length'):
+            string_str += f", len {self.length.string(**kwargs)}"
         string_str += r')'
         return string_str
 
@@ -516,6 +537,9 @@ class PathsOf(Operation):
             latex_str += r" \to"
         if hasattr(self, 'end'):
             latex_str += f" {self.end.latex(**kwargs)}"
+        if hasattr(self, 'length'):
+            latex_str += (r", \textrm{len } "
+                         + f" {self.length.latex(**kwargs)}")
 
         latex_str += r')'
         return latex_str
