@@ -1143,6 +1143,9 @@ class PathsOfMembership(SetMembership):
 
         Called on self = [(v) in PathsOf(G)], and knowing or assuming
         that v in Vertices(G), derive and return self.
+
+        Variations also include cases when PathsOf(G) include a 
+        length parameter, such as PathsOf(G, length=k).
         '''
         from proveit import ExprTuple
         
@@ -1153,6 +1156,7 @@ class PathsOfMembership(SetMembership):
                           and _P_sub.is_single())
         _has_begin = hasattr(self.domain, 'begin')
         _has_end   = hasattr(self.domain, 'end')
+        _has_length = hasattr(self.domain, 'length')
 
         if (_has_begin and _has_end):
             if _single_vertex:
@@ -1166,6 +1170,20 @@ class PathsOfMembership(SetMembership):
             return paths_of_graph_with_ends_membership_folding.instantiate(
                     {G:_G_sub, P:_P_sub, a:_a_sub, b:_b_sub},
                     auto_simplify=False)
+
+        if (_has_begin and _has_length):
+            if _single_vertex:
+                from . import vertex_is_path_with_begin_and_len_0
+                _v_sub = _P_sub[0]
+                return vertex_is_path_with_begin_and_len_0.instantiate(
+                    {G:_G_sub, v:_v_sub})
+            from . import paths_of_graph_with_begin_and_len_membership_folding
+            _a_sub = self.domain.begin
+            _l_sub = self.domain.length
+            return (paths_of_graph_with_begin_and_len_membership_folding.
+                    instantiate(
+                    {G:_G_sub, P:_P_sub, a:_a_sub, l:_l_sub},
+                    auto_simplify=False))
 
         if _has_begin:
             if _single_vertex:
