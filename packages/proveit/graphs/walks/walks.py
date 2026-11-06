@@ -1,5 +1,6 @@
 from proveit import ( n, u, v, G, W, equality_prover, ExprTuple,
-                      Function, Literal, NamedExprs, Operation )
+                      ExprRange, Function, Literal, NamedExprs,
+                      Operation )
 from proveit.graphs import Size
 
 class Walks(Function):
@@ -1114,28 +1115,40 @@ class EndingVertex(Function):
                 self, EndingVertex._operator_, W, styles=styles)
 
 
-class BeginVertex(Function):
+class BeginVertex(Operation):
     '''
     BeginVertex(S) represents the beginning vertex of a sequence S of
     vertices in the form of a VertexSequence. Given a VertexSequence
     such as S = VertexSeq(a, b, c, d), then BeginVertex(S) would
-    represent (but not literally return or evaluate to) the vertex 'a'. 
+    represent (but not literally return or evaluate to) the vertex 'a'.
+    This was later generalized to consider any ordered tuple or
+    ExprTuple of items to be considered a vertex sequence.
 
     '''
 
-    # the literal operator of the BeginningVertex(W) operation
+    # the literal operator of the BeginVertex(W) operation
     _operator_ = Literal(string_format='BeginVertex',
                          latex_format=r'\textrm{BeginVertex}',
                          theory=__file__)
 
-    def __init__(self, vertex_seq, *, styles=None):
+    def __init__(self, operands, *, styles=None):
         '''
         Represent BeginVertex(vertex_seq), the beginning vertex of
         the VertexSequence vertex_seq.
         '''
-        self.seq = vertex_seq
-        Function.__init__(
-                self, BeginVertex._operator_, vertex_seq, styles=styles)
+        
+        if isinstance(operands, ExprRange):
+            # An ExprRange cannot represent an ExprTuple,
+            # so we must want this wrapped in an ExprTuple.
+            operands = ExprTuple(operands)
+        self.seq = operands
+
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    @staticmethod
+    def extract_init_arg_value(arg_name, operator, operands):
+        if arg_name == 'operands':
+            return operands
 
     def formatted(self, format_type, **kwargs):
         # (1) Get the std formatting from the operand VertexSequence
@@ -1151,8 +1164,68 @@ class BeginVertex(Function):
     def latex(self, **kwargs):
         return self.formatted('latex', **kwargs)
 
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self as [BeginVertex((v1, v2, ..., vn))], deduce and
+        return the equality:
 
-class EndVertex(Function):
+            BeginVertex((v1, v2, ..., vn)) = v1
+
+        The implementation deals with several simple special cases
+        in which the walk is an explicit ExprTuple, returning a
+        NotImplementedError otherwise.
+
+        '''
+        from proveit import i, v, IndexedVar
+        from proveit.numbers import one
+        from . import begin_vertex_def
+
+        if isinstance(self.seq, ExprTuple):
+            # walk = ExprTuple(ExprRange())
+            if (self.seq.num_entries() == 1
+                    and isinstance(self.seq[0], ExprRange)):
+                _n_sub = self.seq[0].num_elements()
+                _v_sub = self.seq[0].body.var
+                return begin_vertex_def.instantiate({n:_n_sub, v:_v_sub})
+
+            # walk = ExprTuple(v) (i.e., a trivial walk with 1 vertex)
+            if self.seq.is_single():
+                _n_sub = self.seq.num_elements()
+                _v_to_replace = ExprTuple(IndexedVar(v, one))
+                _v_sub = self.seq
+                return begin_vertex_def.instantiate(
+                        {n:_n_sub, _v_to_replace:_v_sub})
+
+            # walk = ExprTuple(a, b, c), or similar
+            # i.e. walk is an explicit, finite ExprTuple, with no
+            # explicit ExprRange entries
+            if not self.seq.contains_range():
+                _n_sub = self.seq.num_elements()
+                tuple_to_replace_01 = (
+                    ExprTuple(ExprRange(i, IndexedVar(v, i), one, _n_sub)))
+                tuple_to_replace_02 = (
+                    tuple_to_replace_01[0].partition(one).rhs)
+                _v_sub = self.seq
+                try:
+                    return begin_vertex_def.instantiate(
+                        {n:_n_sub, tuple_to_replace_01:_v_sub,
+                         tuple_to_replace_02:_v_sub})
+                except Exception as the_exception:
+                    # try again
+                    return begin_vertex_def.instantiate(
+                        {n:_n_sub, tuple_to_replace_01:_v_sub,
+                         tuple_to_replace_02:_v_sub})
+
+        raise NotImplementedError(
+                "BeginVertex(W).definition() is only implemented for "
+                "some simple special cases in which the walk W is "
+                "is given as an explicit ExprTuple. For more complex "
+                "cases, consider a manual instantiation of the walks "
+                "package 'begin_vertex_def' theorem. ")
+
+
+class EndVertex(Operation):
     '''
     EndVertex(S) represents the ending vertex of a sequence S of
     vertices in the form of a VertexSequence. Given a VertexSequence
@@ -1166,14 +1239,24 @@ class EndVertex(Function):
                          latex_format=r'\textrm{EndVertex}',
                          theory=__file__)
 
-    def __init__(self, vertex_seq, *, styles=None):
+    def __init__(self, operands, *, styles=None):
         '''
         Represent EndVertex(vertex_seq), the ending vertex of
         the VertexSequence vertex_seq.
         '''
-        self.seq = vertex_seq
-        Function.__init__(
-                self, EndVertex._operator_, vertex_seq, styles=styles)
+        
+        if isinstance(operands, ExprRange):
+            # An ExprRange cannot represent an ExprTuple,
+            # so we must want this wrapped in an ExprTuple.
+            operands = ExprTuple(operands)
+        self.seq = operands
+
+        super().__init__(self._operator_, operands=operands, styles=styles)
+
+    @staticmethod
+    def extract_init_arg_value(arg_name, operator, operands):
+        if arg_name == 'operands':
+            return operands
 
     def formatted(self, format_type, **kwargs):
         # (1) Get the std formatting from the operand VertexSequence
@@ -1188,6 +1271,61 @@ class EndVertex(Function):
 
     def latex(self, **kwargs):
         return self.formatted('latex', **kwargs)
+
+    @equality_prover('defined', 'define')
+    def definition(self, **defaults_config):
+        '''
+        From self as [EndVertex((v1, v2, ..., vn))], deduce and
+        return the equality:
+
+            EndVertex((v1, v2, ..., vn)) = vn
+
+        The implementation deals with several simple special cases
+        in which the walk is an explicit ExprTuple, returning a
+        NotImplementedError otherwise.
+
+        '''
+        from proveit import i, v, IndexedVar
+        from proveit.numbers import one, subtract
+        from . import end_vertex_def
+
+        if isinstance(self.seq, ExprTuple):
+            # walk = ExprTuple(ExprRange())
+            if (self.seq.num_entries() == 1
+                    and isinstance(self.seq[0], ExprRange)):
+                _n_sub = self.seq[0].num_elements()
+                _v_sub = self.seq[0].body.var
+                return end_vertex_def.instantiate({n:_n_sub, v:_v_sub})
+
+            # walk = ExprTuple(v) (i.e., a trivial walk with 1 vertex)
+            if self.seq.is_single():
+                _n_sub = self.seq.num_elements()
+                _v_to_replace = ExprTuple(IndexedVar(v, one))
+                _v_sub = self.seq
+                return end_vertex_def.instantiate(
+                        {n:_n_sub, _v_to_replace:_v_sub})
+
+            # walk = ExprTuple(a, b, c), or similar
+            # i.e. walk is an explicit, finite ExprTuple, with no
+            # explicit ExprRange entries
+            if not self.seq.contains_range():
+                _n_sub = self.seq.num_elements()
+                tuple_to_replace_01 = (
+                    ExprTuple(ExprRange(i, IndexedVar(v, i), one, _n_sub)))
+                _before_split_idx = subtract(_n_sub, one).simplified()
+                tuple_to_replace_02 = (
+                    tuple_to_replace_01[0].partition(_before_split_idx).rhs)
+                _v_sub = self.seq
+                return end_vertex_def.instantiate(
+                        {n:_n_sub, tuple_to_replace_01:_v_sub,
+                         tuple_to_replace_02:_v_sub})
+
+        raise NotImplementedError(
+                "EndVertex(W).definition() is only implemented for "
+                "some simple special cases in which the walk W is "
+                "is given as an explicit ExprTuple. For more complex "
+                "cases, consider a manual instantiation of the walks "
+                "package 'end_vertex_def' theorem. ")
 
 
 class EulerianTrails(Function):
