@@ -1,4 +1,4 @@
-from proveit import ( n, u, v, G, W, equality_prover, ExprTuple,
+from proveit import ( j, k, n, u, v, G, W, equality_prover, ExprTuple,
                       ExprRange, Function, Literal, NamedExprs,
                       Operation )
 from proveit.graphs import Size
@@ -1167,10 +1167,10 @@ class BeginVertex(Operation):
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
         '''
-        From self as [BeginVertex((v1, v2, ..., vn))], deduce and
+        From self as [BeginVertex((vj, v_{j+1}, ..., v_k))], deduce and
         return the equality:
 
-            BeginVertex((v1, v2, ..., vn)) = v1
+            BeginVertex((vj, v_{j+1}, ..., v_k)) = v_j
 
         The implementation deals with several simple special cases
         in which the walk is an explicit ExprTuple, returning a
@@ -1185,17 +1185,19 @@ class BeginVertex(Operation):
             # walk = ExprTuple(ExprRange())
             if (self.seq.num_entries() == 1
                     and isinstance(self.seq[0], ExprRange)):
-                _n_sub = self.seq[0].num_elements()
+                _j_sub = self.seq[0].start_index
+                _k_sub = self.seq[0].end_index
                 _v_sub = self.seq[0].body.var
-                return begin_vertex_def.instantiate({n:_n_sub, v:_v_sub})
+                return begin_vertex_def.instantiate(
+                        {j:_j_sub, k:_k_sub, v:_v_sub})
 
             # walk = ExprTuple(v) (i.e., a trivial walk with 1 vertex)
             if self.seq.is_single():
-                _n_sub = self.seq.num_elements()
-                _v_to_replace = ExprTuple(IndexedVar(v, one))
+                _j_sub = one
+                _k_sub = one
                 _v_sub = self.seq
                 return begin_vertex_def.instantiate(
-                        {n:_n_sub, _v_to_replace:_v_sub})
+                        {j:_j_sub, k:_k_sub, v:_v_sub})
 
             # walk = ExprTuple(a, b, c), or similar
             # i.e. walk is an explicit, finite ExprTuple, with no
@@ -1207,14 +1209,17 @@ class BeginVertex(Operation):
                 tuple_to_replace_02 = (
                     tuple_to_replace_01[0].partition(one).rhs)
                 _v_sub = self.seq
+                _j_sub = one
+                _k_sub = _n_sub
+
                 try:
                     return begin_vertex_def.instantiate(
-                        {n:_n_sub, tuple_to_replace_01:_v_sub,
+                        {j:_j_sub, k:_k_sub, tuple_to_replace_01:_v_sub,
                          tuple_to_replace_02:_v_sub})
                 except Exception as the_exception:
                     # try again
                     return begin_vertex_def.instantiate(
-                        {n:_n_sub, tuple_to_replace_01:_v_sub,
+                        {j:_j_sub, k:_k_sub, tuple_to_replace_01:_v_sub,
                          tuple_to_replace_02:_v_sub})
 
         raise NotImplementedError(
@@ -1275,35 +1280,39 @@ class EndVertex(Operation):
     @equality_prover('defined', 'define')
     def definition(self, **defaults_config):
         '''
-        From self as [EndVertex((v1, v2, ..., vn))], deduce and
+        From self as [EndVertex((vi, v_{i+1}, ..., vj))], deduce and
         return the equality:
 
-            EndVertex((v1, v2, ..., vn)) = vn
+            EndVertex((vi, v_{i+1}, ..., vj)) = vj
 
         The implementation deals with several simple special cases
         in which the walk is an explicit ExprTuple, returning a
         NotImplementedError otherwise.
 
         '''
-        from proveit import i, v, IndexedVar
-        from proveit.numbers import one, subtract
+        from proveit import i, v, IndexedVar, Lambda, used_vars
+        from proveit.numbers import zero, one, subtract
         from . import end_vertex_def
 
         if isinstance(self.seq, ExprTuple):
             # walk = ExprTuple(ExprRange())
             if (self.seq.num_entries() == 1
                     and isinstance(self.seq[0], ExprRange)):
-                _n_sub = self.seq[0].num_elements()
+                _j_sub = self.seq[0].start_index
+                _k_sub = self.seq[0].end_index
                 _v_sub = self.seq[0].body.var
-                return end_vertex_def.instantiate({n:_n_sub, v:_v_sub})
+                return end_vertex_def.instantiate(
+                        {j:_j_sub, k:_k_sub, v:_v_sub})
 
             # walk = ExprTuple(v) (i.e., a trivial walk with 1 vertex)
             if self.seq.is_single():
-                _n_sub = self.seq.num_elements()
-                _v_to_replace = ExprTuple(IndexedVar(v, one))
+                # _n_sub = self.seq.num_elements()
+                _j_sub = one
+                _k_sub = one
+                # _v_to_replace = ExprTuple(IndexedVar(v, one))
                 _v_sub = self.seq
                 return end_vertex_def.instantiate(
-                        {n:_n_sub, _v_to_replace:_v_sub})
+                        {j:_j_sub, k:_k_sub, v:_v_sub})
 
             # walk = ExprTuple(a, b, c), or similar
             # i.e. walk is an explicit, finite ExprTuple, with no
@@ -1316,8 +1325,10 @@ class EndVertex(Operation):
                 tuple_to_replace_02 = (
                     tuple_to_replace_01[0].partition(_before_split_idx).rhs)
                 _v_sub = self.seq
+                _j_sub = one
+                _k_sub = _n_sub
                 return end_vertex_def.instantiate(
-                        {n:_n_sub, tuple_to_replace_01:_v_sub,
+                        {j:_j_sub, k:_k_sub, tuple_to_replace_01:_v_sub,
                          tuple_to_replace_02:_v_sub})
 
         raise NotImplementedError(
