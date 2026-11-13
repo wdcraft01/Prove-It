@@ -974,12 +974,24 @@ class EdgeSequenceOf(Operation):
                 return edge_sequence_of_two_def.instantiate(
                     {G:_G_sub, u:_u_sub, v:_v_sub})
 
+            # self.walk = ExprTuple(ExprRange())
+            if (self.walk.num_entries() == 1
+                    and isinstance(self.walk[0], ExprRange)):
+                from . import edge_seq_of_def
+                _j_sub = self.walk[0].start_index
+                _k_sub = self.walk[0].end_index
+                _v_sub = self.walk[0].body.var
+                return edge_seq_of_def.instantiate(
+                        {G:_G_sub, j:_j_sub, k:_k_sub, v:_v_sub})
+
             # else, we have an explicit listing of multiple vertices
             from . import edge_sequence_of_def
             _v_sub = self.walk
             _n_sub = _v_sub.num_elements()
             return edge_sequence_of_def.instantiate(
                     {G:_G_sub, n:_n_sub, v:_v_sub})
+
+            
         
         # Default is no simplification.
         from proveit.logic import Equals
